@@ -6,6 +6,7 @@ Welcome to the fan wiki for the *Gifted* series.
 
 - [Characters](characters/index.md)
 - [Locations](locations/index.md)
+- [Myriad Paths](myriadpaths/index.md)
 - [Volumes](volumes/index.md)
 - [Glossary](glossary.md)
 
