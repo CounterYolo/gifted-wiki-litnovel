@@ -1,0 +1,391 @@
+<title>Gifted Wiki</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one-page wiki. Top bar (brand · story links · search) over a two-column shell — section sidebar on the left, the selected section's content in the middle, built from collapsible +/− blocks. Dark-only by design (owner's spec). */
+:root {
+  color-scheme: dark;
+  --bg: #0c0d11;
+  --surface: #14161c;
+  --surface-2: #1a1d25;
+  --line: #2a2e39;
+  --fg: #ebe8e1;
+  --muted: #9b9ea8;
+  --faint: #6c7080;
+  --g1: #9aa0a6; /* Minor · Basic · Weak */
+  --g2: #5fb878; /* Lesser · Adept · Moderate */
+  --g3: #6b8fd6; /* Greater · Advanced · Strong */
+  --g4: #d9a441; /* Superior · Elite · Potent */
+  --g5: #e06c6c; /* Exalted · Master · Perfect */
+  --display: "Cormorant SC", "Cormorant", Georgia, serif;
+  --body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --topbar-h: 58px;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+a { color: var(--fg); text-decoration-color: var(--faint); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--fg); }
+:focus-visible { outline: 2px solid var(--g3); outline-offset: 2px; border-radius: 3px; }
+
+.wrap {
+  max-width: 1280px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Top bar */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.top .wrap { display: flex; align-items: center; gap: 18px; padding-block: 10px; min-height: var(--topbar-h); }
+.brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.brand b { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: .06em; line-height: 1; }
+.brand span { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
+.links { display: flex; gap: 8px; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
+.links::-webkit-scrollbar { display: none; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;
+  padding: 6px 13px; border-radius: 6px; font-size: 14.5px; font-weight: 500; text-decoration: none;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font-family: var(--body); cursor: pointer;
+}
+.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn:hover { border-color: var(--muted); }
+.search { position: relative; flex: 0 1 220px; min-width: 120px; }
+.search input {
+  width: 100%; background: var(--surface); color: var(--fg);
+  border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 15px; padding: 6px 10px 6px 30px;
+}
+.search input::placeholder { color: var(--faint); }
+.search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); }
+.menu-btn { display: none; background: none; border: 1px solid var(--line); color: var(--fg); border-radius: 6px; padding: 6px 10px; font: inherit; font-size: 15px; flex-shrink: 0; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+
+/* Sidebar */
+.side {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--topbar-h) + 1px);
+  padding-block: 28px; max-height: calc(100vh - var(--topbar-h)); overflow-y: auto;
+}
+.side .label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); padding: 0 12px 8px; }
+.side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.side a {
+  display: grid; grid-template-columns: 1.9em minmax(0, 1fr); align-items: baseline;
+  padding: 7px 12px; border-radius: 8px; text-decoration: none; color: var(--muted); border: 1px solid transparent;
+}
+.side a .n { font-family: var(--display); font-size: 15px; color: var(--faint); }
+.side a .t { font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: .02em; line-height: 1.25; }
+.side a:hover { color: var(--fg); background: var(--surface); }
+.side a[aria-current="page"] { color: var(--fg); background: var(--surface-2); border-color: var(--line); box-shadow: inset 2px 0 0 var(--fg); }
+.side a[aria-current="page"] .n { color: var(--fg); }
+.side .divider { border-top: 1px solid var(--line); margin: 14px 12px; }
+.side .small a { grid-template-columns: minmax(0, 1fr); padding: 4px 12px; font-size: 15px; }
+
+/* Content */
+.content { min-width: 0; padding-block: 0 32px; }
+.view-head { padding-block: 36px 18px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(36px, 5vw, 56px); line-height: 1.05; letter-spacing: .02em; margin: 8px 0 12px; text-wrap: balance; }
+.intro { font-size: 18px; color: var(--muted); max-width: 62ch; margin: 0; }
+.intro em { color: var(--fg); font-style: normal; }
+.sample { font-family: var(--mono); font-size: 11.5px; color: var(--g4); border: 1px dashed color-mix(in srgb, var(--g4) 45%, transparent); border-radius: 6px; padding: 6px 10px; margin-top: 16px; display: inline-block; }
+
+/* Home */
+.home { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 36px; align-items: start; padding-block: 44px 24px; }
+.home .lede { font-size: 19px; color: var(--muted); max-width: 58ch; margin: 0; }
+.home .lede em { color: var(--fg); font-style: normal; }
+.home .lede + .lede { margin-top: 14px; }
+.status { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font-family: var(--mono); font-size: 13.5px; }
+.status h2 { font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: .04em; margin: 0 0 14px; }
+.status dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; }
+.status dt { color: var(--faint); }
+.status dd { margin: 0; font-variant-numeric: tabular-nums; }
+.status .rule { border-top: 1px dashed var(--line); margin: 14px 0 12px; }
+.status .note { font-family: var(--body); font-size: 14px; color: var(--muted); margin: 0; }
+
+.pick { border: 1px dashed var(--line); border-radius: 10px; padding: 44px 20px; text-align: center; color: var(--faint); font-style: italic; font-size: 17px; margin-bottom: 8px; }
+.pick .narrow { display: none; }
+
+/* Collapsible blocks (stats-tracker style, +/−) */
+.block { border-bottom: 1px solid var(--line); }
+.block > summary {
+  list-style: none; cursor: pointer; display: grid; grid-template-columns: 1.2em minmax(0, 1fr) auto; gap: 10px; align-items: baseline;
+  padding: 12px 2px;
+}
+.block > summary::-webkit-details-marker { display: none; }
+.block > summary .sign { font-family: var(--mono); font-size: 16px; color: var(--faint); text-align: center; }
+.block > summary .sign::before { content: "+"; }
+.block[open] > summary .sign::before { content: "−"; }
+.block > summary .ttl { font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: .02em; line-height: 1.25; }
+.block > summary .cnt { font-family: var(--mono); font-size: 13px; color: var(--faint); }
+.block > summary:hover .ttl { text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 4px; }
+.block .inner { padding: 0 2px 16px 2.1em; }
+.block .block > summary .ttl { font-size: 19px; }
+.block .block > summary { padding: 9px 2px; }
+.block .block:last-child { border-bottom: 0; }
+.entry-meta { font-family: var(--mono); font-size: 12.5px; color: var(--faint); margin: 0 0 8px; }
+.entry p { margin: 0 0 10px; max-width: 68ch; color: var(--fg); }
+.entry p.muted { color: var(--muted); }
+.list { list-style: none; padding: 0; margin: 0 0 4px; display: grid; gap: 4px; }
+.list li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.tag { font-family: var(--mono); font-size: 12.5px; color: var(--c, var(--muted)); }
+
+/* Status screen card (official, novel-style) */
+.screen { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 14px 16px; margin: 6px 0 12px; max-width: 520px; }
+.screen .hd { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: .03em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 10px; }
+.screen .hd span { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--faint); letter-spacing: 0; }
+.screen .ph { font-family: var(--mono); font-size: 13px; color: var(--faint); padding: 18px 0; text-align: center; border: 1px dashed var(--line); border-radius: 6px; }
+
+/* Map */
+.map { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); aspect-ratio: 16 / 7; max-width: 100%; display: grid; place-items: center; color: var(--faint); font-family: var(--mono); font-size: 13px; position: relative; overflow: hidden; margin: 4px 0 10px; }
+.map::before { content: ""; position: absolute; left: 12%; right: 12%; top: 50%; border-top: 1px dashed var(--line); }
+
+/* Search results */
+.results { list-style: none; padding: 0; margin: 0; }
+.results li { border-bottom: 1px solid var(--line); }
+.results a { display: block; padding: 12px 2px; text-decoration: none; }
+.results .r-sec { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.results .r-ttl { font-family: var(--display); font-weight: 600; font-size: 20px; display: block; }
+.empty { color: var(--faint); padding: 16px 2px; }
+
+/* Footer */
+footer { border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
+footer .wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; padding-block: 24px 32px; }
+footer .foot { grid-column: 2; min-width: 0; display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; }
+footer p { margin: 0; max-width: 60ch; }
+footer a { color: var(--muted); }
+
+.todo { font-family: var(--mono); font-size: 11px; color: var(--g4); border: 1px dashed color-mix(in srgb, var(--g4) 50%, transparent); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
+
+@media (max-width: 1080px) { .home { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 900px) {
+  .top .wrap { flex-wrap: wrap; row-gap: 10px; }
+  .menu-btn { display: inline-block; }
+  .links { order: 5; flex: 1 1 100%; margin-left: 0; }
+  .search { margin-left: auto; flex: 1 1 160px; }
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .side { position: static; max-height: none; padding-block: 12px; border-bottom: 1px solid var(--line); }
+  .side:not(.open) { display: none; }
+  .pick .wide { display: none; }
+  .pick .narrow { display: inline; }
+  footer .wrap { grid-template-columns: minmax(0, 1fr); }
+  footer .foot { grid-column: 1; }
+}
+@media (max-width: 600px) { .brand span { display: none; } .block .inner { padding-left: 1.4em; } }
+@media (prefers-reduced-motion: no-preference) { .btn, .side a { transition: background-color .15s, border-color .15s, color .15s; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home" aria-label="Gifted Wiki home"><b>Gifted</b><span>Fan Wiki</span></a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sideNav">Sections</button>
+    <nav class="links" aria-label="Story links">
+      <a class="btn" href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road ↗</a>
+      <a class="btn" href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Ellake's Patreon ↗</a>
+      <a class="btn" href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Ellake's Amazon ↗</a>
+    </nav>
+    <label class="search">
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="var(--faint)" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+      <input id="q" type="search" placeholder="Search the wiki" aria-label="Search the wiki">
+    </label>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <aside class="side" id="sideNav" aria-label="Wiki sections">
+    <div class="label">Sections</div>
+    <ul id="secList"></ul>
+    <div class="divider"></div>
+    <ul class="small">
+      <li><a href="#contribute">How to contribute</a></li>
+      <li><a href="#about">About this wiki</a></li>
+    </ul>
+  </aside>
+  <main class="content" id="view" aria-live="polite"></main>
+</div>
+
+<footer>
+  <div class="wrap"><div class="foot">
+    <p>A free fan project. <em>Gifted</em> and its world belong to Ellake. Read the story on <a href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road</a>, and support Ellake financially on <a href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Patreon</a> or by buying the books when they come out on <a href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Amazon</a> &amp; other distributors.</p>
+    <p><a href="#contribute">How to contribute</a> · <a href="#about">About this wiki</a></p>
+  </div></div>
+</footer>
+
+<script>
+(function () {
+  /* SAMPLE CONTENT. On the real site this object is generated from the community "Gifted Wiki" Google Doc:
+     Heading 1 = section, Heading 2 = group, Heading 3 = entry. Placeholder text only; no story content. */
+  var NOTE = 'Sample layout. Real text will come from the Gifted Wiki Google Doc.';
+  var SECTIONS = [
+    { id: 'characters', n: 'I', name: 'Characters', blurb: 'Grouped by the volume they first appear in.',
+      groups: [
+        { name: 'Volume 1', entries: [
+          { id: 'bastian', name: 'Bastian', meta: 'Full name: Sebastian · First appears: Ch. 1', html:
+            '<p>Character write-up from the Google Doc goes here.</p>' +
+            '<div class="screen"><div class="hd">Status Screen <span>latest official · Ch. —</span></div><div class="ph">Novel status screen, restyled in the tracker look</div></div>' },
+          { id: 'cornelius', name: 'Cornelius', meta: 'First appears: Ch. —', html: '<p>Character write-up from the Google Doc goes here.</p>' },
+          { id: 'etta', name: 'Etta', meta: 'First appears: Ch. —', html: '<p>Character write-up from the Google Doc goes here.</p>' }
+        ]},
+        { name: 'Volume 2', entries: [
+          { id: 'example', name: 'Example character', meta: 'First appears: Ch. —', html: '<p>Character write-up from the Google Doc goes here.</p>' }
+        ]}
+      ]},
+    { id: 'paths', n: 'II', name: 'Myriad Paths', blurb: 'Paths, Attributes, Affinities, Skills, Spells, & more.',
+      groups: [
+        { name: 'Paths', entries: [
+          { id: 'grades', name: 'Grades', meta: 'Five grades, colored the same everywhere on the wiki', html:
+            '<ul class="list">' +
+            '<li><span class="tag" style="--c:var(--g1)">1</span> Minor · Basic · Weak</li>' +
+            '<li><span class="tag" style="--c:var(--g2)">2</span> Lesser · Adept · Moderate</li>' +
+            '<li><span class="tag" style="--c:var(--g3)">3</span> Greater · Advanced · Strong</li>' +
+            '<li><span class="tag" style="--c:var(--g4)">4</span> Superior · Elite · Potent</li>' +
+            '<li><span class="tag" style="--c:var(--g5)">5</span> Exalted · Master · Perfect</li></ul>' },
+          { id: 'types', name: 'Path types', meta: 'Rudimentary, Mutated, and others', html: '<p>Types sit alongside grades rather than replacing them. Write-up from the Google Doc goes here.</p>' },
+          { id: 'tiers', name: 'Tiers & steps', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' }
+        ]},
+        { name: 'Attributes', entries: [
+          { id: 'attributes', name: 'Attributes', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' },
+          { id: 'advanced-attributes', name: 'Advanced attributes', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' }
+        ]},
+        { name: 'Affinities', entries: [ { id: 'affinities', name: 'Affinities', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' } ]},
+        { name: 'Skills', entries: [ { id: 'skills', name: 'Skills & skill seeds', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' } ]},
+        { name: 'Spells', entries: [ { id: 'spells', name: 'Spells', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' } ]}
+      ]},
+    { id: 'races', n: 'III', name: 'Races & Spirits', blurb: 'Peoples and spirit types.',
+      groups: [
+        { name: 'Races', entries: [ { id: 'race-example', name: 'Example race', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' } ]},
+        { name: 'Spirits', entries: [ { id: 'spirit-example', name: 'Example spirit type', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' } ]}
+      ]},
+    { id: 'locations', n: 'IV', name: 'Locations', blurb: 'Continents & Realms.',
+      pre: '<div class="map">World map (small version) · <a href="#map" style="margin-left:6px">Open full-size map ↗</a></div>',
+      groups: [
+        { name: 'Northern Continent', entries: [ { id: 'north-example', name: 'Example location', meta: 'Region: —', html: '<p>Write-up from the Google Doc goes here.</p>' } ]},
+        { name: 'Southern Continent', entries: [ { id: 'south-example', name: 'Example location', meta: 'Region: —', html: '<p>Write-up from the Google Doc goes here.</p>' } ]},
+        { name: 'Extraplanar', entries: [
+          { id: 'spirit-realm', name: 'Spirit Realm', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' },
+          { id: 'ocean-of-souls', name: 'Ocean of Souls', meta: '', html: '<p>Write-up from the Google Doc goes here.</p>' }
+        ]},
+        { name: 'Unsorted', entries: [ { id: 'unsorted-example', name: 'Example location', meta: 'Region not yet known', html: '<p>Write-up from the Google Doc goes here.</p>' } ]}
+      ]},
+    { id: 'volumes', n: 'V', name: 'Volumes', blurb: 'Broad, low-spoiler beats for each volume.',
+      groups: [
+        { name: 'Volume 1', entries: [ { id: 'vol1', name: 'Volume 1', meta: 'Bastian’s age: —', html: '<p>Broad beats from the Google Doc go here.</p>' } ]}
+      ]},
+    { id: 'glossary', n: 'VI', name: 'Glossary', blurb: 'Short definitions of key terms, linked from every section.',
+      groups: [
+        { name: 'A–Z', entries: [
+          { id: 'g-path', name: 'Path', meta: '', html: '<p class="muted">One-line definition from the Google Doc.</p>' },
+          { id: 'g-tier', name: 'Tier', meta: '', html: '<p class="muted">One-line definition from the Google Doc.</p>' }
+        ]}
+      ]}
+  ];
+
+  var view = document.getElementById('view');
+  var side = document.getElementById('sideNav');
+  var secList = document.getElementById('secList');
+  var q = document.getElementById('q');
+  var menuBtn = document.getElementById('menuBtn');
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function count(sec) { return sec.groups.reduce(function (a, g) { return a + g.entries.length; }, 0); }
+
+  secList.innerHTML = SECTIONS.map(function (s) {
+    return '<li><a href="#' + s.id + '" data-sec="' + s.id + '"><span class="n">' + s.n + '</span><span class="t">' + esc(s.name) + '</span></a></li>';
+  }).join('');
+
+  menuBtn.addEventListener('click', function () {
+    var open = side.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  function renderHome() {
+    var chars = count(SECTIONS[0]), locs = count(SECTIONS[3]), terms = count(SECTIONS[5]);
+    view.innerHTML =
+      '<section class="home"><div>' +
+      '<div class="eyebrow">Cornelius’ Compendium of the Myriad Paths</div>' +
+      '<h1>Gifted Wiki</h1>' +
+      '<p class="lede">A free fan project. <em>Gifted</em> and its world belong to Ellake. Read the story on <a href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road</a>, and support Ellake financially on <a href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Patreon</a> or by buying the books when they come out on <a href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Amazon</a> &amp; other distributors.</p>' +
+      '<p class="lede">This wiki tracks Bastian, the people he meets, and the worlds &amp; systems they move through.</p>' +
+      '</div><aside class="status" aria-label="Wiki status"><h2>Wiki Status</h2><dl>' +
+      '<dt>Through</dt><dd>Ch. — <span class="todo">from sheet</span></dd>' +
+      '<dt>Characters</dt><dd>' + chars + '</dd><dt>Locations</dt><dd>' + locs + '</dd><dt>Glossary</dt><dd>' + terms + ' terms</dd>' +
+      '</dl><div class="rule"></div><p class="note">If you’re behind, check the label before reading.</p></aside></section>' +
+      '<div class="pick"><span class="wide">Select a section on the left.</span><span class="narrow">Tap Sections above to choose one.</span></div>';
+  }
+
+  function renderSection(sec, openEntry) {
+    var html = '<div class="view-head"><div class="eyebrow">Section ' + sec.n + '</div><h1>' + esc(sec.name) + '</h1>' +
+      '<p class="intro">' + esc(sec.blurb) + '</p><div class="sample">' + NOTE + '</div></div>' + (sec.pre || '');
+    sec.groups.forEach(function (g, gi) {
+      var groupOpen = gi === 0 || g.entries.some(function (e) { return e.id === openEntry; });
+      html += '<details class="block"' + (groupOpen ? ' open' : '') + '><summary><span class="sign" aria-hidden="true"></span><span class="ttl">' + esc(g.name) + '</span><span class="cnt">(' + g.entries.length + ')</span></summary><div class="inner">';
+      g.entries.forEach(function (e) {
+        html += '<details class="block entry" id="' + sec.id + '.' + e.id + '"' + (e.id === openEntry ? ' open' : '') + '><summary><span class="sign" aria-hidden="true"></span><span class="ttl">' + esc(e.name) + '</span><span class="cnt"></span></summary><div class="inner">' +
+          (e.meta ? '<p class="entry-meta">' + esc(e.meta) + '</p>' : '') + e.html + '</div></details>';
+      });
+      html += '</div></details>';
+    });
+    view.innerHTML = html;
+    if (openEntry) {
+      var el = document.getElementById(sec.id + '.' + openEntry);
+      if (el) el.scrollIntoView({ block: 'start' });
+    } else { window.scrollTo(0, 0); }
+  }
+
+  function renderPlaceholder(title, text) {
+    view.innerHTML = '<div class="view-head"><h1>' + esc(title) + '</h1><p class="intro">' + esc(text) + '</p></div>';
+    window.scrollTo(0, 0);
+  }
+
+  function markCurrent(secId) {
+    Array.prototype.forEach.call(secList.querySelectorAll('a'), function (a) {
+      if (a.getAttribute('data-sec') === secId) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+  }
+
+  function route() {
+    var h = (location.hash || '#home').slice(1);
+    var parts = h.split('.');
+    var sec = SECTIONS.filter(function (s) { return s.id === parts[0]; })[0];
+    side.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false');
+    if (sec) { renderSection(sec, parts[1]); markCurrent(sec.id); return; }
+    markCurrent(null);
+    if (h === 'map') return renderPlaceholder('World Map', 'The full-size map opens on its own page so the Locations section stays fast.');
+    if (h === 'contribute') return renderPlaceholder('How to Contribute', 'Edit the Gifted Wiki Google Doc. The site picks up the changes automatically. Step-by-step guide goes here.');
+    if (h === 'about') return renderPlaceholder('About This Wiki', 'Who runs it, where the content comes from, and how to reach the maintainers.');
+    renderHome();
+  }
+
+  q.addEventListener('input', function () {
+    var t = q.value.trim().toLowerCase();
+    if (!t) { route(); return; }
+    var hits = [];
+    SECTIONS.forEach(function (s) {
+      s.groups.forEach(function (g) {
+        g.entries.forEach(function (e) {
+          var text = (e.name + ' ' + e.meta + ' ' + g.name + ' ' + e.html.replace(/<[^>]+>/g, ' ')).toLowerCase();
+          if (text.indexOf(t) !== -1) hits.push({ s: s, g: g, e: e });
+        });
+      });
+    });
+    markCurrent(null);
+    view.innerHTML = '<div class="view-head"><div class="eyebrow">Search</div><h1>Results</h1><p class="intro">' + hits.length + (hits.length === 1 ? ' entry matches' : ' entries match') + ' “' + esc(q.value.trim()) + '”.</p></div>' +
+      (hits.length ? '<ul class="results">' + hits.map(function (h) {
+        return '<li><a href="#' + h.s.id + '.' + h.e.id + '"><span class="r-sec">' + esc(h.s.name) + ' · ' + esc(h.g.name) + '</span><span class="r-ttl">' + esc(h.e.name) + '</span></a></li>';
+      }).join('') + '</ul>' : '<p class="empty">Nothing matches. Try a shorter word.</p>');
+  });
+
+  view.addEventListener('click', function (ev) {
+    var a = ev.target.closest('.results a');
+    if (a) { q.value = ''; }
+  });
+
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
