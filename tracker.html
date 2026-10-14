@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Unlisted page: tells search engines not to list it. Keep this line. -->
+<meta name="robots" content="noindex, nofollow">
+<title>Bastian's Status · Gifted Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ===== SHARED WIKI THEME (same values as the main wiki; the tracker can use these variables) ===== */
+:root {
+  color-scheme: dark;
+  --bg: #0c0d11;
+  --surface: #14161c;
+  --surface-2: #1a1d25;
+  --line: #2a2e39;
+  --fg: #ebe8e1;
+  --muted: #9b9ea8;
+  --faint: #6c7080;
+  --g1: #9aa0a6; /* Grade 1: Minor · Basic · Weak */
+  --g2: #5fb878; /* Grade 2: Lesser · Adept · Moderate */
+  --g3: #6b8fd6; /* Grade 3: Greater · Advanced · Strong */
+  --g4: #d9a441; /* Grade 4: Superior · Elite · Potent */
+  --g5: #e06c6c; /* Grade 5: Exalted · Master · Perfect */
+  --display: "Cormorant SC", "Cormorant", Georgia, serif;
+  --body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --topbar-h: 58px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--fg); text-decoration-color: var(--faint); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--fg); }
+:focus-visible { outline: 2px solid var(--g3); outline-offset: 2px; border-radius: 3px; }
+
+.wiki-wrap {
+  max-width: 1320px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ===== TOP BAR ===== */
+.wiki-top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.wiki-top .wiki-wrap { display: flex; align-items: center; gap: 18px; padding-block: 10px; min-height: var(--topbar-h); }
+.wiki-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.wiki-brand b { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: .06em; line-height: 1; }
+.wiki-brand span { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
+.wiki-links { display: flex; gap: 8px; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
+.wiki-links::-webkit-scrollbar { display: none; }
+.wiki-btn {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;
+  padding: 6px 13px; border-radius: 6px; font-size: 14.5px; font-weight: 500; text-decoration: none;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font-family: var(--body);
+}
+.wiki-btn:hover { border-color: var(--muted); }
+.wiki-btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* ===== TRACKER AREA ===== */
+.wiki-main { padding-block: 28px 40px; min-height: 60vh; }
+.tracker-slot {
+  border: 1px dashed var(--line); border-radius: 10px; padding: 60px 20px;
+  text-align: center; color: var(--faint); font-style: italic;
+}
+
+/* ===== FOOTER ===== */
+.wiki-foot { border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
+.wiki-foot .wiki-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; padding-block: 24px 32px; }
+.wiki-foot p { margin: 0; max-width: 60ch; }
+.wiki-foot a { color: var(--muted); }
+
+@media (max-width: 760px) {
+  .wiki-top .wiki-wrap { flex-wrap: wrap; row-gap: 10px; }
+  .wiki-links { flex: 1 1 100%; margin-left: 0; }
+}
+@media (max-width: 600px) { .wiki-brand span { display: none; } }
+</style>
+
+<style>
+/* ===== BASTIAN STATUS TRACKER (all rules scoped to #tracker) ===== */
+#tracker{
+  color-scheme:dark;
+  --bg:#0c0d11; --panel:#14161c; --ink:#ebe8e1; --muted:#9b9ea8; --line:#2a2e39;
+  --track:#262a35; --tint:#1a1d25; --aether:#6b8fd6; --shadow:#a98ad8; --good:#5fb878; --warn:#d9a441;
+  --t1:var(--g1); --t2:var(--g2); --t3:var(--g3); --t4:var(--g4); --t5:var(--g5);
+  font-size:15px; line-height:1.45; color:var(--ink);
+}
+/* Layout: a status-window card (header, two stat columns) above a chapter-grouped achievement log */
+
+
+
+#tracker *{box-sizing:border-box}
+#tracker{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding:24px 16px 48px}
+#tracker .wrap{max-width:960px;margin:0 auto;display:grid;gap:20px}
+#tracker .wrap>*{min-width:0}
+#tracker #point{width:100%;max-width:100%;text-overflow:ellipsis}
+#tracker .picker{flex-wrap:wrap;min-width:0;max-width:100%}
+#tracker .meta{min-width:0;max-width:100%}
+#tracker summary .age{white-space:normal!important;text-align:right;min-width:0}
+#tracker .sheet{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+#tracker header{padding:22px 0 18px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr) minmax(0,1fr);align-items:center}
+#tracker .hc{padding:0 18px;min-width:0}
+#tracker .cls{font-size:15px;color:var(--muted)}
+#tracker .cls b{color:var(--ink);font-weight:600}
+#tracker .hc.pick{display:flex;align-items:center;gap:8px}
+#tracker .hc .picker{font-size:.85rem;color:var(--muted);white-space:nowrap;flex:none}
+#tracker .hc.pick #point{flex:1 1 auto;min-width:0;width:auto}
+@media (max-width:860px){#tracker header{grid-template-columns:1fr;gap:10px}
+}
+#tracker h1{font-family:var(--display);font-weight:700;font-size:2.1rem;margin:0;line-height:1;letter-spacing:.02em}
+#tracker .sub{color:var(--muted);font-size:.9rem;margin-top:6px}
+#tracker .meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:.85rem;align-items:center}
+#tracker .meta b{color:var(--ink);font-weight:600}
+#tracker select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 8px;max-width:100%}
+#tracker select:focus-visible,#tracker summary:focus-visible{outline:2px solid var(--aether);outline-offset:2px}
+#tracker .notice{margin:0;padding:10px 24px;background:var(--tint);border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+#tracker .notice b{color:var(--warn)}
+#tracker .cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr) minmax(0,1fr)}
+#tracker .col{padding:8px 18px 22px;min-width:0}
+#tracker .col+.col{border-left:1px solid var(--line)}
+@media (max-width:860px){#tracker .cols{grid-template-columns:1fr}
+#tracker .col+.col{border-left:0;border-top:1px solid var(--line)}
+}
+@media (min-width:861px) and (max-width:1180px){#tracker .cols{grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr)}
+#tracker #drawers{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
+#tracker header{grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr);row-gap:10px}
+#tracker header .pick{grid-column:1/-1}
+}
+#tracker .drawer .equipped{text-decoration:line-through;color:var(--muted)}
+#tracker .drawer .src{color:var(--muted);font-size:.85em}
+#tracker .nm{display:inline-block}
+#tracker #skills .top{gap:10px}
+#tracker #skills .top>.name{flex:1 1 auto}
+#tracker .skmeta{display:flex;gap:8px;align-items:center;flex:none}
+#tracker .chipcell{display:inline-block}
+#tracker #skills .num{text-align:right}
+#tracker .chage{font-family:var(--body);font-weight:400;font-size:.82rem;color:var(--muted)}
+#tracker .drawer{border-bottom:1px solid var(--line)}
+#tracker .drawer>summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 0 8px;cursor:pointer;list-style:none;font-family:var(--display);font-size:1.2rem;font-weight:700;letter-spacing:.03em}
+#tracker .drawer>summary::-webkit-details-marker{display:none}
+#tracker .drawer>summary .lbl::before{content:"▸";display:inline-block;width:1em;color:var(--muted);font-size:.8em;transition:transform .15s}
+#tracker .drawer[open]>summary .lbl::before{transform:rotate(90deg)}
+#tracker .drawer>summary .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
+#tracker .drawer ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:5px;font-size:.92rem}
+#tracker .drawer li{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+#tracker .drawer li .sub{white-space:nowrap;color:var(--muted);font-size:.8rem;text-align:right}
+@media (prefers-reduced-motion:reduce){#tracker .drawer>summary .lbl::before{transition:none}
+}
+#tracker section{padding-top:18px}
+#tracker h2{font-family:var(--display);font-size:1.2rem;font-weight:700;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px;letter-spacing:.03em}
+#tracker h2 .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
+#tracker .rows{display:grid;gap:2px}
+#tracker .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0}
+#tracker .v,#tracker .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+#tracker .v{font-weight:600;white-space:nowrap}
+#tracker .num{font-size:.82rem;color:var(--muted);white-space:nowrap}
+#tracker .empty{color:var(--muted);font-style:italic}
+#tracker .chip{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--aether);white-space:nowrap}
+#tracker .chip.t1{color:var(--t1)}
+#tracker .chip.t2{color:var(--t2)}
+#tracker .chip.t3{color:var(--t3)}
+#tracker .chip.t4{color:var(--t4)}
+#tracker .chip.t5{color:var(--t5)}
+#tracker .name{min-width:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#tracker .paths{display:grid;gap:12px}
+#tracker .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+#tracker .tier{font-family:var(--display);font-weight:700;color:var(--aether);margin-left:4px}
+#tracker .paths,#tracker #skills{grid-template-columns:minmax(0,1fr)}
+#tracker #skills>.path{min-width:0}
+#tracker .paths>.path{min-width:0}
+#tracker .paths .top,#tracker #skills .top,#tracker #stats .row,#tracker #stats .row .name,#tracker #skills .name{flex-wrap:nowrap;white-space:nowrap}
+#tracker #skills .top>span:first-child,#tracker #stats .row>.name{min-width:0;overflow:hidden}
+#tracker #skills .top>.num,#tracker #stats .row>.v{flex:none}
+#tracker .paths .top>span:first-child{min-width:0;overflow:hidden}
+#tracker .paths .top>.num{flex:none}
+#tracker .bar{height:6px;background:var(--track);border-radius:3px;margin-top:4px;overflow:hidden}
+#tracker .bar i{display:block;height:100%;background:var(--aether);border-radius:3px}
+#tracker .bar i.t1{background:var(--t1)}
+#tracker .bar i.t2{background:var(--t2)}
+#tracker .bar i.t3{background:var(--t3)}
+#tracker .bar i.t4{background:var(--t4)}
+#tracker .bar i.t5{background:var(--t5)}
+#tracker .bar i.skill{background:repeating-linear-gradient(135deg,var(--c) 0 4px,transparent 4px 7px)}
+#tracker .bar i.mut{background:repeating-linear-gradient(45deg,var(--c) 0 2px,transparent 2px 4px),repeating-linear-gradient(-45deg,var(--c) 0 2px,transparent 2px 4px)}
+#tracker .ladder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(min-content,1fr) minmax(0,1fr) minmax(0,1fr);gap:4px;margin:6px 0 10px;font-size:.78rem}
+#tracker .ladder div{border-top:4px solid var(--c);padding-top:4px;min-width:0}
+#tracker .ladder .nw{white-space:nowrap}
+@media (max-width:560px){#tracker .ladder{grid-template-columns:minmax(0,1fr)}
+}
+#tracker .ladder b{display:block;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+#tracker .ptype{font-family:var(--mono);font-size:.72rem;font-weight:600;margin-left:6px}
+#tracker .tier.t1,#tracker .ptype.t1{color:var(--t1)}
+#tracker .tier.t2,#tracker .ptype.t2{color:var(--t2)}
+#tracker .tier.t3,#tracker .ptype.t3{color:var(--t3)}
+#tracker .tier.t4,#tracker .ptype.t4{color:var(--t4)}
+#tracker .tier.t5,#tracker .ptype.t5{color:var(--t5)}
+#tracker .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted);margin:-2px 0 10px}
+#tracker .legend span{display:inline-flex;align-items:center;gap:5px}
+#tracker .legend i{display:inline-block;width:14px;height:6px;border-radius:3px}
+#tracker .slots{font-size:.78rem;color:var(--muted)}
+#tracker .boon{padding:4px 0}
+#tracker .since{padding:14px 24px 20px;border-top:1px solid var(--line)}
+#tracker .since h2{font-size:1.05rem}
+/* log */
+#tracker .log{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 24px 18px}
+#tracker .log>h2{margin-top:12px}
+#tracker .lead{color:var(--muted);font-size:.88rem;margin:0 0 8px}
+#tracker details{border-bottom:1px solid var(--line)}
+#tracker summary{cursor:pointer;padding:10px 0;display:flex;gap:12px;align-items:baseline;justify-content:space-between;list-style:none}
+#tracker summary::-webkit-details-marker{display:none}
+#tracker summary .ch{font-family:var(--display);font-weight:700;font-size:1.05rem}
+#tracker summary .ch::before{content:"▸";display:inline-block;width:1em;color:var(--muted);transition:transform .15s}
+#tracker details[open] summary .ch::before{transform:rotate(90deg)}
+@media (prefers-reduced-motion:reduce){#tracker summary .ch::before{transition:none}
+}
+#tracker summary .age{font-size:.82rem;color:var(--muted);white-space:nowrap}
+#tracker .entries{list-style:none;margin:0 0 12px;padding:0 0 0 1em;display:grid;gap:10px}
+#tracker .entry .t{font-weight:600}
+#tracker .entry.ach .t::before{content:"Achievement";font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:6px;vertical-align:2px;font-weight:600}
+#tracker .rw{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.86rem;margin-top:2px}
+#tracker .rw span b{color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;margin-right:4px}
+#tracker .entry.lore .t{font-weight:400}
+#tracker .entry.lore .t::before{content:"Story note";font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--shadow);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:6px;vertical-align:2px;font-weight:600}
+#tracker .entry .n{color:var(--muted);font-size:.84rem;font-style:italic;margin-top:2px}
+#tracker .ref{padding:0 0 14px 1em;font-size:.9rem;max-width:70ch}
+#tracker .ref h3{font-family:var(--display);font-size:1rem;margin:12px 0 4px}
+#tracker .ref ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+#tracker .tbl{overflow-x:auto;margin:4px 0 8px}
+#tracker .ref table{border-collapse:collapse;font-size:.86rem;min-width:100%}
+#tracker .ref th,#tracker .ref td{text-align:left;padding:4px 10px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+#tracker .ref th{color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+#tracker .ref td.steps{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem}
+#tracker .src{color:var(--muted);font-size:.8rem;font-style:italic;margin:10px 0 0}
+
+#tracker{padding:0;background:transparent}
+#tracker .wrap{max-width:none}
+</style>
+<!-- Tip: prefix the tracker's CSS rules with #tracker so they can't change the top bar or footer. -->
+
+</head>
+<body>
+
+<header class="wiki-top">
+  <div class="wiki-wrap">
+    <!-- Links back to the main wiki. If the wiki lives at a different address, change "./" to that address. -->
+    <a class="wiki-brand" href="./" aria-label="Back to the Gifted Wiki"><b>Gifted</b><span>Fan Wiki</span></a>
+    <nav class="wiki-links" aria-label="Links">
+      <a class="wiki-btn primary" href="#" aria-current="page">Bastian's status</a>
+      <a class="wiki-btn" href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road ↗</a>
+      <a class="wiki-btn" href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Ellake's Patreon ↗</a>
+      <a class="wiki-btn" href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Ellake's Amazon ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wiki-main">
+  <div class="wiki-wrap">
+    <div id="tracker">
+      <!-- ===== PASTE THE TRACKER'S HTML HERE (replace the placeholder box below) ===== -->
+      <div class="wrap">
+  <div class="sheet">
+    <header>
+      <div class="hc"><h1 id="charName">Sebastian</h1></div>
+      <div class="hc"><span class="cls">Class: <b id="charClass">—</b></span></div>
+      <div class="hc pick"><label class="picker" for="point">Status at</label><select id="point"></select></div>
+    </header>
+    <p class="notice" id="notice" hidden style="display:none"></p>
+    <div class="cols" id="stats">
+      <div class="col">
+        <section><h2>Basic Attributes</h2><div class="rows" id="basic"></div></section>
+        <section><h2>Advanced Attributes <span class="count" id="advCount"></span></h2><div class="rows" id="advanced"></div></section>
+        <section><h2>Affinity <span class="count" id="affCount"></span></h2><div class="rows" id="affinity"></div></section>
+        <section><h2>Body Features <span class="count" id="bodyCount"></span></h2><div class="rows" id="body"></div></section>
+        <section><h2>Boons <span class="count" id="boonCount"></span></h2><div id="boons"></div></section>
+      </div>
+      <div class="col">
+        <section><h2>Active Paths <span class="count" id="pathCount"></span></h2>
+          <div class="paths" id="paths"></div></section>
+        <section><h2>Skills <span class="count" id="skillCount"></span></h2><div class="rows" id="skills"></div></section>
+      </div>
+      <div class="col" id="drawers">
+        <details class="drawer" data-d="spells" open><summary><span class="lbl">Spells Learned</span><span class="count" id="spellCount"></span></summary><ul id="spells"></ul></details>
+        <details class="drawer" data-d="learning"><summary><span class="lbl">Spells in Progress</span><span class="count" id="learnCount"></span></summary><ul id="learning"></ul></details>
+        <details class="drawer" data-d="affinities"><summary><span class="lbl">Castable Affinities</span><span class="count" id="affAccessCount"></span></summary><ul id="affAccess"></ul></details>
+        <details class="drawer" data-d="aas"><summary><span class="lbl">AA's Earned</span><span class="count" id="aaCount"></span></summary><ul id="aaList"></ul></details>
+        <details class="drawer" data-d="dormant"><summary><span class="lbl">Dormant Paths</span><span class="count" id="dormCount"></span></summary><ul id="dormant"></ul></details>
+        <details class="drawer" data-d="available"><summary><span class="lbl">Available Paths</span><span class="count" id="availCount"></span></summary><ul id="available"></ul></details>
+        <details class="drawer" data-d="completed"><summary><span class="lbl">Completed Paths</span><span class="count" id="compCount"></span></summary><ul id="completed"></ul></details>
+        <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
+      </div>
+    </div>
+    <div class="since" id="since" hidden>
+      <h2>Since this status screen</h2>
+      <ul class="entries" id="sinceList"></ul>
+    </div>
+  </div>
+
+  <div class="log">
+    <h2>Achievements &amp; Path Progress</h2>
+    <p class="lead" id="logLead"></p>
+    <details class="rules"><summary><span class="ch">How the numbers work</span></summary>
+      <div class="ref">
+        <h3>Attributes, affinities and skills</h3>
+        <ul>
+          <li>Basic and advanced attributes start at 100 and can keep rising past 200. Each advanced attribute has its own growth condition; path progress is the only one proven so far.</li>
+          <li>A Strong or higher affinity speeds up progress on related paths and on learning spells. Using a skill or casting a spell without a direct affinity for it, but with access through other affinities, costs extra aether.</li>
+          <li>Spellcasting requires the Aethersensing and Aether Manipulation advanced attributes. Without them, affinity-related paths can only advance through sensing an affinity and using skills of that affinity.</li>
+          <li>Affinities start at 100 and move up a grade automatically at 200. Grades: Weak, Moderate, Strong, Potent, Perfect. Affinities affect efficiency, which elements he can wield, and path development.</li>
+          <li>Skills run from 1 to 100. To advance, a skill needs double its current skill slots and an upgraded skill chosen by the user; otherwise it stays at 100. Skill power grades: Minor, Lesser, Greater, Superior, Exalted.</li>
+        </ul>
+        <h3>Grade colors</h3>
+        <div class="ladder">
+          <div style="--c:var(--t1)"><b>1</b>Minor · Basic · Weak</div>
+          <div style="--c:var(--t2)"><b>2</b>Lesser · Adept · Moderate</div>
+          <div style="--c:var(--t3)"><b>3</b><span class="nw">Greater · Advanced</span> · Strong</div>
+          <div style="--c:var(--t4)"><b>4</b>Superior · Elite · Potent</div>
+          <div style="--c:var(--t5)"><b>5</b>Exalted · Master · Perfect</div>
+        </div>
+        <h3>Aether</h3>
+        <ul>
+          <li>Aether Core is volume, Aether Channels are throughput, and the Aether stat is potency.</li>
+          <li>Aether Core sizes use the same grades as skills: Minor, Lesser, Greater, Superior, Exalted.</li>
+        </ul>
+        <h3>Paths</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Path type</th><th>Tiers</th><th>Steps needed per tier</th></tr></thead>
+          <tbody>
+            <tr><td>Basic</td><td>10</td><td class="steps">10 · 25 · 50 · 100 · 250 · 500 · 1,000 · 2,500 · 5,000 · 10,000</td></tr>
+            <tr><td>Advanced</td><td>5</td><td class="steps">10 · 50 · 200 · 500 · 1,000</td></tr>
+            <tr><td>Elite</td><td>3</td><td class="steps">10 · 100 · 500</td></tr>
+            <tr><td>Class</td><td>10</td><td class="steps">100 each</td></tr>
+          </tbody></table></div>
+        <ul>
+          <li>Steps carry over when a tier is reached; only the target goes up.</li>
+          <li>On the status sheet each path is tagged (B), (A) or (E) and colored by its grade: gray for basic, blue for advanced, gold for elite. A mutated path adds -M, as in (B-M), and gets a crosshatched bar.</li>
+          <li>The Completionist earns 10 steps per completed basic path, 20 per advanced and 40 per elite, plus a Talented/Gifted bonus. Rift paths give none.</li>
+          <li>Exceptionalism earns 5 steps per basic path, 10 per advanced and 15 per elite, plus variable amounts from achievements. Talented/Gifted bonuses don't apply to those, but a choose-a-path reward spent on Exceptionalism does get the bonus.</li>
+          <li>Talented adds a step bonus of 20% at 100 and 40% at 200 (its value ÷ 5, as a whole percent). Gifted doubles that: 40% at 100, 80% at 200. Fractions are dropped, both from the percent and from the bonus steps, so a 1.9-step bonus adds 1.</li>
+          <li>Progress speed scales with a race's lifespan. System text shows this as a racial multiplier against the human baseline; longer-lived races like elves progress more slowly.</li>
+        </ul>
+        <h3>Classes</h3>
+        <ul>
+          <li>Humans normally unlock a class at age 12. A class has its own dedicated slot and does not use one of the 10 active path slots. Bastian's shows "Locked" until then.</li>
+          <li>Class grades: Basic, Adept, Advanced, Elite, Master.</li>
+          <li>Classes can come with a range of high-tier rewards. For both basic and adept classes, the mean and median number of these rewards is 1.</li>
+        </ul>
+        <p class="src">Grades, aether roles and step tables are from the author's Discord posts.</p>
+      </div></details>
+    <div id="history"></div>
+  </div>
+</div>
+      <!-- ===== END OF TRACKER HTML ===== -->
+    </div>
+  </div>
+</main>
+
+<footer class="wiki-foot">
+  <div class="wiki-wrap">
+    <p>A free fan project. <em>Gifted</em> and its world belong to Ellake. Read the story on <a href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road</a>, and support Ellake financially on <a href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Patreon</a> or by buying the books when they come out on <a href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Amazon</a> &amp; other distributors.</p>
+    <p><a href="./">Back to the wiki</a></p>
+  </div>
+</footer>
+
+<script>
+// ================= SETTINGS =================
+// The Achievements tab of the Google Sheet. The page reads it on every load and works everything out from it.
+// If the sheet can't be reached, the page uses the copy saved below instead.
+const SHEET_CSV = "https://docs.google.com/spreadsheets/d/1-ZpPiEqdRo89JoZTGhDuBmouyrdEEdiADFyBod5PXQ8/gviz/tq?tqx=out:csv&headers=1&gid=2090483141";
+// Chapters shown as one picker entry
+const MERGE = [[2,3],[7,9],[17,19],[27,28],[50,51],[126,127]];
+// Combination affinities he can cast once he has every part
+const COMBO_AFF = {Dream:["Shadow","Life"]};
+// Copy of the Achievements tab (used when the sheet can't be reached)
+const EMBEDDED_TABLE = [["Chapter", "Age (years)", "Achievement?", "Achievements & Path Progress", "Rewards (Unlocked Paths)", "Rewards (Unlocked AA's)", "Rewards (Attribute Increases)", "Rewards (Other Rewards)", "Notes", "Path Progress", "Status Changes"], ["1", "-0.75", "Yes", "Defeat a Lesser Demon Prince while unborn", "Path of Exceptionalism", "", "", "", "elite path", "Path of Exceptionalism I (20/100)", ""], ["1", "-0.75", "", "Path of Exceptionalism I", "", "Talented", "", "", "Talented immediately taken here", "", ""], ["1", "-0.75", "Yes", "Consume another soul and absorb it into your own", "Path of Soulstealing", "", "", "", "mutated path", "", "Status screen after the demon prince achievements; Slotted: Path of Soulstealing"], ["1", "-0.75", "", "Perform basic/simplistic mental calculations", "Path of Basic Numeracy", "", "", "", "basic path", "", ""], ["1", "-0.75", "", "Path of Basic Numeracy I", "", "", "Mental +1", "", "", "", ""], ["1", "-0.50", "", "Listen in on birth mom talking to others", "Path of Eavesdropping", "", "", "", "basic path", "", ""], ["1", "-0.50", "", "Think in English", "Path of Linguistics - English", "", "", "", "basic path", "", ""], ["1", "-0.50", "", "Attempt to stay awake as long as possible", "Path of Endurance", "", "", "", "basic path", "", ""], ["1", "-0.50", "", "Path of Basic Numeracy II through IX (8 tiers earned)", "", "", "Mental +7, Unallocated +1 (Talented)", "", "", "Path of Basic Numeracy IX (9992/10000)", ""], ["1", "-0.50", "", "Path of Linguistics - English I through IX (9 tiers earned)", "", "", "Mental +8, Unallocated +1 (Talented)", "", "", "Path of Linguistics - English IX (8217/10000)", ""], ["1", "-0.50", "", "Path of Eavesdropping I through III (3 tiers earned)", "", "", "Mental +3", "", "", "Path of Eavesdropping III (62/100)", ""], ["1", "-0.50", "", "Path of Endurance I through II (2 tiers earned)", "", "", "Stamina +2", "", "", "Path of Endurance II (31/50)", "Status screen a few months later (est. 7 months gestation)"], ["1", "-0.08", "", "Path of Basic Numeracy X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "", "", "Path of Basic Numeracy X (10000/10000); Path of Exceptionalism I (25/100)", ""], ["1", "-0.08", "Yes", "Complete a Basic Path", "Path of the Completionist", "", "", "", "advanced path", "", ""], ["1", "0.00", "", "Path of Linguistics - English X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "Path of the Completionist +12", "", "Path of Linguistics - English X (10000/10000); Path of the Completionist I (12/50); Path of Exceptionalism I (30/100)", ""], ["1", "0.00", "", "Path of the Completionist I (1 tier earned)", "", "", "Unallocated +3 (Talented)", "", "", "Path of the Completionist I (12/50)", ""], ["2", "0.08", "Yes", "Survive a Fatal Blow", "", "", "", "Path of Endurance +1000", "", "Path of Endurance VII (1267/2500)", ""], ["2", "0.08", "", "Path of Endurance III through VII (5 tiers earned)", "", "", "Stamina +5", "", "", "Path of Endurance VII (1267/2500)", ""], ["3", "0.08", "", "Given a name", "", "", "", "Name: Sebastian", "he goes by Bastian in most of the series", "", "Unlocked: Path of Willpower; Slotted: Path of Willpower"], ["4", "0.25", "", "Think in Helenian", "Path of Linguistics - Helenian", "", "", "", "basic path", "", ""], ["4", "0.50", "", "Path of Endurance VIII through IX (2 tiers earned)", "", "", "Stamina +1, Unallocated +1 (Talented)", "", "", "Path of Endurance IX (6146/10000)", ""], ["4", "0.50", "", "Path of Willpower I through IX (9 tiers earned)", "", "", "Mental +8, Unallocated +1 (Talented)", "", "", "Path of Willpower IX (5146/10000)", ""], ["4", "0.50", "", "Path of Eavesdropping IV through IX (6 tiers earned)", "", "", "Mental +5, Unallocated +1 (Talented)", "", "", "Path of Eavesdropping IX (6732/10000)", ""], ["4", "0.50", "", "Path of Linguistics - Helenian I through VI (6 tiers earned)", "", "", "Mental +6", "", "", "Path of Linguistics - Helenian VI (738/1000)", ""], ["4", "0.50", "", "Start crawling", "Path of Crawling", "", "", "", "basic path", "", ""], ["4", "0.75", "", "Path of Eavesdropping X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "", "", "Path of Eavesdropping X (10000/10000); Path of the Completionist I (24/50); Path of Exceptionalism I (35/100)", ""], ["4", "0.75", "", "Path of Endurance X (1 tier earned)", "", "Endurance", "Unallocated +2 (Talented)", "", "", "Path of Endurance X (10000/10000); Path of the Completionist I (36/50); Path of Exceptionalism I (40/100)", ""], ["4", "0.75", "", "Path of Willpower X (1 tier earned)", "", "Willpower", "Unallocated +2 (Talented)", "", "", "Path of Willpower X (10000/10000); Path of the Completionist I (48/50); Path of Exceptionalism I (45/100)", ""], ["4", "0.75", "", "Path of Crawling VII (7 tiers earned)", "", "", "Strength +4, Stamina +3", "", "", "Path of Crawling VII (1114/2500)", ""], ["4", "0.75", "", "Path of Linguistics - Helenian VII (1 tier earned)", "", "", "Mental +2", "", "", "Path of Linguistics - Helenian VIII (2891/5000)", ""], ["4", "0.75", "", "Playing hide-and-seek with family", "Path of Sneaking, Path of Hiding, Path of Stealth", "", "", "", "sneaking & hiding basic paths, stealth advanced path", "Path of Hiding (9/10); Path of Stealth (2/10)", "Slotted: Path of Hiding; Slotted: Path of Stealth"], ["4", "0.75", "", "Path of Sneaking I (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Sneaking I (11/25)", "Status screen (9 months old)"], ["5", "0.92", "", "Path of Sneaking II through VI (5 tier earned)", "", "", "Coordination +2, Stamina +3", "", "", "Path of Sneaking VI (812/1000)", ""], ["5", "0.92", "", "Path of Hiding I through VI (6 tiers earned)", "", "", "Coordination +3, Mental +3", "", "", "Path of Hiding VI (894/1000)", ""], ["5", "0.92", "", "Path of Stealth I through II (2 tiers earned)", "", "", "Coordination +1, Stamina +1, Unallocated +4 (Talented)", "", "", "Path of Stealth II (57/200)", ""], ["5", "0.92", "", "Misbehaving and trickery", "Path of Deception", "", "", "", "", "", ""], ["5", "0.92", "", "Path of Deception I through IV (4 tiers earned)", "", "", "Mental +4", "", "", "Path of Deception IV (131/250)", ""], ["6", "0.92", "", "Start climbing", "Path of Climbing", "", "", "", "", "", ""], ["7", "1.00", "", "Path of Climbing I through VII (7 tiers earned)", "", "", "Strength +3, Stamina +2, Coordination +2", "", "", "Path of Climbing VII (1144/2500)", ""], ["7", "1.00", "", "Path of Deception V (1 tier earned)", "", "", "Mental +1", "", "", "Path of Deception V (471/500)", ""], ["7", "1.00", "", "Path of Sneaking VII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Sneaking VII (1831/2500)", ""], ["7", "1.00", "", "Path of Hiding VII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Hiding VII (2007/2500)", ""], ["7", "1.00", "", "Path of Linguistics - Helenian IX (1 tier earned)", "", "", "Unallocated +1 (Talented)", "", "", "Path of Linguistics - Helenian IX (9892/10000)", ""], ["7", "1.00", "", "Path of Crawling VIII through IX (2 tiers earned)", "", "", "Stamina +1, Unallocated +1 (Talented)", "", "", "Path of Crawling IX (7885/10000)", ""], ["7", "1.00", "", "Path of Stealth III (1 tier earned)", "", "", "", "Skill Seed (Stealth) (Minor)", "", "Path of Stealth III (205/500)", ""], ["8", "1.00", "", "Skill Seed (Stealth) (Minor) used", "", "", "", "Skill: Muffled Steps", "skill takes 1 skill slot", "", ""], ["8", "1.00", "", "Path of Linguistics - Helenian X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "", "", "Path of Linguistics - Helenian X (10000/10000); Path of Exceptionalism I (50/100)", ""], ["9", "1.00", "", "Path of the Completionist II (1 tier earned)", "", "", "Unallocated +3 (Talented)", "", "status page updates here", "Path of the Completionist II (60/200); Path of Crawling IX (8019/10000); Path of Sneaking VII (1902/2500); Path of Hiding VII (2080/2500); Path of Stealth III (225/500); Path of Deception V (479/500); Path of Climbing VII (1232/2500)", "Status screen (1 year old); Muffled Steps (Minor) 1/100 [1 slot]"], ["9", "1.00", "", "Start walking", "Path of Walking", "", "", "", "", "", ""], ["9", "1.00", "", "Path of Walking I through V (5 tiers earned)", "", "", "Strength +2, Coordination +2, Stamina +1", "", "", "Path of Walking V (383/500)", ""], ["11", "3.00", "", "Path of Crawling X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "", "", "Path of Crawling X (10000/10000); Path of the Completionist II (72/200); Path of Exceptionalism I (55/100)", ""], ["11", "3.00", "", "Path of Walking VI through X (5 tiers earned)", "", "", "Strength +1, Stamina +1, Coordination +1, Unallocated +3 (Talented)", "", "", "Path of Walking X (10000/10000); Path of the Completionist II (84/200); Path of Exceptionalism I (60/100)", ""], ["11", "3.00", "", "Path of Hiding VIII through X (3 tiers earned)", "", "", "Mental +1, Unallocated +3 (Talented)", "", "", "Path of Hiding X (10000/10000); Path of the Completionist II (96/200); Path of Exceptionalism I (65/100)", ""], ["11", "3.00", "", "Path of Sneaking VIII through X (3 tiers earned)", "", "", "Coordination +1, Unallocated +3 (Talented)", "", "", "Path of Sneaking X (10000/10000); Path of the Completionist II (108/200); Path of Exceptionalism I (70/100)", ""], ["11", "3.00", "", "Path of Climbing VIII through IX (2 tiers earned)", "", "", "Strength +1, Unallocated +1 (Talented)", "", "", "Path of Climbing IX (8188/10000)", ""], ["11", "3.00", "", "Path of Deception VI through VIII (3 tiers earned)", "", "", "Mental +3", "", "", "Path of Deception VIII (2932/5000)", ""], ["11", "3.00", "", "Start running", "Path of Running", "", "", "", "", "", ""], ["11", "3.00", "", "Start balancing", "Path of Balance", "", "", "", "", "", ""], ["11", "3.00", "", "Start strengthening body", "Path of Body Strengthening", "", "", "", "", "", ""], ["11", "3.00", "", "Start coordinating", "Path of Coordination", "", "", "", "", "", ""], ["11", "3.00", "", "Path of Running I through VII (7 tiers earned)", "", "", "Stamina +4, Coordination +3", "", "", "Path of Running VII (2369/2500)", ""], ["11", "3.00", "", "Path of Balance I through VI (6 tiers earned)", "", "", "Coordination +6", "", "", "Path of Balance VI (728/1000)", ""], ["11", "3.00", "", "Path of Body Strengthening I through VI (6 tiers earned)", "", "", "Strength +5, Stamina +1", "", "", "Path of Body Strengthening VI (513/1000)", ""], ["11", "3.00", "", "Path of Coordination I through V (5 tiers earned)", "", "", "Coordination +5", "", "", "Path of Coordination V (365/500)", ""], ["11", "3.00", "", "Path of Stealth IV (1 tier earned)", "", "", "", "Skill Seed (Stealth) (Lesser)", "", "Path of Stealth IV (737/1000)", "Status screen (age 3); Muffled Steps (Minor) 12/100 [1 slot]"], ["15", "3.00", "", "Path of Coordination VI (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Coordination VI (500/1000)", ""], ["15", "3.00", "", "Path of Running VIII (1 tier earned)", "", "", "Stamina +1", "", "", "Path of Running VIII (2500/5000)", ""], ["15", "3.00", "", "Path of Balance VII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Balance VII (1000/2500)", ""], ["17", "3.00", "", "Trained with Thomas & Vianola", "Path of Daggers, Path of Footwork, Path of Swordplay", "", "", "", "**Path of Weapon Mastery, an advanced path, will be unlocked once he gets 7 weapon paths to 8th tier", "", ""], ["18", "3.00", "", "Trained with Cornelius (Grandpa)", "Path of Aethersensing", "", "", "", "", "", ""], ["19", "3.00", "", "Path of Aethersensing I through III (3 tiers earned)", "", "", "Aether +3", "", "", "Path of Aethersensing III (53/100); Path of Stealth IV (854/1000); Path of Climbing IX (8388/10000)", "Muffled Steps (Minor) 13/100 [1 slot]; Unslotted: Path of Coordination"], ["22", "3.00", "", "Path of Aethersensing IV (1 tier earned)", "", "", "Aether +1", "", "Path of Soulstealing gets first steps here", "Path of Aethersensing IV (128/250); Path of Soulstealing (2/10)", ""], ["24", "3.00", "", "Path of Aethersensing V (1 tier earned)", "", "", "Aether +1", "", "", "Path of Aethersensing V (269/500)", ""], ["24", "3.00", "", "Path of Body Strengthening VII (1 tier earned)", "", "", "Strength +1", "", "Etta starts living next door", "Path of Body Strengthening VII (1027/2500); Path of Running VIII (2759/5000); Path of Balance VII (1264/2500); Path of Stealth IV (941/1000); Path of Deception VIII (3132/5000); Path of Climbing IX (8632/10000)", "Status screen (age 3); Muffled Steps (Minor) 16/100 [1 slot]"], ["27", "3.75", "", "Path of Stealth V (1 tier earned)", "Path of Infiltration", "Stealth", "Unallocated +5 (Talented)", "", "3 elite paths options (infiltration, shadowing, & thievery); infiltration picked in chp 28", "Path of Stealth V (1000/1000); Path of the Completionist II (133/200); Path of Exceptionalism I (80/100)", "Slotted: Path of Infiltration"], ["27", "3.75", "Yes", "Complete 3 non-rudimentary paths before age 6", "", "", "", "Path of Exceptionalism +10", "Got steps because already had Path of Exceptionalism", "Path of Exceptionalism I (90/100)", ""], ["29", "4.00", "", "Path of Swordplay I through VI (6 tiers earned)", "", "", "Strength +2, Coordination +2, Stamina +2", "", "", "Path of Swordplay VI (872/1000)", ""], ["29", "4.00", "", "Path of Aethersensing VI (1 tier earned)", "", "", "Aether +1", "", "", "Path of Aethersensing VI (997/1000)", "Unslotted: Path of Balance"], ["32", "4.00", "", "Path of Infiltration I (1 tier earned)", "", "", "Unallocated +2 (Talented)", "extra +1 skill slot, Skill Seed (Infiltration) (Lesser)", "", "Path of Infiltration I (12/100)", ""], ["32", "4.00", "", "Skill Seed (Infiltration) (Lesser) used", "", "", "", "Skill: Controlled Grip", "skill takes 2 skill slots", "", "Controlled Grip (Lesser) 1+/100 [2 slots]"], ["37", "4.00", "", "Path of Swordplay VII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Swordplay VII (1052/2500)", ""], ["37", "4.00", "", "Path of Balance VIII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Balance VIII (2512/5000)", ""], ["37", "4.00", "", "Path of Climbing X (1 tier earned)", "", "", "Unallocated +2 (Talented)", "", "", "Path of Climbing X (10000/10000); Path of the Completionist II (145/200); Path of Exceptionalism I (95/100)", ""], ["37", "4.00", "", "Path of Aethersensing VII (1 tier earned)", "", "", "Aether +1", "", "", "Path of Aethersensing VII (1195/2500)", ""], ["37", "4.00", "", "Wolf's Paw training with George", "Path of Warhammers, Path of Shieldwork, Path of Shortbow, Path of Shortsword, Path of Knives, Path of Hatchets, Path of Axes, Path of Long-knives, Path of Arming-swords", "", "", "", "", "", ""], ["37", "4.00", "", "Learning from mom", "Path of Cooking, Path of Reading - Helenian, Path of Writing - Helenian", "", "", "", "", "", ""], ["37", "4.00", "", "More shenanigans", "Path of Stretching, Path of Pranking, Path of Acrobatics", "", "", "", "", "Path of Running VIII (3816/5000); Path of Body Strengthening VII (2133/2500); Path of Deception VIII (3741/5000); Path of Soulstealing (4/10)", "Status screen (age 4); Muffled Steps (Minor) 21/100 [1 slot]; Controlled Grip (Lesser) 1/100 [2 slots]; Unslotted: Path of Infiltration"], ["39", "4.00", "", "Path of Hatchets I through II (2 tiers earned)", "", "", "Strength +2", "", "", "Path of Hatchets II (25/50)", ""], ["43", "4.00", "", "Training with Magatha", "Path of Brewing", "", "", "", "", "", ""], ["43", "4.00", "", "Path of Brewing I through II (2 tiers earned)", "", "", "Mental +2", "", "", "Path of Brewing II (27/50)", "Unslotted: Path of Hatchets"], ["45", "4.75", "", "Path of Hatchets III through IV (2 tiers earned)", "", "", "Strength +1, Stamina +1", "", "", "Path of Hatchets IV (100/250)", "Unslotted: Path of Brewing"], ["49", "4.75", "", "Path of Brewing III (1 tier earned)", "", "", "Mental +1", "", "", "Path of Brewing III (50/100)", "Unslotted: Path of Hatchets"], ["50", "4.75", "", "Drank Shadow Affinity-improving potion", "", "", "Shadow Affinity +13", "Shadow (Potent) Affinity", "improved from strong to potent. Technically was affinity +113, but getting to 200 = improving affinity tier", "", ""], ["50", "4.75", "Yes", "Advance an Affinity to Potent", "Path of Aether Manipulation", "", "", "", "Options: 1000 steps on basic path, 100 steps on advanced, 10 steps on elite. Can't be used on mutated paths", "", ""], ["51", "4.75", "", "Path of Exceptionalism II (1 tier earned)", "", "Gifted (evolved version of Talented)", "", "", "stat page here", "Path of Exceptionalism II (108/500); Path of Running VIII (4002/5000); Path of Balance VIII (3379/5000); Path of Body Strengthening VII (2455/2500); Path of Aethersensing VII (1381/2500); Path of Swordplay VII (1264/2500); Path of Deception VIII (3878/5000); Path of Brewing III (97/100)", "Status screen (age 4¾); Strength 122; Stamina 129; Muffled Steps (Minor) 25/100 [1 slot]; Controlled Grip (Lesser) 3/100 [2 slots]"], ["54", "5.00", "", "Path of Running IX (1 tier earned)", "", "", "Unallocated +1 (Gifted)", "", "", "Path of Running IX (6072/10000)", ""], ["54", "5.00", "", "Path of Body Strengthening VIII (1 tier earned)", "", "", "Strength +1", "", "", "Path of Body Strengthening VIII (4398/5000)", ""], ["54", "5.00", "", "Path of Swordplay VIII (1 tier earned)", "", "", "Strength +1", "", "", "Path of Swordplay VIII (2613/5000)", ""], ["54", "5.00", "", "Path of Coordination VII through VIII (2 tiers earned)", "", "", "Coordination +2", "", "", "Path of Coordination VIII (2575/5000)", ""], ["54", "5.00", "", "Path of Deception IX (1 tier earned)", "", "", "Unallocated +1 (Gifted)", "", "", "Path of Deception IX (5111/10000)", "Unslotted: Path of Brewing"], ["60", "5.00", "", "Path of Soulstealing I (1 tier earned)", "", "", "", "Improved Aether Core", "Aether Core now at Lesser", "Path of Soulstealing I (39/25)", ""], ["60", "5.00", "", "Path of Soulstealing II (1 tier earned)", "", "", "", "Improved Aether Channels", "Aether Channels now at Moderate", "Path of Soulstealing II (39/50)", ""], ["60", "5.00", "Yes", "Improve Minor Aether Core to Lesser Aether Core", "", "", "", "Path of Aethersensing +1000", "1000 steps on a basic path, aethersensing chosen", "", ""], ["60", "5.00", "Yes", "Improve Weak Aether Channels to Moderate Aether Channels", "", "", "", "Path of Aethersensing +1000", "1000 steps on a basic path, aethersensing chosen", "", ""], ["60", "5.00", "Yes", "Slayed classed individual while not possessing a class", "", "", "", "Boon: Child Warrior", "extra +1 stat on even # tiers from weapon paths", "", ""], ["60", "5.00", "", "Path of Aethersensing VIII through IX (2 tiers earned)", "", "", "Aether +1, Unallocated +1 (Gifted)", "", "", "Path of Running IX (6585/10000); Path of Balance VIII (4733/5000); Path of Body Strengthening VIII (4977/5000); Path of Aethersensing IX (5376/10000); Path of Swordplay VIII (2994/5000); Path of Deception IX (5482/10000); Path of Coordination VIII (2869/5000); Path of the Completionist II (144/200)", "Status screen (chapter 65); Aether Core (Lesser) 107; Aether Channels (Moderate) 111; Mental 156; Muffled Steps (Minor) 48/100 [1 slot]; Controlled Grip (Lesser) 17/100 [2 slots]"], ["67", "5.00", "", "Path of Brewing IV (1 tier earned)", "", "", "Mental +1", "", "", "Path of Brewing IV (100+/250)", ""], ["68", "5.00", "", "Path of Infiltration II (1 tier earned)", "", "", "Unallocated +4 (Gifted)", "extra +2 skill slots, Skill Seed (Infiltration) (Greater)", "", "Path of Infiltration II (105/500)", "Unslotted: Path of Coordination; Unslotted: Path of Brewing"], ["69", "5.00", "", "Path of Body Strengthening IX (1 tier earned)", "", "", "Unallocated +1 (Gifted) ", "", "", "Path of Body Strengthening IX (5000/10000)", ""], ["70", "5.00", "", "Work with mom", "Path of Drawing, Path of Gardening, Path of Jumping, Path of Throwing, Path of Awareness, Path of Persuasion, Path of Conversation, Path of Mentoring", "", "", "", "apparently path of awareness leads into path of perception (unlocks valuable perception advanced attribute)", "", ""], ["70", "5.00", "", "Skill Seed (Stealth) (Lesser) used", "", "", "", "Skill: Royal Cloak of Shadows (Greater)", "actual skill was Shawl of Shadows (Lesser), but got auto-upgraded due to demon fragments in his soul from the womb", "", ""], ["70", "5.00", "Yes", "Evolve skill to Greater grade before unlock a class", "", "", "", "extra +2 skill slots", "", "", "Royal Cloak of Shadows (Greater) 1+/100 [4 slots]"], ["73", "5.00", "", "Path of Balance IX (1 tier earned)", "", "", "Unallocated +1 (Gifted)", "", "", "Path of Balance IX (5003/10000)", ""], ["73", "5.00", "", "Path of Hatchets V (1 tier earned)", "", "", "Strength +1", "", "", "Path of Hatchets V (512/1000)", "Unslotted: Path of Hatchets"], ["74", "5.00", "", "Break into a fortified location", "Path of Thievery", "", "", "", "", "", ""], ["77", "5.00", "Yes", "Grand Deception - successfully orchestrate the removal of a noble from a settlement through deception while leaving no trace of your involvement", "", "", "", "Path of Infiltration +100", "this finished that path", "Path of Infiltration III (500/500)", ""], ["77", "5.00", "", "Path of Infiltration III (1 tier earned)", "", "Invisible Presence", "Unallocated +8 (Gifted)", "", "stat sheet on chp 77 is missing these 8 in Gifted (this is fixed by author in chapter 79)", "Path of the Completionist III (209/500); Path of Exceptionalism II (123/500)", ""], ["77", "5.00", "", "Path of the Completionist III (1 tier earned)", "", "", "", "extra +4 skill slots", "", "Path of the Completionist III (209/500)", ""], ["77", "5.00", "Yes", "Complete 1 elite before age 6", "", "", "", "Path of Exceptionalism +10", "Got steps because already had Path of Exceptionalism", "Path of Exceptionalism II (133/500); Path of Running IX (6871/10000); Path of Body Strengthening IX (5224/10000); Path of Aethersensing IX (5611/10000); Path of Swordplay VIII (3248/5000); Path of Deception IX (5637/10000); Path of Hatchets V (512+/1000)", "Status screen (age 5); Mental 156; Muffled Steps (Minor) 51/100 [1 slot]; Controlled Grip (Lesser) 19/100 [2 slots]; Royal Cloak of Shadows (Greater) 2/100 [4 slots]; Slotted: Path of Hatchets"], ["79", "6.50", "", "Path of Running X (1 tier earned)", "", "", "Unallocated +2 (Gifted)", "", "1.5 year time-jump from chp 77-79", "Path of Running X (10000/10000)", ""], ["79", "6.50", "", "Path of Balance X (1 tier earned)", "", "", "Unallocated +2 (Gifted)", "", "", "Path of Balance X (10000/10000)", ""], ["79", "6.50", "", "Path of Body Strengthening X (1 tier earned)", "", "", "Unallocated +2 (Gifted)", "", "", "Path of Body Strengthening X (10000/10000)", ""], ["79", "6.50", "", "Path of Aethersensing X (1 tier earned)", "Path of Aethersensitivity", "Aethersensing", "Unallocated +2 (Gifted)", "", "Aethersensing immediately taken here; had 3 advanced path options, but others super specialized", "Path of Aethersensing X (10000/10000)", ""], ["79", "6.50", "", "Path of Deception X (1 tier earned)", "Path of Bargaining", "Deception", "Unallocated +2 (Gifted)", "", "3 advanced path options (mediation, bargaining, negotiation); bargaining chosen", "Path of Deception X (10000/10000)", ""], ["79", "6.50", "", "Path of Coordination IX through X (3 tiers earned)", "", "", "Unallocated +3 (Gifted)", "", "", "Path of Coordination X (10000/10000); Path of the Completionist III (307/500); Path of Exceptionalism II (163/500)", ""], ["79", "6.50", "", "Path of Footwork I through VII (7 tiers earned)", "", "", "Coordination +5, Mental +2", "", "", "Path of Footwork VII (1777/2500)", ""], ["79", "6.50", "", "Path of Swordplay IX (1 tier earned)", "", "", "Unallocated +1 (Gifted)", "", "", "Path of Swordplay IX (9269/10000)", ""], ["79", "6.50", "", "Path of Hatchets VI through IX (4 tiers earned)", "", "", "Strength +3, Stamina +2, Unallocated +1 (Gifted)", "", "", "Path of Hatchets IX (7958/10000)", ""], ["79", "6.50", "", "Path of Shieldwork I through VI (6 tiers earned)", "", "", "Strength +3, Stamina +3, Coordination +3", "", "remember that weapon paths boosted +1 stat at even tiers as shown here", "Path of Shieldwork VI (500+/1000)", ""], ["79", "6.50", "", "Path of Daggers I through VI (6 tiers earned)", "", "", "Strength +3, Coordination +6", "", "", "Path of Daggers VI (500+/1000)", ""], ["79", "6.50", "", "Path of Long-knives I through VI (6 tiers earned)", "", "", "Strength +6, Coordination +3", "", "", "Path of Long-knives VI (500+/1000)", "Learning spell: Nightvision (1C-Shadow); Learning spell: Shadowblind (1C-Shadow); Learning spell: Shadowmask (2C-Shadow)"], ["79", "6.50", "", "Path of Axes I through VI (6 tiers earned)", "", "", "Strength +3, Stamina +6", "", "", "Path of Axes VI (500+/1000)", ""], ["79", "6.50", "", "Path of Aether Manipulation I through VII (7 tiers earned)", "", "", "Aether +7", "", "", "Path of Aether Manipulation VII (1464/2500)", ""], ["79", "6.50", "", "Path of Aethersensitivity I through II (2 tiers earned)", "", "", "Aethersensing +10 (AA)", "", "", "Path of Aethersensitivity II (53/200)", ""], ["79", "6.50", "", "Path of Shadow Magic I through II (2 tiers earned)", "", "", "Aether +2", "", "", "Path of Shadow Magic II (33/50)", ""], ["79", "6.50", "", "Path of Obscuring Shadow I (1 tier earned)", "", "", "Unallocated +2 (Gifted)", "", "", "Path of Obscuring Shadow I (12/50)", "Status screen (age 6½); Learned spell: Nightvision (1C-Shadow); Unlocked: Path of Acting; Unlocked: Path of Lockpicking; Unlocked: Path of Cleaning; Unlocked: Path of Reading - English; Unlocked: Path of Writing - English; Unlocked: Path of Parrying; Unlocked: Path of the Messenger; Unlocked: Path of Smithing; Unlocked: Path of Animal Husbandry; Unlocked: Path of Knitting; Unlocked: Path of Woodwork; Unlocked: Path of Spying; Stamina 140; Aether Channels (Moderate) 113; Muffled Aura (Lesser) 7/100 [2 slots]; Controlled Grip (Lesser) 40/100 [2 slots]; Royal Cloak of Shadows (Greater) 55/100 [4 slots]; Removed skill: Muffled Steps; Unslotted: Path of Daggers; Unslotted: Path of Shieldwork; Unslotted: Path of Axes; Unslotted: Path of Long-knives"], ["79", "6.50", "", "Muffled Steps (minor) at end of path, Evolved", "", "", "", "Skill: Muffled Aura", "Requires 2 skill slots now vs 1 before", "", ""], ["87", "7.00", "", "Path of Swordplay X (1 tier earned)", "Path of Swords", "", "Unallocated +3 (Gifted)", "", "", "Path of Swordplay X (10000/10000)", ""], ["87", "7.00", "", "Path of Shadow Magic III (1 tier earned)", "", "", "Aether +1", "", "", "Path of Shadow Magic III (62/100); Path of Exceptionalism II (168/500); Path of the Completionist III (324/500)", "Muffled Aura (Lesser) 7+/100 [2 slots]; Unlocked: Path of the Claw; Slotted: Path of the Claw"], ["90", "7.00", "Yes", "Minor Victory - place first in a small tournament", "", "", "", "Path of Exceptionalism +2, Path of Hatchets +50", "", "Path of Exceptionalism II (170/500); Path of Hatchets IX (8308/10000)", ""], ["90", "7.00", "", "Training with Nazim", "Path of the Claw", "", "", "", "", "Path of the Claw (6/10); Path of Aether Manipulation VII (1673/2500); Path of Aethersensitivity II (59/200); Path of Footwork VII (2064/2500); Path of Obscuring Shadow I (14/50)", "Status screen (age 7); Muffled Aura (Lesser) 8/100 [2 slots]; Controlled Grip (Lesser) 41/100 [2 slots]; Royal Cloak of Shadows (Greater) 56/100 [4 slots]"], ["94", "7.00", "", "Kill an enemy undetected", "Path of Ambushing", "", "", "", "", "", ""], ["94", "7.00", "Yes", "Slay a 2nd class individual while not having a class", "", "", "", "Path of Exceptionalism +10, Skill Seed (Combat) (Lesser), Path of Hatchets +1000", "", "Path of the Completionist III (498/500); Path of Exceptionalism II (180/500); Path of Hatchets IX (8308+/10000)", "Unlocked: Path of Swimming; Unlocked: Path of Cold Resistance"], ["95", "8.50", "", "Path of Hatchets X (1 tier earned)", "Path of the Bloody Axe", "", "Unallocated +3 (Gifted)", "", "", "Path of Hatchets X (10000/10000)", ""], ["95", "8.50", "", "Path of the Completionist IV (1 tier earned)", "", "", "", "extra +1 advanced attribute slot", "", "Path of the Completionist IV (515/1000)", ""], ["95", "8.50", "", "Path of Footwork VIII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Footwork VIII (2500/5000)", ""], ["95", "8.50", "", "Path of the Claw I through VIII (8 tiers earned)", "", "", "Strength +12", "", "", "Path of the Claw VIII (2500/5000)", ""], ["95", "8.50", "", "Path of Long-knives VII through VIII (2 tiers earned)", "", "", "Coordination +3", "", "", "Path of Long-knives VIII (2500/5000)", ""], ["95", "8.50", "", "Path of Shieldwork VII (1 tier earned)", "", "", "Strength +1", "", "", "Path of Shieldwork VII (1269/2500)", ""], ["95", "8.50", "", "Path of Axes VII (1 tier earned)", "", "", "Stamina +1", "", "", "Path of Axes VII (1986/2500)", ""], ["95", "8.50", "", "Path of Aether Manipulation VIII through IX (2 tiers earned)", "", "", "Aether +1, Unallocated +1 (Gifted)", "", "", "Path of Aether Manipulation IX (7794/10000)", ""], ["95", "8.50", "", "Path of Shadow Magic IV through VII (4 tiers earned)", "", "", "Aether +4", "", "", "Path of Shadow Magic VII (1911/2500)", ""], ["95", "8.50", "", "Path of Obscuring Shadow II (1 tier earned)", "", "", "Unallocated +3 (Gifted)", "", "", "Path of Obscuring Shadow II (94/200); Path of Exceptionalism II (185/500)", "Unslotted: Path of Footwork; Unslotted: Path of the Claw"], ["97", "8.50", "", "Skill Seed (Infiltration) (Greater) used", "", "", "", "Skill: Scent Erasure", "requires 4 skill slots", "", "Scent Erasure (Greater) 1+/100 [4 slots]"], ["106", "8.50", "", "Path of Daggers VII (1 tier earned)", "", "", "Coordination +1", "", "", "Path of Daggers VII (1000/2500)", ""], ["106", "8.50", "", "Path of Reading - Helenian I through III (3 tiers earned)", "", "", "Mental +3", "", "", "Path of Reading - Helenian III (67/100)", "Learned spell: Shadowblind (1C-Shadow); Unslotted: Path of Daggers; Unslotted: Path of Long-knives"], ["108", "8.50", "", "Follow someone unseen", "Path of Shadowing", "", "", "", "", "", "Slotted: Path of Shadowing; Unslotted: Path of Reading - Helenian"], ["110", "8.50", "", "Path of Shadowing I (1 tier earned)", "", "", "Unallocated +2 (Gifted)", "extra +1 skill slot, Skill Seed (Shadowing) (Lesser)", "", "Path of Shadowing I (18/100)", ""], ["112", "8.50", "Yes", "Slay 3rd class individual while not possessing a class", "", "", "", "Path of Exceptionalism +10, Path of Aether Manipulation +500", "steps in any basic path", "", ""], ["112", "8.50", "Yes", "Slay 4th class individual while not possessing a class", "", "", "", "Path of Exceptionalism +10, Path of Aether Manipulation +750", "steps in any basic path", "", ""], ["112", "8.50", "", "Path of Ambushing I (1 tier earned)", "", "", "Coordination +1, Unallocated +2 (Gifted)", "", "", "Path of Ambushing I (45/50)", ""], ["112", "8.50", "", "Enter a rift", "Close the Rift, Defeat the Rift Champion, Eradicate Fluted Forest Spider Infestation", "", "", "", "**rift paths don't need free path slots", "", ""], ["112", "8.50", "", "Path of Aether Manipulation X (1 tier earned)", "Path of Aether Control", "Aether Manipulation", "Unallocated +2 (Gifted)", "", "Aether Manipulation immediately taken. 3 advanced paths, one chosen", "Path of Aether Manipulation X (10000/10000); Path of the Completionist IV (532/1000)", ""], ["112", "8.50", "Yes", "Reach 200 in a stat before unlocking a class", "", "", "", "Path of Exceptionalism +5, Path of Shadow Magic +100", "", "Path of Exceptionalism II (215/500)", ""], ["112", "8.50", "", "Path of Shadow Magic VIII (1 tier earned)", "", "", "Aether +1", "", "", "Path of Shadow Magic VIII (2612/5000)", ""], ["113", "8.50", "", "Path of Ambushing II (1 tier earned)", "", "", "Coordination +1, Unallocated +2 (Gifted)", "", "", "Path of Ambushing II (51/200)", ""], ["114", "8.50", "", "Rift Path: Eradicate Fluted Forest Spider Infestation I", "", "", "Unallocated +2 (Gifted)", "6 aether coins", "this rift path is a 1/1 path completion", "", ""], ["114", "8.50", "Yes", "Complete a rift path while not having a class", "", "", "", "Boon Upgrade: Child Aether Knight, Path of Exceptionalism +25", "upgraded boon replaces Child Warrior. Extra +1 stat on even # tiers from both weapon & aether paths", "", ""], ["115", "8.50", "", "Rift Path: Defeat Rift Champion", "", "", "Unallocated +4 (Gifted)", "12 aether coins", "this rift path is a 1/1 path completion", "", ""], ["116", "8.50", "", "Path of Soulstealing III (1 tier earned)", "", "", "", "extra affinity slot", "", "Path of Soulstealing III (81/100)", ""], ["116", "8.50", "", "Rift Path: Close the Rift", "", "", "Unallocated +4 (Gifted)", "6 aether coins, 1 singing sapphire, 1 cassium nugget", "this rift path is a 1/1 path completion that changes depending on achievements", "", ""], ["116", "8.50", "Yes", "Defeat a Rift Champion while not possessing a class", "", "", "", "Life (Moderate) Affinity, Path of Exceptionalism +35", "Choice of 3 moderate affinities (sound, life, water), with life chosen", "", ""], ["116", "8.50", "Yes", "Close a Rift solo while not possessing a class", "", "", "", "Boon: Unclassed Rift Conqueror, Path of Exceptionalism +50", "unlock class 1 year early & get +2 additional high tier rewards on all future class paths", "Path of Exceptionalism II (325/500); Path of Shieldwork VII (1447/2500); Path of Axes VII (2233/2500); Path of Aether Control (2/10); Path of Aethersensitivity II (122/200); Path of Ambushing II (74/200); Path of Shadow Magic VIII (2733/5000); Path of Obscuring Shadow II (102/200)", "Status screen (age 8½); Unlocked: Path of Hiking; Unlocked: Path of Trapping; Unlocked: Path of Skinning; Unlocked: Path of Recovery; Unlocked: Path of Pain Resistance; Aether Channels (Moderate) 114; Muffled Aura (Lesser) 19/100 [2 slots]; Controlled Grip (Lesser) 48/100 [2 slots]; Royal Cloak of Shadows (Greater) 99/100 [4 slots]; Scent Erasure (Greater) 1/100 [4 slots]; Slotted: Path of Aether Control; Unslotted: Path of Shadowing"], ["124", "8.75", "", "Path of Writing - Helenian I through VI (6 tiers earned)", "", "", "Mental +6", "", "", "Path of Writing - Helenian VI (788/1000); Path of Aether Control (4/10); Path of Aethersensitivity II (124/200); Path of Shadow Magic VIII (3299/5000); Path of Obscuring Shadow II (107/200)", "Status screen (age 8¾); Unslotted: Path of Ambushing"], ["126", "8.75", "", "Royal Cloak of Shadows (greater) at end of path, Evolved", "", "", "", "Skill: Royal Shadow Regalia (Superior)", "Requires 8 slots now instead of 4, but frees 6 slots from merger of Muffled Aura (lesser) & Scent Erasure (greater). (+2 skill slots overall)", "", "Learned spell: Shadowmask (2C-Shadow)"], ["127", "8.75", "Yes", "Evolve skill to Superior grade before unlock a class", "", "", "", "extra +3 skill slots, Path of Exceptionalism +10, Path of Obscuring Shadow +200", "also had choice of 2000 steps in Path of Shadow Magic instead", "Path of Exceptionalism II (335/500)", ""], ["127", "8.75", "", "Path of Obscuring Shadow III (1 tier earned)", "", "", "Aether Manipulation +5, Shadow Affinity +1", "", "", "Path of Obscuring Shadow III (475/500)", "Removed skill: Muffled Aura; Removed skill: Scent Erasure"], ["129", "8.75", "", "Path of Aether Control I (1 tier earned)", "", "", "Aether Manipulation +3, Aether +1", "", "", "Path of Aether Control I (10/50)", ""], ["129", "8.75", "", "Path of Persuasion I (1 tier earned)", "", "", "Mental +1", "", "", "Path of Persuasion I (24/25)", ""], ["129", "8.75", "", "Path of Obscuring Shadow IV (1 tier earned)", "", "", "Aether Manipulation +8, Shadow Affinity +2", "", "", "Path of Obscuring Shadow IV (500/1000)", ""], ["129", "8.75", "", "Path of Life Magic I (1 tier earned)", "", "", "Aether +1  ", "", "", "Path of Life Magic I (11/25)", "Unslotted: Path of Obscuring Shadow; Unslotted: Path of Aether Control"], ["131", "8.75", "", "Path of Persuasion II (1 tier earned)", "", "", "Mental +1", "", "", "Path of Persuasion II (26/50)", ""], ["133", "8.75", "", "Path of Shadowing II (1 tier earned)", "", "", "Unallocated +4 (Gifted)", "extra +2 skill slots, Skill Seed (Shadowing) (Greater)", "assumed stats to go to Gifted AA, not stated in chapter", "Path of Shadowing II (114/500); Path of Aethersensitivity II (124+/200); Path of Shadow Magic VIII (3299+/5000); Path of Axes VII (2233+/2500); Path of Shieldwork VII (1447+/2500); Path of Writing - Helenian VI (788+/1000); Path of Life Magic I (20/25)", "Controlled Grip (Lesser) 48+/100 [2 slots]; Unslotted: Path of Persuasion"], ["135", "8.75", "", "Path of Life Magic II (1 tier earned)", "", "", "Aether +2", "", "", "Path of Life Magic II (44/50)", ""], ["135", "8.75", "", "Path of Persuasion III (1 tier earned)", "", "", "Mental +1", "", "", "Path of Persuasion III (52/100)", ""], ["135", "8.75", "", "Path of Writing - Helenian VII (1 tier earned)", "", "", "Mental +1", "", "", "Path of Writing - Helenian VII (1042/2500)", "Learning spell: Sleep (1C-Dream); Learning spell: Dream Ward (1C-Dream); Learning spell: Lucid Dreaming (0C-Dream); Learning spell: Lesser Vital Surge (2C-Life); Learned spell: Lucid Dreaming (0C-Dream); Unlocked: Path of Dream Magic; Unslotted: Path of Shadowing"], ["137", "8.75", "", "Path of Life Magic III (1 tier earned)", "", "", "Aether +1", "", "", "Path of Life Magic IV (139/250)", ""], ["137", "8.75", "", "Path of Persuasion IV (1 tier earned)", "", "", "Mental +1", "", "", "Path of Persuasion V (256/500)", ""], ["137", "8.75", "", "Path of Life Magic IV (1 tier earned)", "", "", "Aether +2", "", "", "", ""], ["137", "8.75", "", "Path of Persuasion V (1 tier earned)", "", "", "Mental +1", "", "", "", ""], ["137", "8.75", "", "Path of Axes VIII (1 tier earned)", "", "", "Strength +2", "", "*switched out for Path of Daggers", "Path of Axes VIII (2500/5000)", "Learning spell: Shadow Hand (2C-Shadow); Learning spell: Shadow Copy (2C-Shadow); Learning spell: Simple Life Assessment (0C-Life)"], ["140", "8.75", "", "Path of Soulstealing IV (1 tier earned)", "", "", "", "Improved Aether Core", "still has Lesser Aether Core, but increased by 72 steps", "Path of Soulstealing IV (127/250)", ""], ["140", "8.75", "Yes", "Break a Spirit Curse while not possessing a Class Path", "", "", "", "Body Feature: Spirit Masking (Minor), Path of Exceptionalism +15", "", "Path of Exceptionalism II (350/500); Path of Shieldwork VII (1847/2500); Path of Daggers VII (1042/2500); Path of Aethersensitivity II (128/200); Path of Writing - Helenian VII (1578/2500); Path of Shadow Magic VIII (3381/5000)", "Aether Manipulation 115; Aether Core (Lesser) 179; Controlled Grip (Lesser) 52/100 [2 slots]; Royal Shadow Regalia (Superior) 2/100 [8 slots]"]];
+// ============================================
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Five-step grade scale shared by paths, classes, affinities, aether body and skills
+const GRADE_TIER={Basic:1,Minor:1,Weak:1,Lesser:2,Adept:2,Moderate:2,Greater:3,Advanced:3,Strong:3,Superior:4,Elite:4,Potent:4,Exalted:5,Master:5,Perfect:5};
+const tierOf=g=>GRADE_TIER[g]||1;
+const chip=(g)=>g?`<span class="chip t${tierOf(g)}">${esc(g)}</span>`:"";
+const row=(label,val,grade)=>`<div class="row"><span class="name"><span class="nm">${esc(label)}</span>${chip(grade)}</span><span class="v">${val==null?"":esc(val)}</span></div>`;
+const fmtN=(c,m,p)=>`${c.toLocaleString()}${p?"+":""}/${m.toLocaleString()}`;
+function fmtAge(a){
+  if(a==null) return "";
+  if(Math.abs(a)<0.01) return "Newborn";
+  const mo=Math.round(Math.abs(a)*12);
+  if(a<0) return `Unborn · ${mo} month${mo===1?"":"s"} before birth`;
+  const y=Math.floor(mo/12), m=mo%12;
+  return `Age ${y?y+" yr"+(y>1?"s":""):""}${y&&m?" ":""}${m?m+" mo":""}`;
+}
+
+function parseCSV(text){
+  const out=[]; let rowA=[], f="", q=false;
+  for(let i=0;i<text.length;i++){ const c=text[i];
+    if(q){ if(c=='"'){ if(text[i+1]=='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c=='"') q=true; else if(c==','){rowA.push(f);f="";}
+    else if(c=='\n'||c=='\r'){ if(c=='\r'&&text[i+1]=='\n') i++; rowA.push(f); out.push(rowA); rowA=[]; f=""; }
+    else f+=c; }
+  if(f!==""||rowA.length){rowA.push(f);out.push(rowA);}
+  return out;
+}
+const isNum=v=>typeof v==="number"&&!isNaN(v);
+// ===== Achievements tab → Bastian's status. Reads the sheet exactly as written. =====
+// Starting status (before the first row): every basic attribute 100, 10 path slots, 3 skill slots,
+// 2 advanced attribute slots, 1 affinity slot, Shadow (Strong) 100, Minor Aether Core, Weak Aether Channels.
+const START = {name:"Unnamed", class:"Locked", stats:100, slots:{path:10,skill:3,aa:2,affinity:1},
+  affinity:[["Shadow","Strong",100]], body:[["Aether Core","Minor",null],["Aether Channels","Weak",null]]};
+// Used only when neither the progress numbers nor the Notes say what kind of path it is
+const KNOWN_TYPES = {E:["Exceptionalism","Infiltration","Shadowing","Thievery"],
+  A:["the Completionist","Stealth","Aethersensitivity","Obscuring Shadow","Aether Control","Bargaining","Lockpicking","Spying",
+     "Ambushing","Swords","the Bloody Axe","Weapon Mastery"], "B-M":["Soulstealing"]};
+const STEP_MAX = {B:[10,25,50,100,250,500,1000,2500,5000,10000,10000], A:[10,50,200,500,1000,1000], E:[10,100,500,500]};
+const MAX_TIER = {B:10, A:5, E:3};
+const ROMANS = ["","I","II","III","IV","V","VI","VII","VIII","IX","X"];
+const ROM = "(X|IX|VIII|VII|VI|V|IV|III|II|I)";
+const BASIC = ["Strength","Stamina","Coordination","Mental","Aether"];
+const GRADES = ["Minor","Lesser","Greater","Superior","Exalted","Basic","Adept","Advanced","Elite","Master","Weak","Moderate","Strong","Potent","Perfect"];
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s;
+const baseType = t => (t || "B").split("-")[0];
+const pathMax = (t, tier) => { const tab = STEP_MAX[baseType(t)] || STEP_MAX.B; return tab[Math.min(tier, tab.length - 1)]; };
+
+// Column finder: matches the tab's headers, case-insensitive
+const COLS = {ch:/^chapter/i, age:/^age/i, text:/^achievements?\b.*progress/i, paths:/unlocked paths/i, aa:/unlocked (advanced|aa)/i,
+  attr:/attribute increases/i, other:/other rewards/i, notes:/^notes?$/i, prog:/^path progress/i, status:/^status/i,
+  ach:/^(system )?achievement\??$/i};
+function rowsFromTable(table){
+  const head = table[0].map(h => String(h || "").trim()), idx = {};
+  for (const k in COLS) idx[k] = head.findIndex(h => COLS[k].test(h));
+  return table.slice(1).map(r => { const o = {}; for (const k in idx) o[k] = idx[k] >= 0 ? String(r[idx[k]] ?? "").trim() : "";
+    o.ch = o.ch === "" ? null : +o.ch; o.age = o.age === "" ? null : +o.age; return o; })
+    .filter(o => o.ch !== null && !isNaN(o.ch) && (o.text || o.paths || o.aa || o.attr || o.other || o.prog || o.status));
+}
+const splitList = s => (s || "").split(/[,;](?![^()]*\))/).map(x => x.trim()).filter(Boolean);
+const num = s => +String(s).replace(/,/g, "");
+
+function newState(){
+  const S = {name:START.name, cls:START.class, stats:Object.fromEntries(BASIC.map(b => [b, START.stats])), slots:{...START.slots},
+    paths:new Map(), aas:new Map(), aff:new Map(), body:new Map(), boons:[], skills:new Map(), spells:new Map(), ach:[], seq:0};
+  START.affinity.forEach(([n,g,v]) => S.aff.set(n, {grade:g, value:v}));
+  START.body.forEach(([n,g,v]) => S.body.set(n, {grade:g, value:v}));
+  return S;
+}
+function typeFromNotes(name, notes, single){
+  const segs = (notes || "").toLowerCase().split(/[,;]/);
+  const first = name.replace(/^the /i, "").split(/[\s-]/)[0].toLowerCase();
+  for (const sg of segs){ const m = sg.match(/\b(basic|advanced|elite|mutated)\b[^,;]*\bpaths?\b/); if (!m) continue;
+    if (single || sg.includes(first)) return {basic:"B", advanced:"A", elite:"E", mutated:"B-M"}[m[1]]; }
+  return null;
+}
+function knownType(n){ for (const t in KNOWN_TYPES) if (KNOWN_TYPES[t].includes(n)) return t; return null; }
+const stem = n => n.toLowerCase().replace(/(ing|e)$/, "");
+function getPath(S, n){
+  let p = S.paths.get(n);
+  if (!p){ for (const [k, v] of S.paths) if (stem(k) === stem(n)){ if (n.length < k.length){ S.paths.delete(k); v.name = n; S.paths.set(n, v); } return v; } }
+  if (!p){ p = {name:n, tier:0, steps:0, approx:false, type:null, typeSrc:0, slotted:0, maxo:null, first:++S.seq}; S.paths.set(n, p); }
+  return p;
+}
+function setType(p, t, strength){ if (t && strength >= p.typeSrc){ p.type = t; p.typeSrc = strength; } }
+function pathName(s){ const m = s.match(/^Path of (.+?)(?:\s*\((B|A|E|B-M|A-M|E-M)\))?$/i); return m ? {name:m[1].trim(), tag:m[2] ? m[2].toUpperCase() : null} : null; }
+function findKey(map, n){ for (const k of map.keys()) if (k.toLowerCase() === n.toLowerCase()) return k; return null; }
+function slotPath(S, p, on){ p.slotted = on ? ++S.seq : 0; }
+
+function applyRow(S, r){
+  const notes = r.notes || "";
+  // 1. unlocked paths
+  const unl = splitList(r.paths).map(pathName).filter(Boolean);
+  unl.forEach(u => { const p = getPath(S, u.name); if (u.tag) setType(p, u.tag, 3); setType(p, typeFromNotes(u.name, notes, unl.length === 1), 2); });
+  // 2. advanced attributes
+  splitList(r.aa).forEach(a => {
+    const m = a.match(/^(.+?)(?:\s*\((?:evolved version of|evolved from)\s+(.+?)\))?$/i), n = m[1].trim();
+    let e = {value:100, slotted:0, first:++S.seq};
+    if (m[2]){ const old = findKey(S.aas, m[2].trim()); if (old){ e = {...S.aas.get(old)}; S.aas.delete(old); } }
+    if (/immediately taken|taken immediately/i.test(notes)) e.slotted = e.slotted || ++S.seq;
+    S.aas.set(n, e);
+  });
+  // 3. the event text: path tiers and evolved skills
+  const t = r.text || "";
+  let rowPath = null;
+  const pm = t.match(new RegExp("^Path of (.+?) " + ROM + "(?: through " + ROM + ")?(?=\\s|\\(|$)"));
+  if (pm){
+    const p = getPath(S, pm[1].trim()), tier = ROMANS.indexOf(pm[3] || pm[2]); rowPath = p;
+    if (tier > p.tier){ const floor = pathMax(p.type || knownType(p.name) || "B", tier - 1);
+      if (p.steps < floor){ p.steps = floor; p.approx = true; } p.tier = tier; p.maxo = null; }
+    if (!p.slotted) slotPath(S, p, true);
+  }
+  const ev = t.match(/^(.+?)\s*\((\w+)\)\s*at end of path,?\s*evolved/i);
+  if (ev){ const nm = ev[1].trim(), last = nm.split(" ").pop().toLowerCase();
+    const k = findKey(S.skills, nm) || [...S.skills.keys()].find(x => x.split(" ").pop().toLowerCase() === last); if (k) S.skills.delete(k); }
+  // 4. attribute increases
+  splitList(r.attr).forEach(x => {
+    const m = x.match(/^(.+?)\s*\+\s*(\d+)\s*(?:\((.+?)\))?$/); if (!m) return;
+    const n = m[1].trim(), v = +m[2], tgt = (m[3] || "").trim();
+    if (BASIC.includes(cap(n)) && n.split(" ").length === 1) S.stats[cap(n)] += v;
+    else if (/^unallocated$/i.test(n)){ const k = findKey(S.aas, tgt) || findKey(S.aas, "Gifted") || findKey(S.aas, "Talented"); if (k) S.aas.get(k).value += v; }
+    else if (/ affinity$/i.test(n)){ const a = S.aff.get(n.replace(/ affinity$/i, "")) || {grade:null, value:100}; a.value += v; S.aff.set(n.replace(/ affinity$/i, ""), a); }
+    else { const k = findKey(S.aas, n) || n; const e = S.aas.get(k) || {value:100, slotted:0, first:++S.seq}; e.value += v; S.aas.set(k, e); }
+  });
+  // 5. other rewards
+  splitList(r.other).forEach(x => {
+    let m;
+    if ((m = x.match(/^Name:\s*(.+)$/i))) S.name = m[1];
+    else if ((m = x.match(/^Class:\s*(.+)$/i))) S.cls = m[1];
+    else if ((m = x.match(/^Skill:\s*(.+?)(?:\s*\((\w+)\))?$/i))){
+      const sl = notes.match(/(\d+)\s*(?:skill\s*)?slots?/i);
+      const old = S.skills.get(m[1]);
+      if (old){ if (m[2]) old.grade = cap(m[2]); if (sl) old.slots = +sl[1]; }
+      else S.skills.set(m[1], {grade:m[2] ? cap(m[2]) : "Minor", value:null, approx:true, slots:sl ? +sl[1] : 1, first:++S.seq});
+    }
+    else if ((m = x.match(/^extra\s*\+?(\d*)\s*(skill|advanced attribute|affinity|path)\s*slots?/i))){
+      const k = {skill:"skill", "advanced attribute":"aa", affinity:"affinity", path:"path"}[m[2].toLowerCase()]; S.slots[k] += +(m[1] || 1);
+    }
+    else if ((m = x.match(/^Boon Upgrade:\s*(.+)$/i))){ if (S.boons.length) S.boons.pop(); S.boons.push(m[1]); }
+    else if ((m = x.match(/^Boon:\s*(.+)$/i))) S.boons.push(m[1]);
+    else if ((m = x.match(/^Body Feature:\s*(.+?)(?:\s*\((\w+)\))?$/i))) S.body.set(m[1], {grade:m[2] ? cap(m[2]) : null, value:100});
+    else if ((m = x.match(/^(\w+)\s*\((\w+)\)\s*Affinity$/i))){ const a = S.aff.get(m[1]) || {value:100}; a.grade = cap(m[2]); S.aff.set(m[1], a); }
+    else if ((m = x.match(/^Path of (.+?)\s*\+\s*([\d,]+)/i))){ const p = getPath(S, m[1].trim()); p.steps += num(m[2]); }
+  });
+  // "*switched out for Path of X" (in Other Rewards or Notes): this row's path comes out, X goes in
+  { const m = ((r.other || "") + " " + notes).match(/switched out for Path of ([^;,.*]+)/i);
+    if (m && rowPath){ slotPath(S, rowPath, false); slotPath(S, getPath(S, m[1].trim()), true); } }
+  // 6. path progress: "Path of X VII (1777/2500)"
+  splitList(r.prog).forEach(x => {
+    const m = x.match(new RegExp("^Path of (.+?)(?:\\s+" + ROM + ")?\\s*\\(\\s*([\\d,]+)(\\+?)\\s*\\/\\s*([\\d,]+)\\s*\\)"));
+    if (!m) return;
+    const p = getPath(S, m[1].trim()), tier = m[2] ? ROMANS.indexOf(m[2]) : p.tier, mx = num(m[5]);
+    p.tier = tier; p.steps = num(m[3]); p.approx = !!m[4];
+    if (tier > 0){ const fits = ["E","A","B"].filter(k => (STEP_MAX[k][Math.min(tier, STEP_MAX[k].length - 1)]) === mx);
+      const mut = (p.type || "").endsWith("-M");
+      if (p.typeSrc < 4 && fits.length){ if (!fits.includes(baseType(p.type))) setType(p, fits[fits.length - 1] + (mut ? "-M" : ""), 4); else p.typeSrc = 4; }
+      p.maxo = pathMax(p.type || knownType(p.name) || "B", tier) === mx ? null : mx; }
+  });
+  // 7. status changes / status screen values
+  splitList(r.status).forEach(x => applyStatus(S, x));
+  if (/^y/i.test(r.ach || "")) S.ach.push({text:t, ch:r.ch});
+}
+function applyStatus(S, x){
+  let m;
+  if (/^status screen/i.test(x)) return;
+  if ((m = x.match(/^(slotted|unslotted|slot in|slot out|equipped|unequipped):?\s*(.+)$/i))){
+    const on = /^(slotted|slot in|equipped)/i.test(m[1]), pn = pathName(m[2].trim());
+    if (pn) slotPath(S, getPath(S, pn.name), on);
+    else { const k = findKey(S.aas, m[2].trim()) || m[2].trim(); const e = S.aas.get(k) || {value:100, slotted:0, first:++S.seq}; e.slotted = on ? ++S.seq : 0; S.aas.set(k, e); }
+    return;
+  }
+  if ((m = x.match(/^(learning|learned)\s+spell:?\s*(.+?)(?:\s*\((\d+)C-([\w ]+)\))?$/i))){
+    const old = S.spells.get(m[2]) || {first:++S.seq};
+    S.spells.set(m[2], {...old, status:m[1].toLowerCase(), circle:m[3] != null ? +m[3] : old.circle, affinity:m[4] || old.affinity}); return;
+  }
+  if ((m = x.match(/^removed?\s+(skill|boon|path|attribute|advanced attribute)s?:?\s*(.+)$/i))){
+    const n = m[2].trim(), kind = m[1].toLowerCase();
+    if (kind === "skill"){ const k = findKey(S.skills, n); if (k) S.skills.delete(k); }
+    else if (kind === "boon") S.boons = S.boons.filter(b => b.toLowerCase() !== n.toLowerCase());
+    else if (kind === "path"){ const pn = pathName(n); if (pn) S.paths.delete(pn.name); }
+    else { const k = findKey(S.aas, n); if (k) S.aas.delete(k); }
+    return;
+  }
+  if ((m = x.match(/^unlocked:?\s*(.+)$/i))){ const pn = pathName(m[1].trim()); if (pn){ const p = getPath(S, pn.name); if (pn.tag) setType(p, pn.tag, 3); } return; }
+  if ((m = x.match(/^boon:\s*(.+)$/i))){ if (!S.boons.includes(m[1])) S.boons.push(m[1]); return; }
+  if ((m = x.match(/^(Name|Class):\s*(.+)$/i))){ if (/^name/i.test(m[1])) S.name = m[2]; else S.cls = m[2]; return; }
+  m = x.match(/^(.+?)(?:\s*\((\w+)\))?(?:\s+([\d,]+)(\+?)(?:\s*\/\s*(\d+))?)?(?:\s*\[(\d+)\s*slots?\])?$/i);
+  if (!m) return;
+  const n = m[1].trim(), g = m[2] ? cap(m[2]) : null, v = m[3] != null ? num(m[3]) : null, ap = !!m[4], sl = m[6] ? +m[6] : null;
+  let k;
+  if (BASIC.includes(n)) { if (v != null) S.stats[n] = v; }
+  else if ((k = n.match(/^(path|skill|advanced attribute|aa|affinity) slots$/i))){ const key = {path:"path", skill:"skill", "advanced attribute":"aa", aa:"aa", affinity:"affinity"}[k[1].toLowerCase()]; if (v != null) S.slots[key] = v; }
+  else if (/ affinity$/i.test(n)){ const an = n.replace(/ affinity$/i, ""), a = S.aff.get(an) || {grade:null, value:100}; if (g) a.grade = g; if (v != null) a.value = v; S.aff.set(an, a); }
+  else if (S.body.has(n) || /^aether (core|channels)$/i.test(n)){ const b = S.body.get(n) || {grade:null, value:null}; if (g) b.grade = g; if (v != null) b.value = v; S.body.set(n, b); }
+  else if (pathName(n)){ const pn = pathName(n), p = getPath(S, pn.name); if (v != null){ p.steps = v; p.approx = ap; } }
+  else if ((k = findKey(S.skills, n)) || m[5] || sl){ k = k || n; const s = S.skills.get(k) || {grade:"Minor", value:null, approx:true, slots:1, first:++S.seq};
+    if (g) s.grade = g; if (v != null){ s.value = v; s.approx = ap; } if (sl) s.slots = sl; S.skills.set(k, s); }
+  else { k = findKey(S.aas, n) || n; const e = S.aas.get(k) || {value:100, slotted:0, first:++S.seq}; if (v != null) e.value = v; S.aas.set(k, e); }
+}
+function snapshot(S){
+  const D = {name:S.name, class:S.cls, basic:BASIC.map(b => [b, S.stats[b]])};
+  const aas = [...S.aas.entries()];
+  D.advanced = {slots:S.slots.aa, items:aas.filter(([, e]) => e.slotted).sort((a, b) => a[1].slotted - b[1].slotted).map(([n, e]) => [n, e.value])};
+  D.aaEarned = aas.sort((a, b) => a[1].first - b[1].first).map(([n]) => n);
+  D.affinity = {slots:S.slots.affinity, items:[...S.aff.entries()].map(([n, a]) => [n, a.grade, a.value])};
+  D.body = [...S.body.entries()].map(([n, b]) => [n, b.grade, b.value]);
+  D.boons = [...S.boons];
+  D.paths = {slots:S.slots.path, items:[]}; D.dormant = []; D.available = []; D.completed = []; D.ptypes = {}; D.ptiers = {};
+  [...S.paths.values()].sort((a, b) => a.first - b.first).forEach(p => {
+    const t = p.type || knownType(p.name) || "B", done = p.tier >= MAX_TIER[baseType(t)];
+    D.ptypes[p.name] = t; D.ptiers[p.name] = p.tier;
+    if (p.slotted && !done) D.paths.items.push([p.name, ROMANS[p.tier] || null, p.steps, p.maxo || pathMax(t, p.tier), p.approx]);
+    else if (done) D.completed.push(p.name); else if (p.tier > 0) D.dormant.push(p.name); else D.available.push(p.name);
+  });
+  D.skills = {slots:S.slots.skill, items:[...S.skills.entries()].map(([n, s]) => [n, s.grade, s.value ?? 1, 100, s.approx || s.value == null, s.slots])};
+  D.spells = [...S.spells.entries()].map(([n, s]) => ({name:n, circle:s.circle, affinity:s.affinity, status:s.status === "learned" ? "learned" : "learning"}));
+  D.achievements = [...S.ach];
+  return D;
+}
+function computeStatus(rows, cut){ const S = newState(); rows.slice(0, cut).forEach(r => applyRow(S, r)); return snapshot(S); }
+if (typeof module !== "undefined") module.exports = {rowsFromTable, computeStatus, newState, applyRow, snapshot, pathMax, ROMANS};
+
+// ---------------- rendering ----------------
+let LOGROWS=[], POINTS=[], CUR_PT={};
+const ptOf=n=>CUR_PT[n]||"B";
+const pathType=n=>{const p=ptOf(n); return p.endsWith("-M")?"M":p;};   // B, A, E or M
+const colorOf=n=>"t"+({B:1,A:3,E:4}[baseType(ptOf(n))]||1);
+const tagHTML=n=>`<span class="ptype ${colorOf(n)}">(${esc(ptOf(n))})</span>`;
+function renderStats(D){
+  $("charName").textContent=D.name; $("charClass").textContent=D.class;
+  $("basic").innerHTML=D.basic.map(([k,v])=>row(k,v)).join("");
+  $("advCount").textContent=`${D.advanced.items.length}/${D.advanced.slots??"?"}`;
+  $("advanced").innerHTML=D.advanced.items.length?D.advanced.items.map(([k,v])=>row(k,v)).join(""):'<div class="row empty">Empty</div>';
+  $("affCount").textContent=`${D.affinity.items.length}/${D.affinity.slots??"?"}`;
+  $("affinity").innerHTML=D.affinity.items.map(([k,g,v])=>row(k,v,g)).join("");
+  $("bodyCount").textContent=`(${D.body.length})`;
+  $("body").innerHTML=D.body.map(([k,g,v])=>row(k,v,g)).join("");
+  $("boonCount").textContent=`(${D.boons.length})`;
+  $("boons").innerHTML=D.boons.length?D.boons.map(b=>`<div class="boon">${esc(b)}</div>`).join(""):'<div class="boon empty">None</div>';
+  $("pathCount").textContent=`${D.paths.items.length}/${D.paths.slots??"?"}`;
+  const PORDER={E:0,A:1,B:2,M:4};
+  const RN=r=>ROMANS.indexOf(r||"");
+  $("paths").innerHTML=D.paths.items.length?[...D.paths.items].sort((x,y)=>(PORDER[pathType(x[0])]-PORDER[pathType(y[0])])||(RN(y[1])-RN(x[1]))||((y[2]||0)-(x[2]||0))).map(([n,t,c,m,p])=>{
+    const tc=colorOf(n);
+    const name=`<span>Path of ${esc(n)}${t?`<span class="tier ${tc}">${esc(t)}</span>`:""}${tagHTML(n)}</span>`;
+    if(c==null||!m) return `<div class="path"><div class="top">${name}</div></div>`;
+    const pct=Math.min(100,c/m*100);
+    return `<div class="path"><div class="top">${name}<span class="num">${fmtN(c,m,p)}</span></div>
+      <div class="bar"><i class="${pathType(n)==="M"?"mut":tc}" style="--c:var(--${tc});width:${pct}%"></i></div></div>`}).join(""):'<div class="row empty">None yet</div>';
+  const used=D.skills.items.reduce((s,x)=>s+(x[5]||0),0);
+  $("skillCount").textContent=`${used}/${D.skills.slots??"?"} slots`;
+  $("skills").innerHTML=D.skills.items.length?[...D.skills.items].sort((x,y)=>((y[5]||0)-(x[5]||0))||(((y[2]||0)/(y[3]||100))-((x[2]||0)/(x[3]||100)))).map(([k,g,c,m,p,sl])=>{
+    const pct=c!=null&&m?Math.min(100,c/m*100):null;
+    return `<div class="path"><div class="top"><span class="name">${esc(k)}</span><span class="skmeta"><span class="chipcell">${chip(g)}</span><span class="slots">${sl?`${sl} slot${sl>1?"s":""}`:""}</span></span>
+      ${pct!=null?`<span class="num">${fmtN(c,m,p)}</span>`:""}</div>
+      ${pct!=null?`<div class="bar"><i class="skill" style="--c:var(--t${tierOf(g)});width:${pct}%"></i></div>`:""}</div>`}).join(""):'<div class="row empty">None yet</div>';
+}
+function li(n,t){ return `<li><span>Path of ${esc(n)}${t?`<span class="tier ${colorOf(n)}">${ROMANS[t]}</span>`:""}${tagHTML(n)}</span></li>`; }
+function fill(id,cid,arr,html){ $(cid).textContent=`(${arr.length})`; $(id).innerHTML=arr.length?arr.map(html).join(""):'<li class="empty">None</li>'; }
+function renderDrawers(S){
+  const tier=S.ptiers, PO={E:0,A:1,B:2,M:4};
+  const byType=(a,b)=>(PO[pathType(a)]-PO[pathType(b)])||((tier[b]||0)-(tier[a]||0))||a.localeCompare(b);
+  fill("dormant","dormCount",[...S.dormant].sort(byType),n=>li(n,tier[n]));
+  fill("completed","compCount",[...S.completed].sort(byType),n=>li(n,tier[n]));
+  fill("available","availCount",[...S.available].sort(byType),n=>li(n,0));
+  const slotted=new Set(S.advanced.items.map(i=>i[0]));
+  const aas=[...S.aaEarned].sort((a,b)=>slotted.has(b)-slotted.has(a));
+  fill("aaList","aaCount",aas,n=>`<li><span${slotted.has(n)?' class="equipped" title="slotted"':""}>${esc(n)}</span></li>`);
+  fill("achList","achCount",S.achievements,e=>`<li><span>${esc(e.text.replace(/ - .*/,""))}</span><span class="sub">Ch. ${e.ch}</span></li>`);
+  const aff={}; S.affinity.items.forEach(([n,g,v])=>aff[n]={rank:tierOf(g)*1000+(v||0),tc:"t"+tierOf(g),tier:tierOf(g)});
+  Object.entries(COMBO_AFF).forEach(([n,parts])=>{
+    if(!parts.every(p=>aff[p])) return;
+    const tr=Math.max(1,Math.round(parts.reduce((s,p)=>s+aff[p].tier,0)/parts.length)-1);
+    aff[n]={rank:tr*1000,tc:"t"+tr,tier:tr,via:parts};
+  });
+  const accessible=Object.entries(aff).sort((a,b)=>b[1].rank-a[1].rank);
+  fill("affAccess","affAccessCount",accessible,([n,a])=>`<li><span>${esc(n)} <span class="src">(${a.via?"T2, "+a.via.map(esc).join("+"):"T1 affinity"})</span></span></li>`);
+  const order=(x,y)=>((aff[y.affinity]?.rank||0)-(aff[x.affinity]?.rank||0))||((x.circle||0)-(y.circle||0))||x.name.localeCompare(y.name);
+  const spellLi=s=>`<li><span>${esc(s.name)}<span class="ptype ${aff[s.affinity]?.tc||"t1"}">(${s.circle??"?"}C-${esc(s.affinity||"?")})</span></span></li>`;
+  fill("spells","spellCount",S.spells.filter(s=>s.status==="learned").sort(order),spellLi);
+  fill("learning","learnCount",S.spells.filter(s=>s.status!=="learned").sort(order),spellLi);
+}
+// Shrink a path name just enough that name, tier, tag and progress stay on one line; line up columns
+function alignCols(){
+  const same=(sel)=>{ const els=[...document.querySelectorAll(sel)]; els.forEach(e=>e.style.minWidth="");
+    const w=Math.max(0,...els.map(e=>e.getBoundingClientRect().width)); els.forEach(e=>e.style.minWidth=Math.ceil(w)+"px"); };
+  same("#affinity .nm"); same("#body .nm"); same("#skills .chipcell"); same("#skills .slots"); same("#skills .num");
+}
+function fitPaths(){
+  alignCols();
+  document.querySelectorAll("#paths .top, #skills .top, #stats .row").forEach(top=>{
+    const nm=top.firstElementChild; if(!nm) return;
+    nm.style.fontSize="";
+    let size=100;
+    while(nm.scrollWidth>nm.clientWidth+1&&size>66){ size-=3; nm.style.fontSize=size+"%"; }
+  });
+}
+let fitTimer; window.addEventListener("resize",()=>{clearTimeout(fitTimer);fitTimer=setTimeout(fitPaths,100)});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>fitPaths());
+
+// ---------------- log list ----------------
+function entryHTML(r){
+  const rw=[], add=(l,v)=>{ if(v) rw.push(`<span><b>${l}</b>${esc(v)}</span>`); };
+  add("Unlocks",r.paths); add("Adv. attribute",r.aa); add("Stats",r.attr); add("Reward",r.other); add("Progress",r.prog); add("Status",r.status);
+  return `<li class="entry${/^y/i.test(r.ach||"")?" ach":""}"><div class="t">${esc(r.text||"")}</div>${rw.length?`<div class="rw">${rw.join("")}</div>`:""}${r.notes?`<div class="n">${esc(r.notes)}</div>`:""}</li>`;
+}
+// ---------------- picker points ----------------
+// Picker: chapter 1 has its in-chapter status screens; every later chapter is one entry, "Ch. N (age)",
+// with " status" added when a status screen was shown that chapter.
+const CH1_LABELS=["Ch. 1 (0 mo. gest)","Ch. 1 (4 mo. gest)","Ch. 1 (7 mo. gest)","Ch. 1 (newborn)"];
+function buildPoints(){
+  const P=[], rows=LOGROWS;
+  const lastIdx={}; rows.forEach((r,i)=>{ lastIdx[r.ch]=i; });
+  const span=ch=>MERGE.find(s=>ch>=s[0]&&ch<=s[1]);
+  const isScreen=r=>/(^|;)\s*status screen/i.test(r.status||"");
+  const ageTxt=cut=>{ let a=null; rows.slice(0,cut).forEach(r=>{ if(isNum(r.age)) a=r.age; });
+    return fmtAge(a).replace(/^Age /,"").replace(/^Newborn$/,"newborn").replace(/^Unborn · (\d+) months? before birth$/,"unborn"); };
+  // chapter 1: start, each status screen inside the chapter, end of chapter
+  if(lastIdx[1]!=null){
+    const c1=[0]; rows.forEach((r,i)=>{ if(r.ch===1&&isScreen(r)&&i!==lastIdx[1]) c1.push(i+1); }); c1.push(lastIdx[1]+1);
+    c1.forEach((cut,k)=>P.push({cut,ch:1,last:1,end:k===c1.length-1,label:k===c1.length-1?CH1_LABELS[3]:(CH1_LABELS[k]||`Ch. 1 (${ageTxt(cut)})`)}));
+  }
+  const chs=Object.keys(lastIdx).map(Number).filter(c=>c!==1).sort((a,b)=>a-b);
+  chs.forEach(ch=>{ const s=span(ch);
+    if(s&&ch!==Math.max(...chs.filter(c=>c>=s[0]&&c<=s[1]))) return;
+    const from=s?s[0]:ch, inCh=rows.filter(r=>r.ch>=from&&r.ch<=ch);
+    const cut=lastIdx[ch]+1, ag=ageTxt(cut);
+    P.push({cut,ch:from,last:ch,end:true,label:`Ch. ${from!==ch?from+"–"+ch:ch}${ag?` (${ag})`:""}${inCh.some(isScreen)?" status":""}`}); });
+  return P.sort((a,b)=>a.cut-b.cut);
+}
+const sel=$("point");
+function render(i){
+  const P=POINTS[i]; if(!P) return; sel.value=i;
+  const S=computeStatus(LOGROWS,P.cut); CUR_PT=S.ptypes;
+  $("notice").hidden=true; $("since").hidden=true; $("stats").hidden=false;
+  renderStats(S); renderDrawers(S); fitPaths();
+  $("logLead").textContent=`Everything up to this point, newest first. Later entries are hidden to avoid spoilers.`;
+  const upto=LOGROWS.slice(0,P.cut);
+  const chs=[...new Set(upto.map(e=>e.ch))].sort((x,y)=>y-x);
+  $("history").innerHTML=chs.map((x,k)=>{
+    const es=upto.filter(e=>e.ch===x);
+    const agl=[...new Set(es.filter(e=>isNum(e.age)).map(e=>fmtAge(e.age)))], ages=agl.length>1?agl[0]+" → "+agl[agl.length-1]:(agl[0]||"");
+    return `<details${k<2?" open":""}><summary><span class="ch">Chapter ${x}${ages?` <span class="chage">(${esc(ages)})</span>`:""}</span><span class="age">${es.length} entr${es.length>1?"ies":"y"}</span></summary>
+      <ul class="entries">${es.map(entryHTML).join("")}</ul></details>`}).join("");
+}
+// Deep link: page.html#ch-120 = stats at the end of chapter 119 (going into 120)
+function fromHash(){
+  const m=location.hash.match(/^#ch-(\d+)$/);
+  if(!m) return POINTS.length-1;
+  const t=+m[1]-1; let best=0;
+  POINTS.forEach((p,i)=>{ if(p.end&&(p.last??p.ch)<=t) best=i; });
+  return best;
+}
+function start(rows){
+  LOGROWS=rows; POINTS=buildPoints();
+  sel.innerHTML=POINTS.map((p,i)=>`<option value="${i}">${esc(p.label)}</option>`).reverse().join("");
+  render(fromHash());
+}
+sel.addEventListener("change",()=>{const i=+sel.value, p=POINTS[i];
+  if(p.end){ try{history.replaceState(null,"","#ch-"+((p.last??p.ch)+1))}catch(e){} }
+  render(i)});
+window.addEventListener("hashchange",()=>render(fromHash()));
+start(rowsFromTable(EMBEDDED_TABLE));
+if(SHEET_CSV) fetch(SHEET_CSV,{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.text(); })
+  .then(t=>{ const table=parseCSV(t); const head=(table[0]||[]).map(h=>String(h).trim());
+    // only switch to the live sheet once it has the Path Progress column
+    if(!head.some(h=>/^path progress/i.test(h))) return;
+    const rows=rowsFromTable(table); if(rows.length){ const keep=sel.value===String(POINTS.length-1); start(rows); } }).catch(()=>{});
+</script>
+
+</body>
+</html>
