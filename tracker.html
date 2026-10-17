@@ -18,7 +18,7 @@
   --surface-2: #1a1d25;
   --line: #2a2e39;
   --fg: #ebe8e1;
-  --muted: #9b9ea8;
+  --muted: #bbbec7;
   --faint: #6c7080;
   --g1: #9aa0a6; /* Grade 1: Minor · Basic · Weak */
   --g2: #5fb878; /* Grade 2: Lesser · Adept · Moderate */
@@ -52,8 +52,8 @@ a:hover { text-decoration-color: var(--fg); }
 }
 .wiki-top .wiki-wrap { display: flex; align-items: center; gap: 18px; padding-block: 10px; min-height: var(--topbar-h); }
 .wiki-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; flex-shrink: 0; }
-.wiki-brand b { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: .06em; line-height: 1; }
-.wiki-brand span { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
+.wiki-brand b { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1; }
+.wiki-brand span { font-family: var(--mono); font-size: 11px; color: var(--faint); text-transform: uppercase; }
 .wiki-links { display: flex; gap: 8px; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
 .wiki-links::-webkit-scrollbar { display: none; }
 .wiki-btn {
@@ -74,7 +74,7 @@ a:hover { text-decoration-color: var(--fg); }
 /* ===== FOOTER ===== */
 .wiki-foot { border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
 .wiki-foot .wiki-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; padding-block: 24px 32px; }
-.wiki-foot p { margin: 0; max-width: 60ch; }
+.wiki-foot p { margin: 0; }
 .wiki-foot a { color: var(--muted); }
 
 @media (max-width: 760px) {
@@ -87,16 +87,13 @@ a:hover { text-decoration-color: var(--fg); }
 <style>
 /* ===== BASTIAN STATUS TRACKER (all rules scoped to #tracker) ===== */
 #tracker{
-  color-scheme:dark;
-  --bg:#0c0d11; --panel:#14161c; --ink:#ebe8e1; --muted:#9b9ea8; --line:#2a2e39;
-  --track:#262a35; --tint:#1a1d25; --aether:#6b8fd6; --shadow:#a98ad8; --good:#5fb878; --warn:#d9a441;
-  --t1:var(--g1); --t2:var(--g2); --t3:var(--g3); --t4:var(--g4); --t5:var(--g5);
-  font-size:15px; line-height:1.45; color:var(--ink);
+  --panel:#14161c;
+  --ink:#ebe8e1;
+  --track:#262a35;
+  --aether:#6b8fd6;
+  --warn:#d9a441;
 }
 /* Layout: a status-window card (header, two stat columns) above a chapter-grouped achievement log */
-
-
-
 #tracker *{box-sizing:border-box}
 #tracker{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding:24px 16px 48px}
 #tracker .wrap{max-width:960px;margin:0 auto;display:grid;gap:20px}
@@ -115,14 +112,13 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker .hc.pick #point{flex:1 1 auto;min-width:0;width:auto}
 @media (max-width:860px){#tracker header{grid-template-columns:1fr;gap:10px}
 }
-#tracker h1{font-family:var(--display);font-weight:700;font-size:2.1rem;margin:0;line-height:1;letter-spacing:.02em}
+#tracker h1{font-family:var(--display);font-weight:700;font-size:2.1rem;margin:0;line-height:1;}
 #tracker .sub{color:var(--muted);font-size:.9rem;margin-top:6px}
 #tracker .meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);font-size:.85rem;align-items:center}
 #tracker .meta b{color:var(--ink);font-weight:600}
 #tracker select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 8px;max-width:100%}
 #tracker select:focus-visible,#tracker summary:focus-visible{outline:2px solid var(--aether);outline-offset:2px}
-#tracker .notice{margin:0;padding:10px 24px;background:var(--tint);border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted)}
-#tracker .notice b{color:var(--warn)}
+#tracker .error { color: var(--warn); font-size: 1.2rem; font-weight: bold }
 #tracker .cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr) minmax(0,1fr)}
 #tracker .col{padding:8px 18px 22px;min-width:0}
 #tracker .col+.col{border-left:1px solid var(--line)}
@@ -144,31 +140,31 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker #skills .num{text-align:right}
 #tracker .chage{font-family:var(--body);font-weight:400;font-size:.82rem;color:var(--muted)}
 #tracker .drawer{border-bottom:1px solid var(--line)}
-#tracker .drawer>summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 0 8px;cursor:pointer;list-style:none;font-family:var(--display);font-size:1.2rem;font-weight:700;letter-spacing:.03em}
+#tracker .drawer>summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 0 8px;cursor:pointer;list-style:none;font-family:var(--display);font-size:1.2rem;font-weight:700;}
 #tracker .drawer>summary::-webkit-details-marker{display:none}
 #tracker .drawer>summary .lbl::before{content:"▸";display:inline-block;width:1em;color:var(--muted);font-size:.8em;transition:transform .15s}
 #tracker .drawer[open]>summary .lbl::before{transform:rotate(90deg)}
-#tracker .drawer>summary .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
+#tracker .drawer>summary .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400}
 #tracker .drawer ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:5px;font-size:.92rem}
 #tracker .drawer li{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 #tracker .drawer li .sub{white-space:nowrap;color:var(--muted);font-size:.8rem;text-align:right}
 @media (prefers-reduced-motion:reduce){#tracker .drawer>summary .lbl::before{transition:none}
 }
 #tracker section{padding-top:18px}
-#tracker h2{font-family:var(--display);font-size:1.2rem;font-weight:700;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px;letter-spacing:.03em}
-#tracker h2 .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
+#tracker h2{font-family:var(--display);font-size:1.2rem;font-weight:700;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px;}
+#tracker h2 .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400}
 #tracker .rows{display:grid;gap:2px}
 #tracker .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0}
 #tracker .v,#tracker .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 #tracker .v{font-weight:600;white-space:nowrap}
 #tracker .num{font-size:.82rem;color:var(--muted);white-space:nowrap}
 #tracker .empty{color:var(--muted);font-style:italic}
-#tracker .chip{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--aether);white-space:nowrap}
-#tracker .chip.t1{color:var(--t1)}
-#tracker .chip.t2{color:var(--t2)}
-#tracker .chip.t3{color:var(--t3)}
-#tracker .chip.t4{color:var(--t4)}
-#tracker .chip.t5{color:var(--t5)}
+#tracker .chip{font-size:.7rem;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--aether);white-space:nowrap}
+#tracker .chip.t1{color:var(--g1)}
+#tracker .chip.t2{color:var(--g2)}
+#tracker .chip.t3{color:var(--g3)}
+#tracker .chip.t4{color:var(--g4)}
+#tracker .chip.t5{color:var(--g5)}
 #tracker .name{min-width:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #tracker .paths{display:grid;gap:12px}
 #tracker .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
@@ -183,25 +179,25 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker .paths .top>.num{flex:none}
 #tracker .bar{height:6px;background:var(--track);border-radius:3px;margin-top:4px;overflow:hidden}
 #tracker .bar i{display:block;height:100%;background:var(--aether);border-radius:3px}
-#tracker .bar i.t1{background:var(--t1)}
-#tracker .bar i.t2{background:var(--t2)}
-#tracker .bar i.t3{background:var(--t3)}
-#tracker .bar i.t4{background:var(--t4)}
-#tracker .bar i.t5{background:var(--t5)}
+#tracker .bar i.t1{background:var(--g1)}
+#tracker .bar i.t2{background:var(--g2)}
+#tracker .bar i.t3{background:var(--g3)}
+#tracker .bar i.t4{background:var(--g4)}
+#tracker .bar i.t5{background:var(--g5)}
 #tracker .bar i.skill{background:repeating-linear-gradient(135deg,var(--c) 0 4px,transparent 4px 7px)}
 #tracker .bar i.mut{background:repeating-linear-gradient(45deg,var(--c) 0 2px,transparent 2px 4px),repeating-linear-gradient(-45deg,var(--c) 0 2px,transparent 2px 4px)}
-#tracker .ladder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(min-content,1fr) minmax(0,1fr) minmax(0,1fr);gap:4px;margin:6px 0 10px;font-size:.78rem}
+#tracker .ladder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(min-content,1fr) minmax(0,1fr) minmax(0,1fr);gap:4px;margin:6px 0 10px;}
 #tracker .ladder div{border-top:4px solid var(--c);padding-top:4px;min-width:0}
-#tracker .ladder .nw{white-space:nowrap}
 @media (max-width:560px){#tracker .ladder{grid-template-columns:minmax(0,1fr)}
 }
 #tracker .ladder b{display:block;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+#tracker .ladder ul { list-style: none; }
 #tracker .ptype{font-family:var(--mono);font-size:.72rem;font-weight:600;margin-left:6px}
-#tracker .tier.t1,#tracker .ptype.t1{color:var(--t1)}
-#tracker .tier.t2,#tracker .ptype.t2{color:var(--t2)}
-#tracker .tier.t3,#tracker .ptype.t3{color:var(--t3)}
-#tracker .tier.t4,#tracker .ptype.t4{color:var(--t4)}
-#tracker .tier.t5,#tracker .ptype.t5{color:var(--t5)}
+#tracker .tier.t1,#tracker .ptype.t1{color:var(--g1)}
+#tracker .tier.t2,#tracker .ptype.t2{color:var(--g2)}
+#tracker .tier.t3,#tracker .ptype.t3{color:var(--g3)}
+#tracker .tier.t4,#tracker .ptype.t4{color:var(--g4)}
+#tracker .tier.t5,#tracker .ptype.t5{color:var(--g5)}
 #tracker .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted);margin:-2px 0 10px}
 #tracker .legend span{display:inline-flex;align-items:center;gap:5px}
 #tracker .legend i{display:inline-block;width:14px;height:6px;border-radius:3px}
@@ -224,11 +220,9 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker summary .age{font-size:.82rem;color:var(--muted);white-space:nowrap}
 #tracker .entries{list-style:none;margin:0 0 12px;padding:0 0 0 1em;display:grid;gap:10px}
 #tracker .entry .t{font-weight:600}
-#tracker .entry.ach .t::before{content:"Achievement";font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:6px;vertical-align:2px;font-weight:600}
+#tracker .entry.ach .t::before{content:"Achievement";font-size:.65rem;text-transform:uppercase;color:var(--warn);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:6px;vertical-align:2px;font-weight:600}
 #tracker .rw{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.86rem;margin-top:2px}
-#tracker .rw span b{color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;margin-right:4px}
-#tracker .entry.lore .t{font-weight:400}
-#tracker .entry.lore .t::before{content:"Story note";font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--shadow);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:6px;vertical-align:2px;font-weight:600}
+#tracker .rw span b{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;margin-right:4px}
 #tracker .entry .n{color:var(--muted);font-size:.84rem;font-style:italic;margin-top:2px}
 #tracker .ref{padding:0 0 14px 1em;font-size:.9rem;max-width:70ch}
 #tracker .ref h3{font-family:var(--display);font-size:1rem;margin:12px 0 4px}
@@ -236,7 +230,7 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker .tbl{overflow-x:auto;margin:4px 0 8px}
 #tracker .ref table{border-collapse:collapse;font-size:.86rem;min-width:100%}
 #tracker .ref th,#tracker .ref td{text-align:left;padding:4px 10px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
-#tracker .ref th{color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+#tracker .ref th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase}
 #tracker .ref td.steps{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem}
 #tracker .src{color:var(--muted);font-size:.8rem;font-style:italic;margin:10px 0 0}
 
@@ -264,7 +258,7 @@ a:hover { text-decoration-color: var(--fg); }
 <main class="wiki-main">
   <div class="wiki-wrap">
     <div id="tracker">
-      <!-- ===== PASTE THE TRACKER'S HTML HERE (replace the placeholder box below) ===== -->
+    <p class="error" id="error" style="display:none"></p>
       <div class="wrap">
   <div class="sheet">
     <header>
@@ -272,7 +266,6 @@ a:hover { text-decoration-color: var(--fg); }
       <div class="hc"><span class="cls">Class: <b id="charClass">—</b></span></div>
       <div class="hc pick"><label class="picker" for="point">Status at</label><select id="point"></select></div>
     </header>
-    <p class="notice" id="notice" hidden style="display:none"></p>
     <div class="cols" id="stats">
       <div class="col">
         <section><h2>Basic Attributes</h2><div class="rows" id="basic"></div></section>
@@ -305,7 +298,7 @@ a:hover { text-decoration-color: var(--fg); }
 
   <div class="log">
     <h2>Achievements &amp; Path Progress</h2>
-    <p class="lead" id="logLead"></p>
+    <p class="lead">Everything up to this point, newest first.</p>
     <details class="rules"><summary><span class="ch">How the numbers work</span></summary>
       <div class="ref">
         <h3>Attributes, affinities and skills</h3>
@@ -318,11 +311,11 @@ a:hover { text-decoration-color: var(--fg); }
         </ul>
         <h3>Grade colors</h3>
         <div class="ladder">
-          <div style="--c:var(--t1)"><b>1</b>Minor · Basic · Weak</div>
-          <div style="--c:var(--t2)"><b>2</b>Lesser · Adept · Moderate</div>
-          <div style="--c:var(--t3)"><b>3</b><span class="nw">Greater · Advanced</span> · Strong</div>
-          <div style="--c:var(--t4)"><b>4</b>Superior · Elite · Potent</div>
-          <div style="--c:var(--t5)"><b>5</b>Exalted · Master · Perfect</div>
+          <div style="--c:var(--g1)"><ul><li><b>1</b></li><li>Minor</li><li>Basic</li><li>Weak</li></ul></div>
+          <div style="--c:var(--g2)"><ul><li><b>2</b></li><li>Lesser</li><li>Adept</li><li>Moderate</li></ul></div>
+          <div style="--c:var(--g3)"><ul><li><b>3</b></li><li>Greater</li><li>Advanced</li><li>Strong</li></ul></div>
+          <div style="--c:var(--g4)"><ul><li><b>4</b></li><li>Superior</li><li>Elite</li><li>Potent</li></ul></div>
+          <div style="--c:var(--g5)"><ul><li><b>5</b></li><li>Exalted</li><li>Master</li><li>Perfect</li></ul></div>
         </div>
         <h3>Aether</h3>
         <ul>
@@ -365,14 +358,13 @@ a:hover { text-decoration-color: var(--fg); }
 <footer class="wiki-foot">
   <div class="wiki-wrap">
     <p>A free fan project. <em>Gifted</em> and its world belong to Ellake. Read the story on <a href="https://www.royalroad.com/fiction/181303/gifted" target="_blank" rel="noopener">Royal Road</a>, and support Ellake financially on <a href="https://www.patreon.com/cw/Ellake" target="_blank" rel="noopener">Patreon</a> or by buying the books when they come out on <a href="https://www.amazon.com/stores/author/B0DG51611M/allbooks" target="_blank" rel="noopener">Amazon</a> &amp; other distributors.</p>
-    <p><a href="./">Back to the wiki</a></p>
   </div>
 </footer>
 
 <script>
 // ================= SETTINGS =================
 // The Achievements tab of the Google Sheet. The page reads it on every load and works everything out from it.
-// If the sheet can't be reached, the page uses the copy saved below instead.
+// If the sheet can't be reached, the page displays nothing.
 const SHEET_CSV = "https://docs.google.com/spreadsheets/d/1-ZpPiEqdRo89JoZTGhDuBmouyrdEEdiADFyBod5PXQ8/gviz/tq?tqx=out:csv&headers=1&gid=2090483141";
 // Chapters shown as one picker entry
 const MERGE = [[2,3],[7,9],[17,19],[27,28],[50,51],[126,127]];
@@ -715,9 +707,8 @@ const sel=$("point");
 function render(i){
   const P=POINTS[i]; if(!P) return; sel.value=i;
   const S=computeStatus(LOGROWS,P.cut); CUR_PT=S.ptypes;
-  $("notice").hidden=true; $("since").hidden=true; $("stats").hidden=false;
+  $("since").hidden=true; $("stats").hidden=false;
   renderStats(S); renderDrawers(S); fitPaths();
-  $("logLead").textContent=`Everything up to this point, newest first. Later entries are hidden to avoid spoilers.`;
   const upto=LOGROWS.slice(0,P.cut);
   const chs=[...new Set(upto.map(e=>e.ch))].sort((x,y)=>y-x);
   $("history").innerHTML=chs.map((x,k)=>{
@@ -744,11 +735,23 @@ sel.addEventListener("change",()=>{const i=+sel.value, p=POINTS[i];
   render(i)});
 window.addEventListener("hashchange",()=>render(fromHash()));
 start(rowsFromTable(EMBEDDED_TABLE));
-if(SHEET_CSV) fetch(SHEET_CSV,{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.text(); })
-  .then(t=>{ const table=parseCSV(t); const head=(table[0]||[]).map(h=>String(h).trim());
-    // only switch to the live sheet once it has the Path Progress column
-    if(!head.some(h=>/^path progress/i.test(h))) return;
-    const rows=rowsFromTable(table); if(rows.length){ const keep=sel.value===String(POINTS.length-1); start(rows); } }).catch(()=>{});
+
+fetch(SHEET_CSV,{cache:"no-store"})
+  .then(r=>{
+    if(!r.ok) return Promise.reject("Could not fetch spreadsheet");
+    return r.text();
+  })
+  .then(t=>{
+    const table=parseCSV(t);
+    const head=(table[0]||[]).map(h=>String(h).trim());
+    if(!head.some(h=>/^path progress/i.test(h))) return Promise.reject("Could not parse spreadsheet");
+    const rows=rowsFromTable(table); if(rows.length){ const keep=sel.value===String(POINTS.length-1); start(rows); }
+   })
+   .catch(e => {
+      const error = $("error");
+      error.style.display = "block";
+      error.textContent = e;
+    });
 </script>
 
 </body>
