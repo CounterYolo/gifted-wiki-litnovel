@@ -3,7 +3,7 @@
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
 ## 2026-10-18
-- Added a **Spreadsheet** button to the top bar that opens the Google Sheet the tracker reads from.
+- Added a **Spreadsheet** button to the top bar that opens the Community GoogleSpreadsheet the tracker reads from (reads & auto-updates from the Achievements tab specifically from that web link).
 - Renamed the **Royal Road** button to **Ellake's Royal Road** for added clarity that the Spreadsheet isn't updated by Ellake.
 
 ## 2026-10-14
