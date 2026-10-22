@@ -3,7 +3,7 @@
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
 ## 2026-10-22
-- Grade colors adjusted to match the guardian bracelet's color order from chapter 148 (book 3 chp 26): red (lowest) → orange → yellow → green → blue (highest)
+- Grade colors adjusted to match the guardian bracelet's color order from chapter 148 (book 3 chp 26): red (lowest) → orange → yellow → green → blue (highest). For easier color differentiation & to less emphasize the lowest grades/paths, red was replaced with gray.
 
 ## 2026-10-18
 - Added a **Spreadsheet** button to the top bar that opens the Community GoogleSpreadsheet the tracker reads from (reads & auto-updates from the Achievements tab specifically from that web link).
