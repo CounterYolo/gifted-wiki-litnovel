@@ -20,7 +20,7 @@
   --fg: #ebe8e1;
   --muted: #9b9ea8;
   --faint: #6c7080;
-  --g1: #9aa0a6; /* Grade 1: Minor · Basic · Weak */
+  --g1: #f7bac4; /* Grade 1: Minor · Basic · Weak */
   --g2: #d4802f; /* Grade 2: Lesser · Adept · Moderate */
   --g3: #f4dc55; /* Grade 3: Greater · Advanced · Strong */
   --g4: #167a5a; /* Grade 4: Superior · Elite · Potent */
@@ -90,7 +90,7 @@ a:hover { text-decoration-color: var(--fg); }
   color-scheme:dark;
   --bg:#0c0d11; --panel:#14161c; --ink:#ebe8e1; --muted:#9b9ea8; --line:#2a2e39;
   --track:#262a35; --tint:#1a1d25; --aether:#6b8fd6; --shadow:#a98ad8; --good:#5fb878; --warn:#d9a441;
-  --t1:var(--g1); --t2:var(--g2); --t3:var(--g3); --t4:var(--g4); --t5:var(--g5); --edge:rgba(255,255,255,.15); --i1:#9aa0a6; --i2:#d4802f; --i3:#f4dc55; --i4:#24946c; --i5:#5a7ef0;
+  --t1:var(--g1); --t2:var(--g2); --t3:var(--g3); --t4:var(--g4); --t5:var(--g5); --edge:rgba(255,255,255,.15); --i1:#f7bac4; --i2:#d4802f; --i3:#f4dc55; --i4:#24946c; --i5:#5a7ef0;
   font-size:15px; line-height:1.45; color:var(--ink);
 }
 /* Layout: a status-window card (header, two stat columns) above a chapter-grouped achievement log */
@@ -239,6 +239,9 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker .ref th{color:var(--muted);font-weight:600;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
 #tracker .ref td.steps{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem}
 #tracker .src{color:var(--muted);font-size:.8rem;font-style:italic;margin:10px 0 0}
+#tracker .core td,#tracker .core th{text-align:right}
+#tracker .core td:first-child,#tracker .core th:first-child{text-align:left}
+#tracker .core th[colspan]{text-align:center}
 
 #tracker{padding:0;background:transparent}
 #tracker .wrap{max-width:none}
@@ -309,16 +312,8 @@ a:hover { text-decoration-color: var(--fg); }
     <p class="lead" id="logLead"></p>
     <details class="rules" open><summary><span class="ch">How the numbers work</span></summary>
       <div class="ref">
-        <h3>Attributes, affinities and skills</h3>
-        <ul>
-          <li>Basic and advanced attributes start at 100 and can keep rising past 200. Each advanced attribute has its own growth condition; path progress is the only one proven so far.</li>
-          <li>A Strong or higher affinity speeds up progress on related paths and on learning spells. Using a skill or casting a spell without a direct affinity for it, but with access through other affinities, costs extra aether.</li>
-          <li>Spellcasting requires the Aethersensing and Aether Manipulation advanced attributes. Without them, affinity-related paths can only advance through sensing an affinity and using skills of that affinity.</li>
-          <li>Affinities start at 100 and move up a grade automatically at 200. Grades: Weak, Moderate, Strong, Potent, Perfect. Affinities affect efficiency, which elements he can wield, and path development.</li>
-          <li>Skills run from 1 to 100. To advance, a skill needs double its current skill slots and an upgraded skill chosen by the user; otherwise it stays at 100. Skill power grades: Minor, Lesser, Greater, Superior, Exalted.</li>
-        </ul>
         <h3>Grade colors</h3>
-        <p class="src" style="margin:0 0 4px">Follows the guardian bracelets' order, from red (lowest) to blue (highest). In the tracker, red is replaced with gray for easier color differentiation.</p>
+        <p class="src" style="margin:0 0 4px">Follows the guardian bracelets' order, from red (lowest) to blue (highest). In the tracker, red is shown as a light pink for easier color differentiation.</p>
         <div class="ladder">
           <div style="--c:var(--t1)"><b>1</b>Minor · Basic · Weak</div>
           <div style="--c:var(--t2)"><b>2</b>Lesser · Adept · Moderate</div>
@@ -326,11 +321,6 @@ a:hover { text-decoration-color: var(--fg); }
           <div style="--c:var(--t4)"><b>4</b>Superior · Elite · Potent</div>
           <div style="--c:var(--t5)"><b>5</b>Exalted · Master · Perfect</div>
         </div>
-        <h3>Aether</h3>
-        <ul>
-          <li>Aether Core is volume, Aether Channels are throughput, and the Aether stat is potency.</li>
-          <li>Aether Core sizes use the same grades as skills: Minor, Lesser, Greater, Superior, Exalted.</li>
-        </ul>
         <h3>Paths</h3>
         <div class="tbl"><table>
           <thead><tr><th>Path type</th><th>Tiers</th><th>Steps needed per tier</th></tr></thead>
@@ -342,11 +332,35 @@ a:hover { text-decoration-color: var(--fg); }
           </tbody></table></div>
         <ul>
           <li>Steps carry over when a tier is reached; only the target goes up.</li>
-          <li>On the status sheet each path is tagged (B), (A) or (E) and colored by its grade: gray for basic, yellow for advanced, green for elite. A mutated path adds -M, as in (B-M), and gets a crosshatched bar.</li>
+          <li>On the status sheet each path is tagged (B), (A) or (E) and colored by its grade: pink for basic, yellow for advanced, green for elite. A mutated path adds -M, as in (B-M), and gets a crosshatched bar.</li>
           <li>The Completionist earns 10 steps per completed basic path, 20 per advanced and 40 per elite, plus a Talented/Gifted bonus. Rift paths give none.</li>
           <li>Exceptionalism earns 5 steps per basic path, 10 per advanced and 15 per elite, plus variable amounts from achievements. Talented/Gifted bonuses don't apply to those, but a choose-a-path reward spent on Exceptionalism does get the bonus.</li>
           <li>Talented adds a step bonus of 20% at 100 and 40% at 200 (its value ÷ 5, as a whole percent). Gifted doubles that: 40% at 100, 80% at 200. Fractions are dropped, both from the percent and from the bonus steps, so a 1.9-step bonus adds 1.</li>
           <li>Progress speed scales with a race's lifespan. System text shows this as a racial multiplier against the human baseline; longer-lived races like elves progress more slowly.</li>
+        </ul>
+        <h3>Aether Core scaling</h3>
+        <p class="src" style="margin:0 0 4px">Capacity in Base Minor Cores (BMC): a Minor core at 100 = 1. Each core grade holds 5× the one before (5×5×5×5×5). Reaching 200 upgrades a core to 100 of the next type (e.g. Minor 200 → Lesser 100). Exalted is the highest core type humanity can reach, so Exalted 200 (3,125 BMC) is the highest capacity anyone can have.</p>
+        <div class="tbl"><table class="core">
+          <thead><tr><th>Core type</th><th colspan="5">Rating (BMC equivalent)</th></tr><tr><th></th><th>100</th><th>140</th><th>170</th><th>190</th><th>200</th></tr></thead>
+          <tbody>
+            <tr><td><span class="chip t1">Minor</span></td><td class="steps">1</td><td class="steps">2</td><td class="steps">3</td><td class="steps">4</td><td class="steps">—</td></tr>
+            <tr><td><span class="chip t2">Lesser</span></td><td class="steps">5</td><td class="steps">10</td><td class="steps">15</td><td class="steps">20</td><td class="steps">—</td></tr>
+            <tr><td><span class="chip t3">Greater</span></td><td class="steps">25</td><td class="steps">50</td><td class="steps">75</td><td class="steps">100</td><td class="steps">—</td></tr>
+            <tr><td><span class="chip t4">Superior</span></td><td class="steps">125</td><td class="steps">250</td><td class="steps">375</td><td class="steps">500</td><td class="steps">—</td></tr>
+            <tr><td><span class="chip t5">Exalted</span></td><td class="steps">625</td><td class="steps">1,250</td><td class="steps">1,875</td><td class="steps">2,500</td><td class="steps">3,125</td></tr>
+          </tbody></table></div>
+        <h3>Attributes, affinities and skills</h3>
+        <ul>
+          <li>Basic and advanced attributes start at 100 and can keep rising past 200. Each advanced attribute has its own growth condition; path progress is the only one proven so far.</li>
+          <li>A Strong or higher affinity speeds up progress on related paths and on learning spells. Using a skill or casting a spell without a direct affinity for it, but with access through other affinities, costs extra aether.</li>
+          <li>Spellcasting requires the Aethersensing and Aether Manipulation advanced attributes. Without them, affinity-related paths can only advance through sensing an affinity and using skills of that affinity.</li>
+          <li>Affinities start at 100 and move up a grade automatically at 200. Grades: Weak, Moderate, Strong, Potent, Perfect. Affinities affect efficiency, which elements he can wield, and path development.</li>
+          <li>Skills run from 1 to 100. To advance, a skill needs double its current skill slots and an upgraded skill chosen by the user; otherwise it stays at 100. Skill power grades: Minor, Lesser, Greater, Superior, Exalted.</li>
+        </ul>
+        <h3>Aether</h3>
+        <ul>
+          <li>Aether Core is volume, Aether Channels are throughput, and the Aether stat is potency.</li>
+          <li>Aether Core sizes use the same grades as skills: Minor, Lesser, Greater, Superior, Exalted.</li>
         </ul>
         <h3>Classes</h3>
         <ul>
