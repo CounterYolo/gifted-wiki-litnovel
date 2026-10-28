@@ -658,9 +658,11 @@ function renderStats(D){
   $("charName").textContent=D.name; $("charClass").textContent=D.class;
   $("basic").innerHTML=D.basic.map(([k,v])=>row(k,v)).join("");
   $("advCount").textContent=`${D.advanced.items.length}/${D.advanced.slots??"?"}`;
-  // Gifted: bonus XP = Gifted ÷ 2.5, whole percent, rounded down (e.g. 233 → +93% XP)
-  $("advanced").innerHTML=D.advanced.items.length?D.advanced.items.map(([k,v])=>{ const r=row(k,v);
-    return /^gifted$/i.test(String(k).trim())&&isFinite(+v)&&v!==""&&v!=null?r.replace('<span class="v">',`<span class="v"><span class="gxp">(+${Math.floor(+v*2/5)}% XP)</span>`):r; }).join(""):'<div class="row empty">Empty</div>';
+  // Bonus XP, whole percent, rounded down: Gifted = rating ÷ 2.5 (100 → 40%, 233 → 93%);
+  // Talented is half as effective = rating ÷ 5 (100 → 20%, 150 → 30%)
+  const XPDIV={gifted:[2,5],talented:[1,5]};
+  $("advanced").innerHTML=D.advanced.items.length?D.advanced.items.map(([k,v])=>{ const r=row(k,v), d=XPDIV[String(k).trim().toLowerCase()];
+    return d&&v!==""&&v!=null&&isFinite(+v)?r.replace('<span class="v">',`<span class="v"><span class="gxp">(+${Math.floor(+v*d[0]/d[1])}% XP)</span>`):r; }).join(""):'<div class="row empty">Empty</div>';
   $("affCount").textContent=`${D.affinity.items.length}/${D.affinity.slots??"?"}`;
   $("affinity").innerHTML=D.affinity.items.map(([k,g,v])=>row(k,v,g)).join("");
   $("bodyCount").textContent=`(${D.body.length})`;
