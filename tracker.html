@@ -255,11 +255,13 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker h2 .hright{margin-left:auto}
 #tracker #paths .num.npct,#tracker #paths .num.nfull,#tracker #paths.bars-tier .num.nabs,#tracker #paths.bars-full .num.nabs{display:none}
 #tracker #paths.bars-tier .num.npct,#tracker #paths.bars-full .num.nfull{display:inline}
-#tracker .bmc{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px}
-#tracker #body.nobmc .bmc{display:none}
-#tracker .hright{display:inline-flex;align-items:center;gap:12px;align-self:center}
+#tracker .bmc,#tracker .gxp{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px}
+#tracker #body.nobmc .bmc,#tracker #advanced.noxp .gxp{display:none}
+#tracker .hright{display:inline-flex;align-items:baseline;gap:12px;align-self:baseline}
 #tracker .dtoggle{font-family:var(--body);font-size:.72rem;font-weight:400;letter-spacing:0;color:var(--muted);display:inline-flex;align-items:center;gap:5px;cursor:pointer;user-select:none;line-height:1}
-#tracker .dtoggle input{margin:0;width:13px;height:13px;accent-color:var(--t5);cursor:pointer}
+#tracker .dtoggle input{margin:0;width:13px;height:13px;accent-color:var(--t5);cursor:pointer;align-self:center}
+#tracker .hright .dtoggle{align-items:baseline}
+#tracker .hright .dsel{align-self:center}
 
 #tracker{padding:0;background:transparent}
 #tracker .wrap{max-width:none}
@@ -298,9 +300,9 @@ a:hover { text-decoration-color: var(--fg); }
     <div class="cols" id="stats">
       <div class="col">
         <section><h2>Basic Attributes</h2><div class="rows" id="basic"></div></section>
-        <section><h2>Advanced Attributes <span class="count" id="advCount"></span></h2><div class="rows" id="advanced"></div></section>
+        <section><h2><span style="white-space:nowrap">Advanced Attributes</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showXp">XP</label><span class="count" id="advCount"></span></span></h2><div class="rows" id="advanced"></div></section>
         <section><h2>Affinity <span class="count" id="affCount"></span></h2><div class="rows" id="affinity"></div></section>
-        <section><h2><span style="white-space:nowrap">Body Features <span class="count" id="bodyCount"></span></span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showBmc">BMC</label></span></h2><div class="rows" id="body"></div></section>
+        <section><h2><span style="white-space:nowrap">Body Features</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showBmc">BMC</label><span class="count" id="bodyCount"></span></span></h2><div class="rows" id="body"></div></section>
         <section><h2>Boons <span class="count" id="boonCount"></span></h2><div id="boons"></div></section>
       </div>
       <div class="col">
@@ -656,7 +658,9 @@ function renderStats(D){
   $("charName").textContent=D.name; $("charClass").textContent=D.class;
   $("basic").innerHTML=D.basic.map(([k,v])=>row(k,v)).join("");
   $("advCount").textContent=`${D.advanced.items.length}/${D.advanced.slots??"?"}`;
-  $("advanced").innerHTML=D.advanced.items.length?D.advanced.items.map(([k,v])=>row(k,v)).join(""):'<div class="row empty">Empty</div>';
+  // Gifted: bonus XP = Gifted ÷ 2.5, whole percent, rounded down (e.g. 233 → +93% XP)
+  $("advanced").innerHTML=D.advanced.items.length?D.advanced.items.map(([k,v])=>{ const r=row(k,v);
+    return /^gifted$/i.test(String(k).trim())&&isFinite(+v)&&v!==""&&v!=null?r.replace('<span class="v">',`<span class="v"><span class="gxp">(+${Math.floor(+v*2/5)}% XP)</span>`):r; }).join(""):'<div class="row empty">Empty</div>';
   $("affCount").textContent=`${D.affinity.items.length}/${D.affinity.slots??"?"}`;
   $("affinity").innerHTML=D.affinity.items.map(([k,g,v])=>row(k,v,g)).join("");
   $("bodyCount").textContent=`(${D.body.length})`;
@@ -827,6 +831,10 @@ window.addEventListener("resize",layoutSbars);
 // "BMC" checkbox by Body Features: show the Aether Core's capacity in Base Minor Cores (remembered per browser)
 (function(){ const cb=$("showBmc"); if(!cb) return; let on=false; try{ on=localStorage.getItem("showBmc")==="1"; }catch(e){}
   const apply=()=>{ $("body").classList.toggle("nobmc",!cb.checked); try{ localStorage.setItem("showBmc",cb.checked?"1":"0"); }catch(e){} };
+  cb.checked=on; apply(); cb.addEventListener("change",apply); })();
+// "XP" checkbox by Advanced Attributes: show Gifted's bonus XP % (remembered per browser)
+(function(){ const cb=$("showXp"); if(!cb) return; let on=false; try{ on=localStorage.getItem("showXp")==="1"; }catch(e){}
+  const apply=()=>{ $("advanced").classList.toggle("noxp",!cb.checked); try{ localStorage.setItem("showXp",cb.checked?"1":"0"); }catch(e){} };
   cb.checked=on; apply(); cb.addEventListener("change",apply); })();
 // Bar style for Active Paths (default "classic"): "full" (whole path, tier separators), "tier" (current tier only), "classic" (toward the next tier's total).
 // Works with either a <select id="barMode"> or checkboxes with name="barMode"; remembered per browser.
