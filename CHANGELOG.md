@@ -7,6 +7,7 @@ Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
   - **Classic view** (default): the original bar, filled toward the next tier's total. This is how one would expect the bar to look from how the status screen looks.
   - **Current tier progress**: the bar shows only the current tier, and the number beside it becomes the % done in that tier. This helps clarify how far along someone is along the current tier of a path.
   - **Full path**: one bar for the whole path, with a separator between each tier at its true position (IX|X halfway on basic paths, IV|V halfway on advanced). The small early tiers grow steadily in size. This helps clarify & give context to how far along someone is to the full completion of a path.
+- Advanced Attributes: a new **XP** checkbox (off by default) shows the XP% modifier bonus to path rewards & path progress speed as a result of the Talented/Gifted Advanced Attribute. It displays the whole percentage rounded down, as that is how the author also calculates path progress through this advanced attribute.
 - Body Features: a new **BMC** checkbox (off by default) shows the Aether Core's capacity in Base Minor Cores next to its rating, calculated from the Aether Core scaling table using a piecewise linear formula to estimate the BMC between established breakpoints.
 
 ## 2026-10-25
