@@ -253,8 +253,8 @@ a:hover { text-decoration-color: var(--fg); }
 #tracker .dtoggles{display:inline-flex;gap:8px;white-space:nowrap}
 #tracker h2:has(.dtoggles){flex-wrap:wrap;row-gap:4px}
 #tracker h2 .hright{margin-left:auto}
-#tracker #paths .num.npct,#tracker #paths.bars-tier .num.nabs{display:none}
-#tracker #paths.bars-tier .num.npct{display:inline}
+#tracker #paths .num.npct,#tracker #paths .num.nfull,#tracker #paths.bars-tier .num.nabs,#tracker #paths.bars-full .num.nabs{display:none}
+#tracker #paths.bars-tier .num.npct,#tracker #paths.bars-full .num.nfull{display:inline}
 #tracker .bmc{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px}
 #tracker #body.nobmc .bmc{display:none}
 #tracker .hright{display:inline-flex;align-items:center;gap:12px;align-self:center}
@@ -679,7 +679,7 @@ function renderStats(D){
     const pctAll=Math.min(100,c/m*100);
     // progress inside the current tier only (e.g. 7,838/10,000 on IX = 2,838 of the 5,000 needed since VIII→IX)
     const ki=ths.indexOf(m), lo=ki>0?ths[ki-1]:0, pctTier=m>lo?Math.max(0,Math.min(100,(c-lo)/(m-lo)*100)):100;
-    return `<div class="path"><div class="top">${name}<span class="num nabs">${fmtN(c,m,p)}</span><span class="num npct">${Math.floor(pctTier)}%</span></div>
+    return `<div class="path"><div class="top">${name}<span class="num nabs">${fmtN(c,m,p)}</span><span class="num nfull">${fmtN(c,ths[nT],p)}</span><span class="num npct">${Math.floor(pctTier)}%</span></div>
       <div class="sbar" data-th="${ths.join(",")}" style="--c:var(--${tc})">${segs}</div>
       <div class="bar classic"><i class="${mut?"mut":tc}" style="--c:var(--${tc});width:${pctAll}%"></i></div>
       <div class="bar tierbar"><i class="${mut?"mut":tc}" style="--c:var(--${tc});width:${pctTier.toFixed(1)}%"></i></div></div>`}).join(""):'<div class="row empty">None yet</div>';
