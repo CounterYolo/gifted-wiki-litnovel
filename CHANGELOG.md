@@ -3,8 +3,11 @@
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
 ## 2026-10-28
-- Per community suggestion, Active Paths now has a dropdown to choose the bar style: "Classic view" (default, the original bar), "Current tier progress" (bar shows only the current tier, with the number shown as % completed in that tier), and "Full path" (one bar for the whole path with separators between tiers, placed proportionally so IX|X is halfway on basic paths and IV|V is halfway on advanced paths).
-- Body Features now has a "BMC" checkbox (off by default) that shows the Aether Core's equivalent in Base Minor Cores next to its rating, calculated from the Aether Core Scaling table and rounded down.
+- Active Paths: a new dropdown next to the path count chooses how the path bars look:
+  - **Classic view** (default): the original bar, filled toward the next tier's total.
+  - **Current tier progress**: the bar shows only the current tier, and the number beside it becomes the % done in that tier.
+  - **Full path**: one bar for the whole path, with a separator between each tier at its true position (IX|X halfway on basic paths, IV|V halfway on advanced). The small early tiers grow steadily in size.
+- Body Features: a new **BMC** checkbox (off by default) shows the Aether Core's capacity in Base Minor Cores next to its rating, calculated from the Aether Core scaling table using a piecewise linear formula to estimate the BMC between established breakpoints.
 
 ## 2026-10-25
 - Per suggestion from Fred on Discord "Switch to HSL, and use higher luminosity for brightness", colors adjusted accordingly and the grade 1 gray now looks like a light red (light pink).
