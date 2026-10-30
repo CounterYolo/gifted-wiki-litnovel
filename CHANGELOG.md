@@ -2,6 +2,13 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-10-30
+- Achievements & Path Progress: Adjusted into 3 variants 
+  - **Age Summary** (default): Summary of info by age in the series. Due to the timeskips not always being on a year-by-year basis, this isn't an exact science
+  - **Chapter Summary**: Summary of info by chapter in the series.
+  - **By Entry** (old way): Has actual info by row entry in the GoogleSpreadsheet -- as it generally appears in the chapter. Best tab for verifying if the info going into the tracker was entered correctly.
+- How the Numbers Work: section is now a button on the top bar of the tracker, that is a dropdown above the status sheet when clicked
+
 ## 2026-10-28
 - Active Paths: a new dropdown next to the path count chooses how the path bars look:
   - **Classic view** (default): the original bar, filled toward the next tier's total. This is how one would expect the bar to look from how the status screen looks.
