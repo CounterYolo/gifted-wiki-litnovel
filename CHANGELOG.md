@@ -2,6 +2,15 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-01
+- Affinity: the "Castable Affinities" dropdown is replaced by a **Castable & Tier** checkbox by the Affinity heading (off by default). When ticked, each affinity shows its type in italics after its grade ("T1 affinity"), lined up in one column. Affinities Bastian can only cast through others appear as an extra row in italics, with a dashed EQUIV oval and their type (e.g. Dream: *EQUIV-Moderate*, "T2, Life+Shadow", *108*). The EQUIV value is the average of the two affinities, then lowered one grade (Potent 116 + Moderate 100 → Strong 108 → Moderate 108). This grade "downgrade" is to help illustrate that there is indeed an advantage to combining affinities to a higher tier -- if someone needed intends to use that higher tier for skills & spells primarily vs the lower-tier affinities.
+- Spells: "Spells Learned" and "Spells in Progress" are combined into one **Spells** dropdown with **Learned / In-Progress / Lost** tabs in its heading. The tabs only appear once Bastian has spells, and Lost only once a spell has been lost. Spells of his own direct affinities are listed before those cast through combined ones like Life+Shadow=Dream.
+- Advanced Attributes: the "XP" checkbox is now **Tier**. When ticked it shows each AA's tier in italics (Talented T2 AA, Gifted T3 AA; Aethersensing and Aether Manipulation assumed as T1 AA's for now), lined up in one column, with each one's bonus % by its number.
+- Body Features: the BMC checkbox is now **BMC & BWC**. Aether Channels also show their capacity in Base Weak Channels (Weak 100 = 1 BWC), assuming channels scale the same way as cores.
+- How the numbers work:
+  - The Talented/Gifted note is replaced by a new **Advanced attributes** section on the advanced attribute tiers (T1 +10%, T2 +20%, T3 +40%, T4 +80%…, scaled by rating, fractions dropped; Talented is T2, Gifted is T3).
+  - "Aether Core scaling" is now **Aether Core & Aether Channels scaling**, covering both BMC and BWC.
+
 ## 2026-10-30
 - Achievements & Path Progress: Adjusted into 3 variants 
   - **Age Summary** (default): Summary of info by age in the series. Due to the timeskips not always being on a year-by-year basis, this isn't an exact science
