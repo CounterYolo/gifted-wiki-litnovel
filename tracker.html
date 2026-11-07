@@ -1409,15 +1409,14 @@ const spellSrc=(k,name)=>"";   // the sheet records spells only as status lines,
 function spellsOf(aff,cut){ const h=spellHist(cut), D=hist()[cut];
   return Object.entries(h).filter(([,o])=>o.aff===aff).map(([n,o])=>`${n} (${o.circle??"?"}C${o.lost?", lost":o.learned?"":", in progress"})`); }
 function infoAff(name,cut){ const H=hist(), D=H[cut], cur=D.affinity.items.find(x=>x[0]===name); if(!cur) return '<p class="muted">Not gained yet.</p>';
-  const get=S=>{ const x=S.affinity.items.find(a=>a[0]===name); return x?x[2]:null; }, gr=S=>{ const x=S.affinity.items.find(a=>a[0]===name); return x?x[1]:null; };
-  let k0=null; for(let k=0;k<=cut;k++) if(gr(H[k])!=null||get(H[k])!=null){ k0=k; break; }
-  const gch=[]; for(let k=Math.max(1,k0+1);k<=cut;k++){ const a=gr(H[k-1]), b=gr(H[k]); if(a&&b&&a!==b) gch.push(`Ch. ${rowCh(k)}: ${esc(a)} → ${esc(b)} — ${esc(srcTxt(causeRow(k,new RegExp(reEsc2(name),"i"))))}`); }
-  const sp=spellsOf(name,cut), ca=castableAff(D)[name];
+  const at=S=>S.affinity.items.find(a=>a[0]===name)||null;
+  const start=at(H[0]), steps=[]; let prev=start;
+  for(let k=1;k<=cut;k++){ const x=at(H[k]); if(!x) continue;
+    if(!prev||x[1]!==prev[1]||x[2]!==prev[2]) steps.push({k,ch:rowCh(k),g:x[1],v:x[2],src:(prev?"":"gained — ")+bodySrc(k,name)}); prev=x; }
   return `<div class="ifhead"><b>${esc(name)}</b> ${chip(cur[1])} <span class="aatag">T1 affinity</span><span class="num">${cur[2]}</span></div>${descPH("Affinity",name)}
-    <dl class="ifdl"><dt>Gained</dt><dd>${k0===0?"Had it from the start":`Ch. ${rowCh(k0)} — ${esc(srcTxt(causeRow(k0,new RegExp(reEsc2(name),"i"))))}`}</dd>
-    ${gch.length?`<dt>Grade</dt><dd>${gch.join("<br>")}</dd>`:""}
-</dl>
-    ${prog(seriesTable(series(get,cut,[name+" Affinity",name])))}`; }
+    ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Grade</th><th>Rating</th><th>From</th></tr></thead><tbody>
+    ${start?`<tr><td>start</td><td>${esc(start[1])}</td><td class="num">${start[2]??""}</td><td class="muted">starting value</td></tr>`:""}
+    ${steps.map(s=>`<tr><td>${s.ch}</td><td>${esc(s.g)}</td><td class="num">${s.v??""}</td><td>${esc(s.src)}</td></tr>`).join("")}</tbody></table>`)}`; }
 function infoEquiv(name,cut){ const H=hist(), D=H[cut], ca=castableAff(D)[name]; if(!ca||!ca.via) return '<p class="muted">Not reachable yet.</p>';
   const parts=ca.via.map(v=>{ const x=D.affinity.items.find(a=>a[0]===v); return x?`${v} (${x[1]} ${x[2]})`:v; });
   let k0=null; for(let k=1;k<=cut;k++){ const c=castableAff(H[k])[name]; if(c&&c.via){ k0=k; break; } }
