@@ -2,6 +2,12 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-07
+- "Achievements" reference tab in GoogleSpreadsheet entirely rewritten to accomodate the changes below. Additional reference tab called "Details" also added to said GoogleSpreadsheet.
+- Info panels: every item can now be clicked for details (basic attributes, advanced attributes, affinities, body features, boons, paths, skills, spells, achievements, skill seeds). A **Popup / Dropdown** switch picks how they open, and a **Full breakdown** checkbox shows every step change instead of a summary.
+- Skill Seeds: new dropdown. Seeds used straight away are struck through; bought seeds show their grade and type from the Details tab until they are used or sold off.
+- Column 3 now has 2 rows of checkboxes to show or hide each optional dropdown (paths on the first row, the rest on the second), remembered in each browser.
+
 ## 2026-11-01
 - Affinity: the "Castable Affinities" dropdown is replaced by a **Castable & Tier** checkbox by the Affinity heading (off by default). When ticked, each affinity shows its type in italics after its grade ("T1 affinity"), lined up in one column. Affinities Bastian can only cast through others appear as an extra row in italics, with a dashed EQUIV oval and their type (e.g. Dream: *EQUIV-Moderate*, "T2, Life+Shadow", *108*). The EQUIV value is the average of the two affinities, then lowered one grade (Potent 116 + Moderate 100 → Strong 108 → Moderate 108). This grade "downgrade" is to help illustrate that there is indeed an advantage to combining affinities to a higher tier -- if someone needed intends to use that higher tier for skills & spells primarily vs the lower-tier affinities.
 - Spells: "Spells Learned" and "Spells in Progress" are combined into one **Spells** dropdown with **Learned / In-Progress / Lost** tabs in its heading. The tabs only appear once Bastian has spells, and Lost only once a spell has been lost. Spells of his own direct affinities are listed before those cast through combined ones like Life+Shadow=Dream.
