@@ -2,6 +2,11 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-08
+- Affinity panels: now laid out like body features (Ch. | Grade | Rating | From), one row per change, showing the full rating instead of a +/− change.
+- Path panels: the tier rewards table now shows even when "Full breakdown" is off; the box only adds the step-by-step table.
+- Clickable items no longer have a dotted underline (the pointer still changes on hover).
+
 ## 2026-11-07
 - "Achievements" reference tab in GoogleSpreadsheet entirely rewritten to accomodate the changes below. Additional reference tab called "Details" also added to said GoogleSpreadsheet.
 - Info panels: every item can now be clicked for details (basic attributes, advanced attributes, affinities, body features, boons, paths, skills, spells, achievements, skill seeds). A **Popup / Dropdown** switch picks how they open, and a **Full breakdown** checkbox shows every step change instead of a summary.
