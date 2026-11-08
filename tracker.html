@@ -346,7 +346,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker #spellTabs[hidden],#tracker #spellTabs button[hidden]{display:none}
 /* item details */
 #tracker .hasinfo{cursor:pointer}
-#tracker .hasinfo .nm,#tracker .hasinfo>.top>.name,#tracker .boon.hasinfo,#tracker #paths .hasinfo .top{text-decoration:underline dotted var(--muted);text-underline-offset:3px;text-decoration-thickness:1px}
+#tracker .hasinfo .nm,#tracker .hasinfo>.top>.name,#tracker .boon.hasinfo,#tracker #paths .hasinfo .top{text-decoration:none}
 #tracker .hasinfo:hover{background:var(--tint)}
 #tracker .hasinfo:focus-visible{outline:2px solid var(--aether);outline-offset:2px;border-radius:4px}
 #tracker .hasinfo[aria-expanded=true]{background:var(--tint)}
@@ -362,7 +362,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 @media (max-width:520px){#tracker .iftab .bon{white-space:normal}
 }
 #tracker .drawer li>.infodrop{flex-basis:100%;white-space:normal}
-#tracker .drawer li>span.hasinfo{text-decoration:underline dotted var(--muted);text-underline-offset:3px;text-decoration-thickness:1px}
+#tracker .drawer li>span.hasinfo{text-decoration:none}
 #tracker .drawer li>span.hasinfo.equipped{text-decoration:line-through;text-decoration-thickness:auto}
 #tracker .infopop{position:fixed;z-index:50;max-height:min(70vh,560px);overflow:auto;box-shadow:0 12px 32px rgba(0,0,0,.35)}
 #tracker .infopop.sheet{left:8px!important;right:8px;bottom:8px;top:auto!important;width:auto!important;max-height:72vh;border-radius:12px}
@@ -1325,8 +1325,8 @@ function infoPath(name,cut){ const H=hist(), D=H[cut], get=S=>{ const v=(S.pstep
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)}${unlockSrc(firstK,name)}</dd>
       ${evs.map(e=>`<dt>${evTxt(e)}</dt><dd>Ch. ${rowCh(e.k)}${esc(evSrc(e))}</dd>`).join("")}
       ${pathAchievements(name,cut).map(a=>`<dt>Achievement</dt><dd>Ch. ${rowCh(a.k)} — ${esc(a.text)}${a.rew?` <span class="muted">(${esc(a.rew)})</span>`:""}</dd>`).join("")}</dl>
-    ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Tier</th><th>Rewards</th></tr></thead><tbody>${tiers.map(t=>`<tr><td>${rowCh(t.k)}</td><td class="nw">${t.from+1<t.to?ROMANS[t.from+1]+"–":""}${ROMANS[t.to]}</td><td>${esc(t.rew)||'<span class="muted">—</span>'}</td></tr>`).join("")}</tbody></table>
-    <table class="iftab"><thead><tr><th>Ch.</th><th>Steps from</th><th>Steps</th><th>Total</th><th>Tier</th></tr></thead><tbody>${(()=>{ let tPrev=(H[rows[0]?.from??0]?.ptiers||{})[name]||0; return rows.map((x,i)=>{
+    ${tiers.length?`<table class="iftab"><thead><tr><th>Ch.</th><th>Tier</th><th>Rewards</th></tr></thead><tbody>${tiers.map(t=>`<tr><td>${rowCh(t.k)}</td><td class="nw">${t.from+1<t.to?ROMANS[t.from+1]+"–":""}${ROMANS[t.to]}</td><td>${esc(t.rew)||'<span class="muted">—</span>'}</td></tr>`).join("")}</tbody></table>`:""}
+    ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Steps from</th><th>Steps</th><th>Total</th><th>Tier</th></tr></thead><tbody>${(()=>{ let tPrev=(H[rows[0]?.from??0]?.ptiers||{})[name]||0; return rows.map((x,i)=>{
       // a tier can be recorded a row or two after the steps that reached it: look up to the next steps change
       const end=i+1<rows.length?rows[i+1].k-1:cut, ta=tPrev, tb=Math.max(ta,(H[end].ptiers||{})[name]||0), its=stepInfo(x); tPrev=tb;
       // several sources in one chapter: one line each; the chapter, total and tier go on the last line
