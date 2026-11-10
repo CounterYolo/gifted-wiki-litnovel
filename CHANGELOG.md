@@ -2,6 +2,9 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-09
+- Advanced attributes: percentages now shown only for Talented and Gifted; other AA's show their tier without a percentage until the story clarifies how tiers relate to the bonus.
+
 ## 2026-11-08
 - Affinity panels: now laid out like body features (Ch. | Grade | Rating | From), one row per change, showing the full rating instead of a +/− change.
 - Path panels: the tier rewards table now shows even when "Full breakdown" is off; the box only adds the step-by-step table.
