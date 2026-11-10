@@ -495,7 +495,8 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
         </ul>
         <h3>Advanced attributes</h3>
         <ul>
-          <li>Advanced attributes (AA's) come in tiers, and each tier doubles the base bonus of the one below: a T1 AA gives a base +10% to what it improves, T2 +20%, T3 +40%, T4 +80%, and so on. The bonus scales with the AA's rating (rating ÷ 100 × the tier's base), so 200 doubles it. Fractions are dropped, both from the percent and from the bonus steps, so a 1.9-step bonus adds 1. Talented is a T2 AA (+20% at 100, +40% at 200; its rating ÷ 5) and Gifted is a T3 AA (+40% at 100, +80% at 200; its rating ÷ 2.5). The tiers of Aethersensing and Aether Manipulation aren't known yet; the tracker treats both as T1 for now.</li>
+          <li>Talented (T2) gives bonus XP of its rating ÷ 5 (+20% at 100, +40% at 200) and Gifted (T3) gives its rating ÷ 2.5 (+40% at 100, +80% at 200). Fractions are dropped, both from the percent and from the bonus steps, so a 1.9-step bonus adds 1.</li>
+          <li>How an AA's tier relates to the bonus it gives isn't settled yet: Aether Talented, Physically Talented and Socially Talented are T1 AA's but give the same bonus as Talented. Until the story clarifies it, the tracker shows no percentage for any AA other than Talented and Gifted.</li>
         </ul>
         </div>
         <p class="src">Grades, aether roles and step tables are from the author's Discord posts.</p>
@@ -857,6 +858,8 @@ function renderStats(D){
     if(!t) return r;
     const r2=r.replace('</span></span><span class="v">',`</span><span class="aatier">T${t} AA</span></span><span class="v">`);
     if(v===""||v==null||!isFinite(+v)) return r2;
+    // only Talented and Gifted have known percentages; other AA's show none until the story clarifies
+    if(key!=="talented"&&key!=="gifted") return r2;
     const pct=Math.floor(10*Math.pow(2,t-1)*(+v)/100+1e-9);
     return r2.replace('<span class="v">',`<span class="v"><span class="gxp">(+${pct}%)</span>`); }).join(""):'<div class="row empty">Empty</div>';
   $("affCount").textContent=`${D.affinity.items.length}/${D.affinity.slots??"?"}`;
@@ -1151,7 +1154,7 @@ const splitNote=(d,parts)=>{ if(!parts.length) return ""; const bt=parts.reduce(
 // AA tiers (see How the numbers work)
 const AA_TIERS={talented:2,gifted:3,aethersensing:1,"aether manipulation":1,"aether talented":1,"physically talented":1,"socially talented":1,"aether gifted":2,"physically gifted":2,"socially gifted":2};
 function aaTierFromDetails(n){ const d=typeof detail==="function"&&detail("Advanced Attribute",n), m=d&&String(d.grade).match(/^T(\d+)/i); return m?+m[1]:null; }
-const aaPct=(n,v)=>{ const t=AA_TIERS[String(n).toLowerCase()]||aaTierFromDetails(n); return t&&isFinite(+v)?Math.floor(10*2**(t-1)*(+v)/100+1e-9):null; };
+const aaPct=(n,v)=>{ if(!/^(talented|gifted)$/i.test(String(n).trim())) return null; const t=AA_TIERS[String(n).toLowerCase()]||aaTierFromDetails(n); return t&&isFinite(+v)?Math.floor(10*2**(t-1)*(+v)/100+1e-9):null; };
 function aaLineage(name){ const back={}; LOGROWS.forEach(r=>String(r.aa||"").split(/;\s*/).forEach(a=>{ const m=a.match(/^(.+?)\s*\((?:evolved version of|evolved from)\s+(.+?)\)/i); if(m) back[m[1].trim()]=m[2].trim(); }));
   const chain=[name]; while(back[chain[0]]) chain.unshift(back[chain[0]]); return chain; }
 
@@ -1184,7 +1187,7 @@ function infoAA(name,cut){ const H=hist(), chain=aaLineage(name), D=H[cut];
 ${descPH("Advanced Attribute",curName)}
     <dl class="ifdl">
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)} as ${esc(chain[0])} (${tierTxt(chain[0])}${everSlotted?", 100":""}) — ${esc(srcTxt(causeRow(firstK,new RegExp(reEsc2(chain[0]),"i"))))}</dd>
-      ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}, +${aaPct(e.from[0],e.from[1])}%) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}, +${aaPct(e.to[0],e.to[1])}%) — ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
+      ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}${aaPct(e.from[0],e.from[1])!=null?`, +${aaPct(e.from[0],e.from[1])}%`:""}) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}${aaPct(e.to[0],e.to[1])!=null?`, +${aaPct(e.to[0],e.to[1])}%`:""}) — ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
       ${/^gifted$/i.test(curName)?`<dt>Cap</dt><dd>250 until the Basic Class Path is completed</dd>`:capK>=0?`<dt>Cap</dt><dd>${cur[1]} (reached in Ch. ${LOGROWS[capK].ch})</dd>`:""}
     </dl>${prog(seriesTable(series(get,cut,shown)))}`; }
 
