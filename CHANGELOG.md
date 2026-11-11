@@ -2,6 +2,9 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-11
+- New Rift/Dungeon Paths dropdown added, plus a "Rift Paths" checkbox added to toggle this dropdown's visibility.
+
 ## 2026-11-09
 - Advanced attributes: percentages now shown only for Talented and Gifted; other AA's show their tier without a percentage until the story clarifies how tiers relate to the bonus.
 
