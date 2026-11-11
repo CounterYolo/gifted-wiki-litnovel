@@ -343,7 +343,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 @media (max-width:560px){#tracker #body .v{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
 #tracker #body .bmc{order:2;margin-right:0;font-size:.74rem}
 }
-#tracker #spellTabs[hidden],#tracker #spellTabs button[hidden]{display:none}
+#tracker #spellTabs[hidden],#tracker #spellTabs button[hidden],#tracker #riftTabs[hidden]{display:none}
 /* item details */
 #tracker .hasinfo{cursor:pointer}
 #tracker .hasinfo .nm,#tracker .hasinfo>.top>.name,#tracker .boon.hasinfo,#tracker #paths .hasinfo .top{text-decoration:none}
@@ -525,7 +525,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
       </div>
       <div class="col" id="drawers">
         <div class="dshow" id="drawerShow" role="group" aria-label="Sections to show">
-          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="dormant">Dormant Paths</label><label class="dtoggle"><input type="checkbox" data-d="available">Available Paths</label><label class="dtoggle"><input type="checkbox" data-d="completed">Completed Paths</label></div>
+          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="dormant">Dormant Paths</label><label class="dtoggle"><input type="checkbox" data-d="available">Available Paths</label><label class="dtoggle"><input type="checkbox" data-d="completed">Completed Paths</label><label class="dtoggle"><input type="checkbox" data-d="rift">Rift Paths</label></div>
           <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="spells">Spells</label><label class="dtoggle"><input type="checkbox" data-d="aas">AA's Earned</label><label class="dtoggle"><input type="checkbox" data-d="achievements">Achievements</label><label class="dtoggle"><input type="checkbox" data-d="seeds">Skill Seeds</label></div>
         </div>
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
@@ -533,6 +533,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
         <details class="drawer" data-d="dormant"><summary><span class="lbl">Dormant Paths</span><span class="count" id="dormCount"></span></summary><ul id="dormant"></ul></details>
         <details class="drawer" data-d="available"><summary><span class="lbl">Available Paths</span><span class="count" id="availCount"></span></summary><ul id="available"></ul></details>
         <details class="drawer" data-d="completed"><summary><span class="lbl">Completed Paths</span><span class="count" id="compCount"></span></summary><ul id="completed"></ul></details>
+        <details class="drawer" data-d="rift"><summary><span class="lbl">Rift/Dungeon Paths</span><span class="sumr"><span class="seg spelltabs" id="riftTabs" role="group" aria-label="Which rift and dungeon paths"><button type="button" data-t="active">Active <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="riftCount"></span></span></summary><ul id="riftList"></ul></details>
         <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
         <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="count" id="seedCount"></span></summary><ul id="seedList"></ul></details>
       </div>
@@ -922,6 +923,36 @@ function seedList(cut){ const out=[], rows=LOGROWS.slice(0,cut);
       if(s){ s.state="sold"; s.res=`${s.ch===r.ch?"Sold":"Kept as a physical object, sold"} Ch. ${r.ch}${/auction/i.test(r.notes)?" (auction house)":""}`; } } });
   out.forEach(x=>{ if(!x.state){ x.state="have"; x.res="Still has it as a physical object"; } });
   return out; }
+// Rift and dungeon paths, read the plain way from the sheet:
+//  unlocked = an item in Unlocked Paths that doesn't start with "Path of";
+//  completed = an event "Rift Path: <name>" or "Dungeon Path: <name>" (a tier numeral at the end is allowed)
+const riftKey=n=>String(n).toLowerCase().replace(/\s+(i|ii|iii|iv|v|vi|vii|viii|ix|x)$/,"").replace(/\bthe\b/g," ").replace(/\s+/g," ").trim();
+function riftList(cut){ const out=[], by={}, rows=LOGROWS.slice(0,cut);
+  rows.forEach((r,i)=>{ const k=i+1;
+    splitList(r.paths).forEach(n=>{ if(/^path of /i.test(n)) return; const key=riftKey(n); if(by[key]) return;
+      by[key]={name:n,key,kind:/dungeon/i.test(r.text+" "+r.notes)?"Dungeon":"Rift",unlockK:k,doneK:null,tier:null}; out.push(by[key]); });
+    const m=String(r.text||"").match(/^(rift|dungeon) path:\s*(.+)$/i); if(m){ const key=riftKey(m[2]);
+      let x=by[key]; if(!x){ x=by[key]={name:m[2].replace(/\s+(I|II|III|IV|V|VI|VII|VIII|IX|X)$/,""),key,kind:m[1][0].toUpperCase()+m[1].slice(1).toLowerCase(),unlockK:null,doneK:null,tier:null}; out.push(x); }
+      x.kind=m[1][0].toUpperCase()+m[1].slice(1).toLowerCase(); x.doneK=k; x.tier=(m[2].match(/\s(I|II|III|IV|V|VI|VII|VIII|IX|X)$/)||[])[1]||null; } });
+  return out; }
+let RIFTTAB="active";
+(function(){ try{ const v=localStorage.getItem("riftTab"); if(["active","completed"].includes(v)) RIFTTAB=v; }catch(e){} })();
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#riftTabs button"); if(!b) return;
+  e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; RIFTTAB=b.dataset.t; try{ localStorage.setItem("riftTab",RIFTTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
+function renderRift(){ const all=riftList(curCut()), groups={active:all.filter(x=>!x.doneK),completed:all.filter(x=>x.doneK)};
+  const tabs=$("riftTabs"); if(tabs) tabs.hidden=!all.length;
+  document.querySelectorAll("#riftTabs button").forEach(b=>{ b.querySelector("i").textContent=groups[b.dataset.t].length; b.setAttribute("aria-pressed",b.dataset.t===RIFTTAB?"true":"false"); });
+  $("riftCount").textContent=`(${all.length})`;
+  const list=[...groups[RIFTTAB]].sort((a,b)=>((a.doneK||a.unlockK||0)-(b.doneK||b.unlockK||0)));   // oldest first: by completion, else by unlock
+  $("riftList").innerHTML=list.length?list.map(x=>`<li><span data-rk="${esc(x.key)}">${esc(x.name)}</span><span class="sub">${x.kind} · Ch. ${rowCh(x.doneK||x.unlockK)}</span></li>`).join(""):'<li class="empty">None</li>'; }
+function infoRift(key,cut){ const x=riftList(cut).find(r=>r.key===key); if(!x) return '<p class="muted">Not unlocked yet.</p>';
+  const R=k=>LOGROWS[k-1]||{}, rew=k=>{ const r=R(k); return [r.paths,r.aa?("AA: "+r.aa):"",r.attr,r.other].filter(Boolean).join("; "); };
+  const notes=[...new Set([x.unlockK,x.doneK].filter(Boolean).map(k=>R(k).notes).filter(Boolean))];
+  return `<div class="ifhead"><b>${esc(x.name)}</b> <span class="aatag">${x.kind} path</span><span class="num">${x.tier||""}</span></div>
+    <dl class="ifdl"><dt>Now</dt><dd>${x.doneK?"Completed":"Active"}</dd>
+      ${x.unlockK?`<dt>Unlocked</dt><dd>Ch. ${rowCh(x.unlockK)} — ${esc(srcTxt(x.unlockK))}</dd>`:""}
+      ${x.doneK?`<dt>Completed</dt><dd>Ch. ${rowCh(x.doneK)}${x.tier?` at tier ${x.tier}`:""}</dd><dt>Rewards</dt><dd>${esc(rew(x.doneK))||'<span class="muted">none in the sheet</span>'}</dd>`:""}
+      ${notes.map(n=>`<dt>Note</dt><dd>${esc(n)}</dd>`).join("")}</dl>`; }
 function fill(id,cid,arr,html){ $(cid).textContent=`(${arr.length})`; $(id).innerHTML=arr.length?arr.map(html).join(""):'<li class="empty">None</li>'; }
 // Affinities Bastian can cast with: his own (T1), plus combined ones reachable through two of his affinities (T2).
 // A combined affinity counts one grade below the average of the two it comes through, and uses the weaker one's rating.
@@ -945,6 +976,7 @@ function renderDrawers(S){
   fill("dormant","dormCount",[...S.dormant].sort(byType),n=>li(n,tier[n]));
   fill("completed","compCount",[...S.completed].sort(byType),n=>li(n,tier[n]));
   fill("available","availCount",[...S.available].sort(byType),n=>li(n,0));
+  renderRift();
   const slotted=new Set(S.advanced.items.map(i=>i[0]));
   const aas=[...S.aaEarned].sort((a,b)=>slotted.has(b)-slotted.has(a));
   fill("aaList","aaCount",aas,n=>`<li><span${slotted.has(n)?' class="equipped" title="slotted"':""}>${esc(n)}</span></li>`);
@@ -1437,7 +1469,7 @@ function infoSpell(name,cut){ const o=spellHist(cut)[name]; if(!o) return '<p cl
     ${o.learned?`<dt>Learned</dt><dd>Ch. ${rowCh(o.learned)}${esc(spellSrc(o.learned,name))}</dd>`:`<dt>Now</dt><dd>${lostNow?"Lost":"Still learning"}</dd>`}
     ${o.lost?`<dt>Lost</dt><dd>Ch. ${rowCh(o.lost)}</dd>`:(lostNow&&!o.lost?`<dt>Lost</dt><dd>can no longer cast ${esc(o.aff)}</dd>`:"")}</dl>`; }
 function infoHTML(kind,name){ const cut=curCut();
-  try{ return ({basic:infoBasic,aa:infoAA,body:infoBody,boon:infoBoon,path:infoPath,skill:infoSkill,ach:infoAch,seed:infoSeed,aff:infoAff,equiv:infoEquiv,spell:infoSpell})[kind](name,cut); }
+  try{ return ({basic:infoBasic,aa:infoAA,body:infoBody,boon:infoBoon,path:infoPath,skill:infoSkill,ach:infoAch,seed:infoSeed,rift:infoRift,aff:infoAff,equiv:infoEquiv,spell:infoSpell})[kind](name,cut); }
   catch(e){ console.error(e); return '<p class="muted">Couldn\'t build these details.</p>'; } }
 
 // mark the items that have details, after every render
@@ -1453,6 +1485,7 @@ function markInfo(){
   document.querySelectorAll("#aaList li>span:first-child").forEach(r=>mark(r,"aa",r.textContent.trim()));
   document.querySelectorAll("#achList li>span:first-child").forEach((r,i)=>mark(r,"ach",String(i)));
   document.querySelectorAll("#seedList li>span:first-child").forEach((r,i)=>mark(r,"seed",String(i)));
+  document.querySelectorAll("#riftList li>span[data-rk]").forEach(r=>mark(r,"rift",r.dataset.rk));
   document.querySelectorAll("#available li>span:first-child").forEach(r=>{ const m=(r.firstChild?.textContent||"").match(/^Path of (.+)$/); if(m) mark(r,"path",m[1].trim()); });
   document.querySelectorAll("#affinity .row").forEach(r=>mark(r,r.classList.contains("affequiv")?"equiv":"aff",r.querySelector(".nm")?.textContent.trim()));
   document.querySelectorAll("#spells li>span:first-child").forEach(r=>mark(r,"spell",(r.firstChild?.textContent||"").trim()));
