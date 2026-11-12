@@ -343,6 +343,12 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .drawer[data-d=rift] #riftCount{display:none}
 #tracker .drawer[data-d=seeds] #seedCount{display:none}
 #tracker .spelltabs button{padding:3px 8px}
+#tracker .drawer[data-d=nonactive] .lbl{white-space:nowrap}
+#tracker .drawer>summary .lbl{font-size:1rem}   /* all column-3 dropdown titles the same size */
+#tracker .drawer[data-d=nonactive]>summary{flex-wrap:wrap;row-gap:4px;column-gap:6px;align-items:center}
+#tracker .drawer[data-d=nonactive] .sumr{min-width:0}
+#tracker #pathTabs button{padding:3px 5px;font-size:.72rem}
+#tracker #pathTabs i{margin-left:2px}
 #tracker .spelltabs{display:inline-flex;width:max-content;font-family:var(--body);letter-spacing:0;align-self:center}
 #tracker .spelltabs i{font-style:normal;color:var(--muted);font-family:var(--mono);font-size:.7rem;margin-left:3px}
 #tracker #body{grid-template-columns:minmax(0,1fr)}
@@ -350,7 +356,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 @media (max-width:560px){#tracker #body .v{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
 #tracker #body .bmc{order:2;margin-right:0;font-size:.74rem}
 }
-#tracker #skillTabs[hidden],#tracker #seedTabs[hidden],#tracker #spellTabs[hidden],#tracker #spellTabs button[hidden],#tracker #riftTabs[hidden]{display:none}
+#tracker #skillTabs[hidden],#tracker .drawer ul[hidden],#tracker .drawer .count[hidden],#tracker #seedTabs[hidden],#tracker #spellTabs[hidden],#tracker #spellTabs button[hidden],#tracker #riftTabs[hidden]{display:none}
 /* item details */
 #tracker .hasinfo{cursor:pointer}
 #tracker .hasinfo .nm,#tracker .hasinfo>.top>.name,#tracker .boon.hasinfo,#tracker #paths .hasinfo .top{text-decoration:none}
@@ -532,14 +538,12 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
       </div>
       <div class="col" id="drawers">
         <div class="dshow" id="drawerShow" role="group" aria-label="Sections to show">
-          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="dormant">Dormant Paths</label><label class="dtoggle"><input type="checkbox" data-d="available">Available Paths</label><label class="dtoggle"><input type="checkbox" data-d="completed">Completed Paths</label><label class="dtoggle"><input type="checkbox" data-d="rift">Rift Paths</label></div>
+          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="nonactive">Non-Active Paths</label><label class="dtoggle"><input type="checkbox" data-d="rift">Rift Paths</label></div>
           <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="spells">Spells</label><label class="dtoggle"><input type="checkbox" data-d="aas">AA's Earned</label><label class="dtoggle"><input type="checkbox" data-d="achievements">Achievements</label><label class="dtoggle"><input type="checkbox" data-d="seeds">Skill Seeds</label></div>
         </div>
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
         <details class="drawer" data-d="aas"><summary><span class="lbl">AA's Earned</span><span class="count" id="aaCount"></span></summary><ul id="aaList"></ul></details>
-        <details class="drawer" data-d="dormant"><summary><span class="lbl">Dormant Paths</span><span class="count" id="dormCount"></span></summary><ul id="dormant"></ul></details>
-        <details class="drawer" data-d="available"><summary><span class="lbl">Available Paths</span><span class="count" id="availCount"></span></summary><ul id="available"></ul></details>
-        <details class="drawer" data-d="completed"><summary><span class="lbl">Completed Paths</span><span class="count" id="compCount"></span></summary><ul id="completed"></ul></details>
+        <details class="drawer" data-d="nonactive"><summary><span class="lbl">Non-Active Paths</span><span class="sumr"><span class="seg spelltabs" id="pathTabs" role="group" aria-label="Which paths"><button type="button" data-t="dormant">Dormant <i></i></button><button type="button" data-t="completed">Completed <i></i></button><button type="button" data-t="available">Available <i></i></button></span><span class="count" id="dormCount" hidden></span><span class="count" id="compCount" hidden></span><span class="count" id="availCount" hidden></span></span></summary><ul id="dormant"></ul><ul id="completed"></ul><ul id="available"></ul></details>
         <details class="drawer" data-d="rift"><summary><span class="lbl">Rift/Dungeon Paths</span><span class="sumr"><span class="seg spelltabs" id="riftTabs" role="group" aria-label="Which rift and dungeon paths"><button type="button" data-t="active">Active <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="riftCount"></span></span></summary><ul id="riftList"></ul></details>
         <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
         <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="sumr"><span class="seg spelltabs" id="seedTabs" role="group" aria-label="Which skill seeds"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="unavailable">Unavailable <i></i></button></span><span class="count" id="seedCount"></span></span></summary><ul id="seedList"></ul></details>
@@ -998,6 +1002,10 @@ function renderDrawers(S){
   fill("dormant","dormCount",[...S.dormant].sort(byType),n=>li(n,tier[n]));
   fill("completed","compCount",[...S.completed].sort(byType),n=>li(n,tier[n]));
   fill("available","availCount",[...S.available].sort(byType),n=>li(n,0));
+  // one drawer, three tabs: only the chosen list shows
+  const pc={dormant:S.dormant.length,completed:S.completed.length,available:S.available.length};
+  document.querySelectorAll("#pathTabs button").forEach(b=>{ b.querySelector("i").textContent=pc[b.dataset.t]; b.setAttribute("aria-pressed",b.dataset.t===PATHTAB?"true":"false"); });
+  ["dormant","completed","available"].forEach(t=>{ $(t).hidden=t!==PATHTAB; });
   renderRift();
   const slotted=new Set(S.advanced.items.map(i=>i[0]));
   const aas=[...S.aaEarned].sort((a,b)=>slotted.has(b)-slotted.has(a));
@@ -1032,7 +1040,10 @@ function renderDrawers(S){
   $("spells").innerHTML=list.length?[...list].sort(order).map(x=>spellLi(x,tab)).join(""):'<li class="empty">None</li>';
   LASTS=S;
 }
-let SPELLTAB="learned", LASTS=null, SEEDTAB="available";
+let SPELLTAB="learned", LASTS=null, SEEDTAB="available", PATHTAB="dormant";
+(function(){ try{ const v=localStorage.getItem("pathTab"); if(["dormant","completed","available"].includes(v)) PATHTAB=v; }catch(e){} })();
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#pathTabs button"); if(!b) return;
+  e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; PATHTAB=b.dataset.t; try{ localStorage.setItem("pathTab",PATHTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
 (function(){ try{ const v=localStorage.getItem("seedTab"); if(["available","unavailable"].includes(v)) SEEDTAB=v; }catch(e){} })();
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#seedTabs button"); if(!b) return;
   e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; SEEDTAB=b.dataset.t; try{ localStorage.setItem("seedTab",SEEDTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
