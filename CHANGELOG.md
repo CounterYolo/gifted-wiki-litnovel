@@ -7,6 +7,7 @@ Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 - Skill Seeds: Available and Unavailable tabs added over just listed all skill seeds in one list
 - Skills: Available and Unavailable tabs. Unavailable lists former skills with the chapters they were held (e.g. Ch. 8–79)
 - Skill panels: a former skill now says what it became ("Evolved into …", "Upgraded into …", "Merged into …" or "Removed") instead of "Left in Ch. X".
+- Non-Active Paths: new dropdown that merges Dormant Paths, Completed Paths, and Available Paths into one dropdown with separate selectors inside such for each list.
 
 ## 2026-11-11
 - New Rift/Dungeon Paths dropdown added, plus a "Rift Paths" checkbox added to toggle this dropdown's visibility.
