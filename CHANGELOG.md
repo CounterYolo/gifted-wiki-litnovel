@@ -2,6 +2,12 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-12
+- Spells: re-learning is now shown. In-Progress lists each spell with (Learning) in white or (Re-Learning) in red. A spell being re-learned stays in Learned, greyed with a red (RLIP), and isn't counted there until it's re-learned.
+- Skill Seeds: Available and Unavailable tabs added over just listed all skill seeds in one list
+- Skills: Available and Unavailable tabs. Unavailable lists former skills with the chapters they were held (e.g. Ch. 8–79)
+- Skill panels: a former skill now says what it became ("Evolved into …", "Upgraded into …", "Merged into …" or "Removed") instead of "Left in Ch. X".
+
 ## 2026-11-11
 - New Rift/Dungeon Paths dropdown added, plus a "Rift Paths" checkbox added to toggle this dropdown's visibility.
 
