@@ -3,10 +3,10 @@
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 ## 2026-11-12 (another update)
 - AA's Earned is now "AA Info" (checkbox renamed to match), with Slotted, Evolved and Available tabs.
-- Every AA shows its tier right after its name (T1/T2/T3), taken from the Details tab; if an AA isn't listed there, it's worked out from what earned it (basic path at X = T1, advanced path at V = T2, elite path at III = T3).
-- Slotted: each AA shows when and how it was earned and when it was slotted, on two lines under its name.
-- Evolved: AA's that turned into another one (e.g. Talented → Gifted, Ch. 51), greyed and crossed out; clicking one opens the AA it became.
-- Available: earned but not slotted, with the chapter and how it was earned on the same line.
+  - Every AA shows its tier right after its name (T1/T2/T3), taken from the Details tab; if an AA isn't listed there, it's worked out from what earned it (basic path at X = T1, advanced path at V = T2, elite path at III = T3).
+  - Slotted: each AA shows when and how it was earned and when it was slotted, on two lines under its name.
+  - Evolved: AA's that turned into another one (e.g. Talented → Gifted, Ch. 51), greyed and crossed out; clicking one opens the AA it became.
+  - Available: earned but not slotted, with the chapter and how it was earned on the same line.
 
 ## 2026-11-12 (initial update)
 - Spells: re-learning is now shown. In-Progress lists each spell with (Learning) in white or (Re-Learning) in red. A spell being re-learned stays in Learned, greyed with a red (RLIP), and isn't counted there until it's re-learned.
