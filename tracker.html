@@ -382,6 +382,9 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 }
 #tracker .drawer li>.infodrop{flex-basis:100%;white-space:normal}
 #tracker .drawer li>span.hasinfo{text-decoration:none}
+#tracker .drawer li:has(>.hasinfo){cursor:pointer}
+#tracker .drawer li>.hasinfo:hover{background:none}
+#tracker .drawer li:has(>.hasinfo):not(:has(.infodrop)):hover,#tracker .drawer li:has(>.hasinfo[aria-expanded=true]){background:var(--tint)}
 #tracker .drawer li>span.hasinfo.equipped{text-decoration:line-through;text-decoration-thickness:auto}
 #tracker .drawer li>span.hasinfo.sprl{text-decoration:line-through;text-decoration-thickness:auto}
 #tracker .infopop{position:fixed;z-index:50;max-height:min(70vh,560px);overflow:auto;box-shadow:0 12px 32px rgba(0,0,0,.35)}
@@ -550,9 +553,9 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
         </div>
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
         <details class="drawer" data-d="rift"><summary><span class="lbl">Rift/Dungeon Paths</span><span class="sumr"><span class="seg spelltabs" id="riftTabs" role="group" aria-label="Which rift and dungeon paths"><button type="button" data-t="active">Active <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="riftCount"></span></span></summary><ul id="riftList"></ul></details>
-        <details class="drawer" data-d="nonactive"><summary><span class="lbl">Non-Active Paths</span><span class="sumr"><span class="seg spelltabs" id="pathTabs" role="group" aria-label="Which paths"><button type="button" data-t="dormant">Dormant <i></i></button><button type="button" data-t="completed">Completed <i></i></button><button type="button" data-t="available">Available <i></i></button></span><span class="count" id="dormCount" hidden></span><span class="count" id="compCount" hidden></span><span class="count" id="availCount" hidden></span></span></summary><ul id="dormant"></ul><ul id="completed"></ul><ul id="available"></ul></details>
-        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button><button type="button" data-t="available">Available <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
-        <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="sumr"><span class="seg spelltabs" id="seedTabs" role="group" aria-label="Which skill seeds"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="unavailable">Unavailable <i></i></button></span><span class="count" id="seedCount"></span></span></summary><ul id="seedList"></ul></details>
+        <details class="drawer" data-d="nonactive"><summary><span class="lbl">Non-Active Paths</span><span class="sumr"><span class="seg spelltabs" id="pathTabs" role="group" aria-label="Which paths"><button type="button" data-t="dormant">Dormant <i></i></button><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="dormCount" hidden></span><span class="count" id="compCount" hidden></span><span class="count" id="availCount" hidden></span></span></summary><ul id="dormant"></ul><ul id="completed"></ul><ul id="available"></ul></details>
+        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
+        <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="sumr"><span class="seg spelltabs" id="seedTabs" role="group" aria-label="Which skill seeds"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="used">Used <i></i></button><button type="button" data-t="relinquished">Relinquished <i></i></button></span><span class="count" id="seedCount"></span></span></summary><ul id="seedList"></ul></details>
         <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
       </div>
     </div>
@@ -1006,8 +1009,11 @@ const GRADE_AFF=["Weak","Moderate","Strong","Potent","Perfect"];
 function renderDrawers(S){
   const tier=S.ptiers, PO={E:0,A:1,B:2,M:4};
   const byType=(a,b)=>(PO[pathType(a)]-PO[pathType(b)])||((tier[b]||0)-(tier[a]||0))||a.localeCompare(b);
-  fill("dormant","dormCount",[...S.dormant].sort(byType),n=>li(n,tier[n]));
-  fill("completed","compCount",[...S.completed].sort(byType),n=>li(n,tier[n]));
+  // the chapter each path went into its current state (dormant or completed; available paths show none)
+  const H=hist(), cutP=curCut(), since=(list,n)=>{ let k=cutP; while(k>0&&(H[k-1][list]||[]).includes(n)) k--; return k?`Ch. ${rowCh(k)}`:"start"; };
+  const withCh=(html,ch)=>html.replace(/<\/li>$/,`<span class="sub">${ch}</span></li>`);
+  fill("dormant","dormCount",[...S.dormant].sort(byType),n=>withCh(li(n,tier[n]),since("dormant",n)));
+  fill("completed","compCount",[...S.completed].sort(byType),n=>withCh(li(n,tier[n]),since("completed",n)));
   fill("available","availCount",[...S.available].sort(byType),n=>li(n,0));
   // one drawer, three tabs: only the chosen list shows
   const pc={dormant:S.dormant.length,completed:S.completed.length,available:S.available.length};
@@ -1023,8 +1029,8 @@ function renderDrawers(S){
   document.querySelectorAll("#aaTabs button").forEach(b=>{ b.querySelector("i").textContent=ag[b.dataset.t].length; b.setAttribute("aria-pressed",b.dataset.t===AATAB?"true":"false"); });
   fill("aaList","aaCount",ag[AATAB],x=>AATAB==="available"&&x.line&&x.line.length?`<li><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span><span class="sub">${esc(x.line[0].replace(/^Earned /,""))}</span></li>`:x.line&&x.line.length?`<li class="aali"><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span>${x.line.map(l=>`<span class="aawhen">${esc(l)}</span>`).join("")}</li>`:`<li><span data-aa="${esc(x.key)}"${AATAB==="evolved"?' class="equipped"':""}>${esc(x.n)}${tg(x.n)}</span>${x.sub?`<span class="sub">${esc(x.sub)}</span>`:""}</li>`);
   const seeds=seedList(curCut());
-  // Available: seeds he still has (kept as physical objects); Unavailable: used or sold — oldest first, like the other lists
-  const sg={available:[],unavailable:[]}; seeds.forEach((x,i)=>sg[x.state==="have"?"available":"unavailable"].push({...x,i}));
+  // Available: seeds he still has (kept as physical objects); Used: used on himself; Relinquished: sold, given away or lost — oldest first
+  const sg={available:[],used:[],relinquished:[]}; seeds.forEach((x,i)=>sg[x.state==="have"?"available":x.state==="used"?"used":"relinquished"].push({...x,i}));
   const stabs=$("seedTabs"); if(stabs) stabs.hidden=!seeds.length;
   document.querySelectorAll("#seedTabs button").forEach(b=>{ b.querySelector("i").textContent=sg[b.dataset.t].length; b.setAttribute("aria-pressed",b.dataset.t===SEEDTAB?"true":"false"); });
   fill("seedList","seedCount",sg[SEEDTAB],x=>`<li><span data-si="${x.i}"${x.state==="have"?"":' class="equipped"'}>${esc(x.label)}</span><span class="sub">Ch. ${x.ch}</span></li>`);
@@ -1053,7 +1059,7 @@ function renderDrawers(S){
   $("spells").innerHTML=list.length?[...list].sort(order).map(x=>spellLi(x,tab)).join(""):'<li class="empty">None</li>';
   LASTS=S;
 }
-let SPELLTAB="learned", LASTS=null, SEEDTAB="available", PATHTAB="dormant", AATAB="slotted";
+let SPELLTAB="learned", LASTS=null, SEEDTAB="available", PATHTAB="dormant", AATAB="available";
 (function(){ try{ const v=localStorage.getItem("aaTab"); if(["slotted","evolved","available"].includes(v)) AATAB=v; }catch(e){} })();
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#aaTabs button"); if(!b) return;
   e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; AATAB=b.dataset.t; try{ localStorage.setItem("aaTab",AATAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
@@ -1078,7 +1084,7 @@ function aaEvolved(cut){ const out=[]; LOGROWS.slice(0,cut).forEach((r,i)=>Strin
 (function(){ try{ const v=localStorage.getItem("pathTab"); if(["dormant","completed","available"].includes(v)) PATHTAB=v; }catch(e){} })();
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#pathTabs button"); if(!b) return;
   e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; PATHTAB=b.dataset.t; try{ localStorage.setItem("pathTab",PATHTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
-(function(){ try{ const v=localStorage.getItem("seedTab"); if(["available","unavailable"].includes(v)) SEEDTAB=v; }catch(e){} })();
+(function(){ try{ let v=localStorage.getItem("seedTab"); if(v==="unavailable") v="used"; if(["available","used","relinquished"].includes(v)) SEEDTAB=v; }catch(e){} })();
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#seedTabs button"); if(!b) return;
   e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; SEEDTAB=b.dataset.t; try{ localStorage.setItem("seedTab",SEEDTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
 (function(){ try{ const v=localStorage.getItem("spellTab"); if(["learned","progress","lost"].includes(v)) SPELLTAB=v; }catch(e){} })();
@@ -1608,6 +1614,9 @@ addEventListener("resize",placePop); addEventListener("scroll",()=>{ if(POP&&!PO
 document.addEventListener("click",e=>{ if(e.target.closest("label")?.querySelector("#infoFull")) return;
   if(e.target.closest(".ifclose")){ const back=POPFOR; closeInfo(); back&&back.focus&&back.focus({preventScroll:true}); return; }
   const it=e.target.closest(".hasinfo"); if(it&&!e.target.closest("input,select,button,label,.infodrop")){ openInfo(it); return; }
+  // anywhere on a list row opens that row's item
+  const row=!e.target.closest(".infodrop,input,select,button,label")&&e.target.closest(".drawer li"), rit=row&&row.querySelector(":scope>.hasinfo");
+  if(rit){ openInfo(rit); return; }
   if(POP&&!e.target.closest(".infopop")) closeInfo(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&(POP||document.querySelector(".infodrop"))){ const back=POPFOR||document.querySelector(".hasinfo[aria-expanded=true]"); closeInfo(); back&&back.focus(); return; }
   const it=e.target.closest&&e.target.closest(".hasinfo"); if(it&&(e.key==="Enter"||e.key===" ")&&e.target===it){ e.preventDefault(); openInfo(it); } });
