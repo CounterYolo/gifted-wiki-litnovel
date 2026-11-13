@@ -2,6 +2,7 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 ## 2026-11-12 (another update)
+- Slot counts for AA's, Affinity and Skills are clickable: a panel shows the starting number and each chapter that added slots, with where they came from.
 - AA's Earned is now "AA Info" (checkbox renamed to match), with Slotted, Evolved and Available tabs.
   - Every AA shows its tier right after its name (T1/T2/T3), taken from the Details tab; if an AA isn't listed there, it's worked out from what earned it (basic path at X = T1, advanced path at V = T2, elite path at III = T3).
   - Slotted: each AA shows when and how it was earned and when it was slotted, on two lines under its name.
