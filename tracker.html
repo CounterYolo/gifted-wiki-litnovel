@@ -158,9 +158,10 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .drawer>summary .lbl::before{content:"▸";display:inline-block;width:1em;color:var(--muted);font-size:.8em;transition:transform .15s}
 #tracker .drawer[open]>summary .lbl::before{transform:rotate(90deg)}
 #tracker .drawer>summary .count{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;letter-spacing:0}
-#tracker .drawer ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:5px;font-size:.92rem}
+#tracker .drawer ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:1px;font-size:.8rem;line-height:1.35}
+#tracker .drawer li>*:not(.infodrop){font-size:.8rem}   /* third column: one small size for every row */
 #tracker .drawer li{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-#tracker .drawer li .sub{white-space:nowrap;color:var(--muted);font-size:.8rem;text-align:right}
+#tracker .drawer li .sub{white-space:nowrap;color:var(--muted);font-size:.8rem;text-align:right;margin-top:0}
 #tracker .drawer li.aali{flex-wrap:wrap;align-items:flex-start;gap:0}
 #tracker .drawer li.aali>span:first-child,#tracker .drawer li.aali>.aawhen{flex-basis:100%}
 #tracker .drawer li .aawhen{color:var(--muted);font-size:.78rem;line-height:1.3}
@@ -281,10 +282,14 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .bmc,#tracker .gxp{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px}
 #tracker #body.nobmc .bmc,#tracker #advanced.noxp .gxp{display:none}
 #tracker #aaList .aach{font-style:normal}
+#tracker #aaUniq{color:var(--muted);font-family:var(--mono);font-weight:400;font-size:.72rem;margin-right:6px;white-space:nowrap}
 #tracker #aaList li,#tracker #aaList li *:not(.infodrop):not(.infodrop *){font-size:.8rem}   /* AA Info: one smaller size throughout */
-#tracker #aaList .aato{white-space:nowrap;margin:0 auto 0 6px;color:var(--muted)}
-#tracker #aaList li:has(.aato){flex-wrap:wrap;gap:0}
-#tracker #aaList li:has(.aato)>.sub{white-space:nowrap;margin-left:auto;padding-left:10px}
+#tracker #aaList .aaev{color:var(--muted);white-space:nowrap}
+#tracker #aaList .aaev .aastrike{text-decoration:line-through}
+#tracker #aaList .aaev .aat{font-style:italic}
+#tracker #aaList li:has(.aaev),#tracker #aaList li.aaone{flex-wrap:wrap;gap:0}
+#tracker #aaList li.aaone>.sub{white-space:nowrap;margin-left:auto;padding-left:10px}
+#tracker #aaList li:has(.aaev)>.sub{white-space:nowrap;margin-left:auto;padding-left:10px}
 #tracker #aaList li>span[data-aa]{white-space:nowrap}
 #tracker #aaList li>.sub{white-space:normal;min-width:0}
 #tracker #aaList .aatier{font-style:italic;color:var(--muted);font-size:.8rem;margin-left:6px;white-space:nowrap;display:inline-block}
@@ -376,9 +381,9 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .hasinfo:hover{background:var(--tint)}
 #tracker .hasinfo:focus-visible{outline:2px solid var(--aether);outline-offset:2px;border-radius:4px}
 #tracker .hasinfo[aria-expanded=true]{background:var(--tint)}
-#tracker .infodrop,#tracker .infopop{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.84rem;line-height:1.45}
-#tracker .infodrop{margin:4px 0 8px;grid-column:1/-1}
-#tracker .drawer li:has(>.infodrop){flex-wrap:wrap}
+#tracker .infodrop,#tracker .infopop{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.8rem;line-height:1.3}
+#tracker .infodrop{margin:2px 0 4px;grid-column:1/-1}
+#tracker .drawer li:has(>.infodrop){flex-wrap:wrap;row-gap:0}
 #tracker .iftab .nw,#tracker .iftab td:first-child,#tracker .iftab td.num{white-space:nowrap}
 #tracker .iftab td.num.stp{white-space:normal}
 #tracker .iftab tr:has(+tr.ifsub)>td{border-bottom:0}
@@ -399,19 +404,19 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .ifclose{position:absolute;top:4px;right:6px;border:0;background:transparent;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px 8px}
 #tracker .ifclose:hover{color:var(--ink)}
 #tracker .ifbody>*:first-child{margin-top:0}
-#tracker .ifhead{display:flex;align-items:center;gap:8px;margin:0 28px 6px 0;font-size:.95rem}
+#tracker .ifhead{display:flex;align-items:center;gap:8px;margin:0 24px 2px 0;font-size:.9rem}
 #tracker .ifhead .num{margin-left:auto;font-family:var(--mono);font-weight:600}
 #tracker .ifhead .ifsl{font-size:.75rem;color:var(--muted)}
 #tracker .ifhead .iflv{font-family:var(--mono);font-weight:600;font-size:.85rem}
-#tracker .ifbody p{margin:4px 0 8px}
+#tracker .ifbody p{margin:2px 0 4px}
 #tracker .ifdesc{color:var(--muted);font-size:.8rem;margin-bottom:2px}
 #tracker .ifnotes{color:var(--muted);font-size:.74rem;margin-top:0}
-#tracker .ifdl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:3px 10px;margin:4px 0 8px}
-#tracker .ifdl dt{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+#tracker .ifdl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:1px 10px;margin:2px 0 4px}
+#tracker .ifdl dt{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
 #tracker .ifdl dd{margin:0}
-#tracker .iftab{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:.8rem}
-#tracker .iftab th{text-align:left;color:var(--muted);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line);padding:3px 6px 3px 0}
-#tracker .iftab td{padding:3px 6px 3px 0;border-bottom:1px solid var(--line);vertical-align:top}
+#tracker .iftab{width:100%;border-collapse:collapse;margin:3px 0 2px;font-size:.8rem}
+#tracker .iftab th{text-align:left;color:var(--muted);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line);padding:2px 6px 2px 0}
+#tracker .iftab td{padding:2px 6px 2px 0;border-bottom:1px solid var(--line);vertical-align:top}
 #tracker .iftab td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
 #tracker .iftab .muted,#tracker .ifbody .muted{color:var(--muted)}
 #tracker .ifbody .warn{color:var(--t2)}
@@ -561,7 +566,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
         <details class="drawer" data-d="rift"><summary><span class="lbl">Rift/Dungeon Paths</span><span class="sumr"><span class="seg spelltabs" id="riftTabs" role="group" aria-label="Which rift and dungeon paths"><button type="button" data-t="active">Active <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="riftCount"></span></span></summary><ul id="riftList"></ul></details>
         <details class="drawer" data-d="nonactive"><summary><span class="lbl">Non-Active Paths</span><span class="sumr"><span class="seg spelltabs" id="pathTabs" role="group" aria-label="Which paths"><button type="button" data-t="dormant">Dormant <i></i></button><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="dormCount" hidden></span><span class="count" id="compCount" hidden></span><span class="count" id="availCount" hidden></span></span></summary><ul id="dormant"></ul><ul id="completed"></ul><ul id="available"></ul></details>
-        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
+        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="aauniq" id="aaUniq" title="unique AA's obtained (evolved AA's don't count as new ones)"></span><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
         <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="sumr"><span class="seg spelltabs" id="seedTabs" role="group" aria-label="Which skill seeds"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="used">Used <i></i></button><button type="button" data-t="relinquished">Relinquished <i></i></button></span><span class="count" id="seedCount"></span></span></summary><ul id="seedList"></ul></details>
         <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
       </div>
@@ -993,7 +998,7 @@ function infoRift(key,cut){ const x=riftList(cut).find(r=>r.key===key); if(!x) r
   const notes=[...new Set([x.unlockK,x.doneK].filter(Boolean).map(k=>R(k).notes).filter(Boolean))];
   return `<div class="ifhead"><b>${esc(x.name)}</b> <span class="aatag">${x.kind} path</span><span class="num">${x.tier||""}</span></div>
     <dl class="ifdl"><dt>Now</dt><dd>${x.doneK?"Completed":"Active"}</dd>
-      ${x.unlockK?`<dt>Unlocked</dt><dd>Ch. ${rowCh(x.unlockK)} — ${esc(srcTxt(x.unlockK))}</dd>`:""}
+      ${x.unlockK?`<dt>Unlocked</dt><dd>Ch. ${rowCh(x.unlockK)}: ${esc(srcTxt(x.unlockK))}</dd>`:""}
       ${x.doneK?`<dt>Completed</dt><dd>Ch. ${rowCh(x.doneK)}${x.tier?` at tier ${x.tier}`:""}</dd><dt>Rewards</dt><dd>${esc(rew(x.doneK))||'<span class="muted">none in the sheet</span>'}</dd>`:""}
       ${notes.map(n=>`<dt>Note</dt><dd>${esc(n)}</dd>`).join("")}</dl>`; }
 function fill(id,cid,arr,html){ $(cid).textContent=`(${arr.length})`; $(id).innerHTML=arr.length?arr.map(html).join(""):'<li class="empty">None</li>'; }
@@ -1030,11 +1035,15 @@ function renderDrawers(S){
   const slotted=new Set(S.advanced.items.map(i=>i[0]));
   // Slotted: in an AA slot now; Evolved: AA's that turned into another one; Available: earned but not slotted
   const evo=aaEvolved(curCut());
-  const cutA=curCut(), when=n=>aaWhen(n,cutA), tg=n=>{ const t=aaTierInfo(n,cutA); return t?`<span class="aatier">T${t}</span>`:""; };
-  const ag={slotted:S.advanced.items.map(i=>({n:i[0],key:i[0],line:when(i[0])})),evolved:evo.map(e=>({n:e.from,key:e.to,firstK:(()=>{ for(let k=1;k<=cutA;k++) if(String(LOGROWS[k-1].aa||"").split(/;\s*/).some(a=>a.replace(/\s*\(.*$/,"").trim()===e.from)) return k; return null; })(),sub:`Ch. ${rowCh(e.k)}${srcTxt(e.k)?" — "+srcTxt(e.k):""}`,to:e.to})),available:S.aaEarned.filter(n=>!slotted.has(n)).map(n=>({n,key:n,line:when(n)}))};
+  const cutA=curCut(), when=n=>aaWhen(n,cutA), tg=n=>{ const t=aaTierInfo(n,cutA); return t?`<span class="aatier">T${t}</span>`:""; }, tt=n=>{ const t=aaTierInfo(n,cutA); return t?`: <i class="aat">T${t}</i>`:""; };
+  const ag={slotted:S.advanced.items.map(i=>({n:i[0],key:i[0],line:when(i[0])})),evolved:evo.map(e=>({n:e.from,key:e.to,firstK:(()=>{ for(let k=1;k<=cutA;k++) if(String(LOGROWS[k-1].aa||"").split(/;\s*/).some(a=>a.replace(/\s*\(.*$/,"").trim()===e.from)) return k; return null; })(),sub:`Ch. ${rowCh(e.k)}${srcTxt(e.k)?": "+srcTxt(e.k):""}`,to:e.to})),available:S.aaEarned.filter(n=>!slotted.has(n)).map(n=>({n,key:n,line:when(n)}))};
   const atabs=$("aaTabs"); if(atabs) atabs.hidden=!S.aaEarned.length;
+  // unique AA's obtained: every AA in the Unlocked AA's column counts once, except one marked as an evolved version
+  // of others (it replaces them, so it adds nothing new; several merging into one still count as their originals)
+  const uniq=LOGROWS.slice(0,cutA).reduce((n,r)=>n+String(r.aa||"").split(/;\s*/).filter(a=>a.trim()&&!/\((?:evolved version of|evolved from)\b/i.test(a)).length,0);
+  const ue=$("aaUniq"); if(ue) ue.textContent=S.aaEarned.length?`(${uniq})`:"";
   document.querySelectorAll("#aaTabs button").forEach(b=>{ b.querySelector("i").textContent=ag[b.dataset.t].length; b.setAttribute("aria-pressed",b.dataset.t===AATAB?"true":"false"); });
-  fill("aaList","aaCount",ag[AATAB],x=>AATAB==="available"&&x.line&&x.line.length?`<li><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span><span class="sub">${esc(x.line[0].replace(/^Earned /,""))}</span></li>`:x.line&&x.line.length?`<li class="aali"><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span>${x.line.map(l=>`<span class="aawhen">${esc(l)}</span>`).join("")}</li>`:`<li><span data-aa="${esc(x.key)}"${AATAB==="evolved"?' class="equipped"':""}>${esc(x.n)}${tg(x.n)}${x.firstK?`<span class="aatier aach">(Ch. ${rowCh(x.firstK)})</span>`:""}</span>${x.to?`<span class="aato">→ ${esc(x.to)}${tg(x.to)}</span>`:""}${x.sub?`<span class="sub">${esc(x.sub)}</span>`:""}</li>`);
+  fill("aaList","aaCount",ag[AATAB],x=>AATAB==="available"&&x.line&&x.line.length?`<li><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span><span class="sub">${esc(x.line[0].replace(/^Earned /,""))}</span></li>`:x.line&&x.line.length?`<li class="aaone"><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span><span class="sub">${esc(x.line[0].replace(/^Earned /,""))}${x.line[1]&&(x.line[0].match(/Ch\. \d+/)||[])[0]!==(x.line[1].match(/Ch\. \d+/)||[])[0]?` (${esc(x.line[1].replace(/^Slotted/,"slotted"))})`:""}</span></li>`:AATAB==="evolved"?`<li><span class="aaev" data-aa="${esc(x.key)}"><span class="aastrike">${esc(x.n)}</span>${tt(x.n)}${x.firstK?` (Ch. ${rowCh(x.firstK)})`:""} → ${esc(x.to)}${tt(x.to)}</span>${x.sub?`<span class="sub">${esc(x.sub)}</span>`:""}</li>`:`<li><span data-aa="${esc(x.key)}">${esc(x.n)}${tg(x.n)}</span>${x.sub?`<span class="sub">${esc(x.sub)}</span>`:""}</li>`);
   const seeds=seedList(curCut());
   // Available: seeds he still has (kept as physical objects); Used: used on himself; Relinquished: sold, given away or lost — oldest first
   const sg={available:[],used:[],relinquished:[]}; seeds.forEach((x,i)=>sg[x.state==="have"?"available":x.state==="used"?"used":"relinquished"].push({...x,i}));
@@ -1076,7 +1085,7 @@ function aaWhen(name,cut){ const chain=aaLineage(name), H=hist(); let ek=null, a
   let sk=null; for(let k=1;k<=cut;k++){ const on=H[k].advanced.items.some(i=>chain.includes(i[0])), was=H[k-1].advanced.items.some(i=>chain.includes(i[0])); if(on&&!was) sk=k; }
   const slotNow=H[cut].advanced.items.some(i=>i[0]===name);
   const how=ek?srcTxt(ek):""; const parts=[];
-  if(ek) parts.push(`Earned Ch. ${rowCh(ek)}${as!==name?` as ${as}`:""}${how?` — ${how}`:""}`);
+  if(ek) parts.push(`Earned Ch. ${rowCh(ek)}${as!==name?` as ${as}`:""}${how?`: ${how}`:""}`);
   if(slotNow&&sk) parts.push(`Slotted Ch. ${rowCh(sk)}`);
   return parts; }
 // tier shown in AA Info: the Details tab first; otherwise from what earned it —
@@ -1311,8 +1320,8 @@ function infoAA(name,cut){ const H=hist(), chain=aaLineage(name), D=H[cut];
   return `<div class="ifhead"><b>${esc(curName)}</b> <span class="aatag">${tierTxt(curName)} AA</span>${slottedNow?`<span class="num">${cur[1]}</span>`:""}</div>
 ${descPH("Advanced Attribute",curName)}
     <dl class="ifdl">
-      <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)} as ${esc(chain[0])} (${tierTxt(chain[0])}${everSlotted?", 100":""}) — ${esc(srcTxt(causeRow(firstK,new RegExp(reEsc2(chain[0]),"i"))))}</dd>
-      ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}${aaPct(e.from[0],e.from[1])!=null?`, +${aaPct(e.from[0],e.from[1])}%`:""}) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}${aaPct(e.to[0],e.to[1])!=null?`, +${aaPct(e.to[0],e.to[1])}%`:""}) — ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
+      <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)} as ${esc(chain[0])} (${tierTxt(chain[0])}${everSlotted?", 100":""}): ${esc(srcTxt(causeRow(firstK,new RegExp(reEsc2(chain[0]),"i"))))}</dd>
+      ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}${aaPct(e.from[0],e.from[1])!=null?`, +${aaPct(e.from[0],e.from[1])}%`:""}) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}${aaPct(e.to[0],e.to[1])!=null?`, +${aaPct(e.to[0],e.to[1])}%`:""}): ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
       ${/^gifted$/i.test(curName)?`<dt>Cap</dt><dd>250 until the Basic Class Path is completed</dd>`:capK>=0?`<dt>Cap</dt><dd>${cur[1]} (reached in Ch. ${LOGROWS[capK].ch})</dd>`:""}
     </dl>${prog(seriesTable(series(get,cut,shown)))}`; }
 
@@ -1340,8 +1349,8 @@ function infoBoon(name,cut){ const H=hist(), line=["Child Warrior","Child Aether
   const tot={}; bb.forEach(b=>b.items.forEach(([s,n,t])=>{ const key=/unallocated/i.test(s)?"Unallocated → "+t:s; tot[key]=(tot[key]||0)+n; }));
   const all=Object.values(tot).reduce((a,b)=>a+b,0);
   return `<div class="ifhead"><b>${esc(name)}</b></div>${descPH("Boon",name)}
-    <dl class="ifdl">${mine.map(e=>`<dt>${e.k===mine[0].k?"Gained":"Upgraded"}</dt><dd>Ch. ${rowCh(e.k)}: <b>${esc(e.boon)}</b> — ${esc(srcTxt(e.k))}${e.note?`<br><span class="muted">${esc(e.note)}</span>`:""}</dd>`).join("")}</dl>
-    ${bb.length?`<p><b>Bonus stats so far: ${all}</b> — ${Object.entries(tot).map(([s,n])=>`${esc(s)} ${sgn(n)}`).join(", ")}</p>
+    <dl class="ifdl">${mine.map(e=>`<dt>${e.k===mine[0].k?"Gained":"Upgraded"}</dt><dd>Ch. ${rowCh(e.k)}: <b>${esc(e.boon)}</b> (${esc(srcTxt(e.k))})${e.note?`<br><span class="muted">${esc(e.note)}</span>`:""}</dd>`).join("")}</dl>
+    ${bb.length?`<p><b>Bonus stats so far: ${all}</b>. ${Object.entries(tot).map(([s,n])=>`${esc(s)} ${sgn(n)}`).join(", ")}</p>
     ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Boon</th><th>Path tier</th><th>Bonus</th></tr></thead><tbody>${bb.map(b=>
       `<tr><td>${b.ch}</td><td>${esc(b.boon.replace("Child ",""))}</td><td>${esc(b.src)}</td><td>${b.items.map(([s,n,t])=>`${sgn(n)} ${esc(s)}${t?` (${esc(t)})`:""}`).join(", ")}</td></tr>`).join("")}</tbody></table>`)}`:inLine?'<p class="muted">No bonus stats yet.</p>':""}`; }
 
@@ -1383,9 +1392,9 @@ function pathAchievements(name,cut){ const out=[], isDone=t=>/^Path of (.+?) (?:
   return out; }
 // what unlocked a path: the row that lists it as a reward / unlock. A path that only appears in a status line has no known cause.
 function unlockSrc(k,name){ const re=new RegExp("Path of "+reEsc2(name)+"(?![\\w-])","i"), c=causeRow(k,re);
-  return re.test(ownTxt(LOGROWS[c-1]))?" — "+esc(srcTxt(c)):""; }
+  return re.test(ownTxt(LOGROWS[c-1]))?": "+esc(srcTxt(c)):""; }
 function infoAvailable(name,cut){ const H=hist(); let k0=null; for(let k=1;k<=cut;k++) if(pathState(H[k],name)){ k0=k; break; }
-  const ev=[]; for(let k=k0+1;k<=cut;k++){ const a=pathState(H[k-1],name), b=pathState(H[k],name); if(a!==b) ev.push(`<dt>${b==="active"?"Slotted":"Unslotted"}</dt><dd>Ch. ${rowCh(k)}${b==="available"?" — before reaching tier I, so back to Available":""}</dd>`); }
+  const ev=[]; for(let k=k0+1;k<=cut;k++){ const a=pathState(H[k-1],name), b=pathState(H[k],name); if(a!==b) ev.push(`<dt>${b==="active"?"Slotted":"Unslotted"}</dt><dd>Ch. ${rowCh(k)}${b==="available"?": before reaching tier I, so back to Available":""}</dd>`); }
   return `<div class="ifhead"><b>Path of ${esc(name)}</b> ${tagHTML(name)}</div>
     <dl class="ifdl"><dt>Unlocked</dt><dd>Ch. ${rowCh(k0)}${unlockSrc(k0,name)}</dd>${ev.join("")}</dl>`; }
 function infoPath(name,cut){ const H=hist(), D=H[cut], get=S=>{ const v=(S.psteps||{})[name]; return v==null?null:v; };
@@ -1445,14 +1454,14 @@ function infoPath(name,cut){ const H=hist(), D=H[cut], get=S=>{ const v=(S.pstep
   { let on=false; const keep=[]; evs.forEach(e=>{ if(e.b==="active") on=true; if(e.b==="dormant"&&!on) return; keep.push(e); }); evs.splice(0,evs.length,...keep); }
   // a slot change: the row about this path, else just where the sheet records the change
   // completing = reaching the last tier; slot changes are just when they happened
-  const evSrc=e=>{ if(e.b!=="completed") return ""; const kt=tierRow(e.k,name,(H[e.k].ptiers||{})[name]); return ` — reached tier ${ROMANS[(H[e.k].ptiers||{})[name]]}`+(kt!==e.k?` (final steps from ${srcTxt(e.k)})`:""); };
+  const evSrc=e=>{ if(e.b!=="completed") return ""; const kt=tierRow(e.k,name,(H[e.k].ptiers||{})[name]); return `: reached tier ${ROMANS[(H[e.k].ptiers||{})[name]]}`+(kt!==e.k?` (final steps from ${srcTxt(e.k)})`:""); };
   let wasOn=false; const evTxt=e=>{ const t=e.b==="completed"?"Completed":e.b==="active"?(wasOn?"Made active again":"Made active"):"Made dormant"; if(e.b==="active") wasOn=true; return t; };
   return `<div class="ifhead"><b>Path of ${esc(name)}</b> ${tagHTML(name)}<span class="num">${cur[1]||""} ${(cur[2]??0).toLocaleString()}</span></div>
     ${/Completionist/.test(name)?`<p>Earns steps whenever another path is completed: <b>10</b> per basic, <b>20</b> per advanced, <b>40</b> per elite, plus the Talented/Gifted bonus at that moment, rounded down. Choose-a-path rewards spent on it also get the bonus. Rift &amp; dungeon paths give none. The brackets after the steps show how much of that number the bonus added.</p>`:""}
     <dl class="ifdl"><dt>Now</dt><dd>${st==="active"?"Active":st==="completed"?"Completed":st==="dormant"?"Dormant (not slotted)":"Available, not started"}${t?` at tier ${ROMANS[t]}`:""}</dd>
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)}${unlockSrc(firstK,name)}</dd>
       ${evs.map(e=>`<dt>${evTxt(e)}</dt><dd>Ch. ${rowCh(e.k)}${esc(evSrc(e))}</dd>`).join("")}
-      ${pathAchievements(name,cut).map(a=>`<dt>Achievement</dt><dd>Ch. ${rowCh(a.k)} — ${esc(a.text)}${a.rew?` <span class="muted">(${esc(a.rew)})</span>`:""}</dd>`).join("")}</dl>
+      ${pathAchievements(name,cut).map(a=>`<dt>Achievement</dt><dd>Ch. ${rowCh(a.k)}: ${esc(a.text)}${a.rew?` <span class="muted">(${esc(a.rew)})</span>`:""}</dd>`).join("")}</dl>
     ${tiers.length?`<table class="iftab"><thead><tr><th>Ch.</th><th>Tier</th><th>Rewards</th></tr></thead><tbody>${tiers.map(t=>`<tr><td>${rowCh(t.k)}</td><td class="nw">${t.from+1<t.to?ROMANS[t.from+1]+"–":""}${ROMANS[t.to]}</td><td>${esc(t.rew)||'<span class="muted">—</span>'}</td></tr>`).join("")}</tbody></table>`:""}
     ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Steps from</th><th>Steps</th><th>Total</th><th>Tier</th></tr></thead><tbody>${(()=>{ let tPrev=(H[rows[0]?.from??0]?.ptiers||{})[name]||0; return rows.map((x,i)=>{
       // a tier can be recorded a row or two after the steps that reached it: look up to the next steps change
@@ -1486,12 +1495,12 @@ function skillParents(name,cut){ const h=skillHistory(name,cut); if(!h.first) re
 function seedSource(k){ const t=srcTxt(k), m=t.match(/^Skill Seed \((.+?)\) \((.+?)\) used/i);
   if(m){ const key=`skill seed (${m[1]}) (${m[2]})`.toLowerCase(); let uses=0, got=0;
     for(let j=1;j<k;j++) if(srcTxt(j).toLowerCase().startsWith(key+" used")) uses++;
-    for(let j=1;j<k;j++) if(String(LOGROWS[j-1].other||"").toLowerCase().includes(key)){ if(got===uses) return {dt:"Seed acquired",dd:`Ch. ${rowCh(j)} — ${srcTxt(j)}`}; got++; }
+    for(let j=1;j<k;j++) if(String(LOGROWS[j-1].other||"").toLowerCase().includes(key)){ if(got===uses) return {dt:"Seed acquired",dd:`Ch. ${rowCh(j)}: ${srcTxt(j)}`}; got++; }
     return {dt:"Seed acquired",dd:"not found in the sheet"}; }
-  if(/^bought/i.test(t)) return {dt:"Acquired",dd:`Ch. ${rowCh(k)} — bought (not earned from a path)`};
+  if(/^bought/i.test(t)) return {dt:"Acquired",dd:`Ch. ${rowCh(k)}: bought (not earned from a path)`};
   return null; }
 function gainTxt(k,evolved,merged){ const t=srcTxt(k);
-  if(evolved&&/at end of path/i.test(t)) return `${evolved} evolved into it${merged.length?` (with ${merged.join(", ")} merged in)`:""} — skill advancement, not a path reward`;
+  if(evolved&&/at end of path/i.test(t)) return `${evolved} evolved into it${merged.length?` (with ${merged.join(", ")} merged in)`:""}: skill advancement, not a path reward`;
   return t; }
 function skillBlock(name,cut,depth,lead){ const {h,evolved,merged}=skillParents(name,cut); if(!h.first) return "";
   const lvl=h.last?skillFate(name,h.last.k):"";
@@ -1502,7 +1511,7 @@ function skillBlock(name,cut,depth,lead){ const {h,evolved,merged}=skillParents(
   const kids=[evolved,...merged].filter(Boolean);
   return `<div class="ifskill${depth?" sub":""}"><div class="ifhead"><b>${esc(name)}</b> ${chip(g)}${sl?`<span class="ifsl">${sl} slot${sl>1?"s":""}</span>`:""}${cur?`<span class="iflv">${lv==null?"?":lv}/100</span>`:""}</div>
     ${lead||""}${(h.steps.map(s=>s.g).filter((g,i,a)=>a.indexOf(g)===i)).map(g=>descPH("Skill",name,g)).join("")}
-    <dl class="ifdl">${(sd=>sd?`<dt>${sd.dt}</dt><dd>${esc(sd.dd)}</dd>`:"")(seedSource(h.gain))}<dt>Gained</dt><dd>Ch. ${rowCh(h.gain)} — ${esc(gainTxt(h.gain,evolved,merged))}</dd>
+    <dl class="ifdl">${(sd=>sd?`<dt>${sd.dt}</dt><dd>${esc(sd.dd)}</dd>`:"")(seedSource(h.gain))}<dt>Gained</dt><dd>Ch. ${rowCh(h.gain)}: ${esc(gainTxt(h.gain,evolved,merged))}</dd>
     ${h.steps.length>1?`<dt>Skill advancement</dt><dd>${h.steps.slice(1).map(s=>`Ch. ${rowCh(s.k)}: ${esc(s.g)}, ${s.sl} slot${s.sl>1?"s":""}`).join("; ")}</dd>`:""}
     ${evolved?`<dt>Evolved from</dt><dd>${esc(evolved)}</dd>`:""}${merged.length?`<dt>Merged in</dt><dd>${merged.map(esc).join(", ")}</dd>`:""}
     ${lvl?`<dt>Ended</dt><dd>${esc(lvl)}</dd>`:""}</dl>
@@ -1514,7 +1523,7 @@ function infoSkill(name,cut){ const b=skillBlock(name,cut,0); return b||'<p clas
 function infoSeed(i,cut){ const x=seedList(cut)[+i]; if(!x) return '<p class="muted">Not gained yet.</p>';
   const m=x.res.match(/^(.*?)(?:,\s*)?(used|sold)\b(.*)$/i), kept=/physical object/i.test(x.res);
   return `<div class="ifhead"><b>${esc(x.type?`Skill Seed (${x.type})`:"Skill Seed")}</b> ${chip(x.grade)}</div>
-    <dl class="ifdl"><dt>${x.how==="bought"?"Bought":"Gained"}</dt><dd>Ch. ${x.ch}${x.how==="bought"?"":` — ${esc(x.how)}`}</dd>
+    <dl class="ifdl"><dt>${x.how==="bought"?"Bought":"Gained"}</dt><dd>Ch. ${x.ch}${x.how==="bought"?"":`: ${esc(x.how)}`}</dd>
     ${kept?`<dt>Kept</dt><dd>as a physical object</dd>`:""}
     <dt>${x.state==="used"?"Used":x.state==="sold"?"Sold":"Now"}</dt><dd>${esc(x.state==="have"?"still has it":(m?(m[2]+m[3]).replace(/^(used|sold)\s*/i,"").replace(/^immediately:\s*/i,`immediately (Ch. ${x.ch}): `).replace(/^Ch\. (\d+):\s*/,"Ch. $1 → "):x.res))}</dd></dl>`; }
 function infoAch(i,cut){ i=+i; let n=-1, k=null; for(let j=1;j<=cut;j++) if(/^y/i.test(LOGROWS[j-1].ach||"")&&++n===i){ k=j; break; }
@@ -1523,7 +1532,7 @@ function infoAch(i,cut){ i=+i; let n=-1, k=null; for(let j=1;j<=cut;j++) if(/^y/
   const oth=String(r.other||"").replace(/Path of ([^,;+]+?) \+(\d+)/g,(m0,p,n)=>{ const sp=rewardSplit(k,p.trim(),+n).short; return sp?`${m0} (${sp})`:m0; });
   const rew=rewardText(r,oth);
   let by=null; for(const pn of Object.keys(H[cut].ptiers||{})) if(pathAchievements(pn,cut).some(a=>a.k===k)){ by=pn; break; }
-  const age=r.age!=null?` — ${fmtAge(r.age).replace(/^Age /,"age ")}`:"";
+  const age=r.age!=null?`: ${fmtAge(r.age).replace(/^Age /,"age ")}`:"";
   return `<div class="ifhead"><b>${esc(r.text)}</b></div>
     <dl class="ifdl"><dt>Earned</dt><dd>Ch. ${r.ch}${esc(age)}</dd>
     ${by?`<dt>Earned by</dt><dd>completing Path of ${esc(by)}</dd>`:""}
@@ -1546,7 +1555,7 @@ function infoAff(name,cut){ const H=hist(), D=H[cut], cur=D.affinity.items.find(
   const at=S=>S.affinity.items.find(a=>a[0]===name)||null;
   const start=at(H[0]), steps=[]; let prev=start;
   for(let k=1;k<=cut;k++){ const x=at(H[k]); if(!x) continue;
-    if(!prev||x[1]!==prev[1]||x[2]!==prev[2]) steps.push({k,ch:rowCh(k),g:x[1],v:x[2],src:(prev?"":"gained — ")+bodySrc(k,name)}); prev=x; }
+    if(!prev||x[1]!==prev[1]||x[2]!==prev[2]) steps.push({k,ch:rowCh(k),g:x[1],v:x[2],src:(prev?"":"gained: ")+bodySrc(k,name)}); prev=x; }
   return `<div class="ifhead"><b>${esc(name)}</b> ${chip(cur[1])} <span class="aatag">T1 affinity</span><span class="num">${cur[2]}</span></div>${descPH("Affinity",name)}
     ${prog(`<table class="iftab"><thead><tr><th>Ch.</th><th>Grade</th><th>Rating</th><th>From</th></tr></thead><tbody>
     ${start?`<tr><td>start</td><td>${esc(start[1])}</td><td class="num">${start[2]??""}</td><td class="muted">starting value</td></tr>`:""}
@@ -1566,7 +1575,7 @@ const SLOT_NAME={aa:"Advanced attribute slots",affinity:"Affinity slots",skill:"
 function infoSlots(key,cut){ const H=hist(), get=D=>key==="aa"?D.advanced.slots:key==="affinity"?D.affinity.slots:D.skills.slots;
   const start=get(H[0]), rows=[]; let prev=start;
   for(let k=1;k<=cut;k++){ const v=get(H[k]); if(v!==prev&&v!=null){ const r=LOGROWS[k-1];
-    const why=/^status screen/i.test(r.text||"")?"status screen":[srcTxt(k),String(r.other||"").split(/,\s*(?![^()]*\))/).find(x=>/slot/i.test(x))].filter(Boolean).join(" — ");
+    const why=/^status screen/i.test(r.text||"")?"status screen":[srcTxt(k),String(r.other||"").split(/,\s*(?![^()]*\))/).find(x=>/slot/i.test(x))].filter(Boolean).join(": ");
     rows.push({k,d:v-(prev??0),v,why}); prev=v; } }
   const now=get(H[cut]);
   return `<div class="ifhead"><b>${SLOT_NAME[key]}</b><span class="num">${now??"?"}</span></div>
@@ -1575,7 +1584,7 @@ function infoSlots(key,cut){ const H=hist(), get=D=>key==="aa"?D.advanced.slots:
     ${rows.map(x=>`<tr><td>${rowCh(x.k)}</td><td class="num">${x.d>0?"+":""}${x.d}</td><td class="num">${x.v}</td><td>${esc(x.why)}</td></tr>`).join("")}</tbody></table>`; }
 function infoSpell(name,cut){ const o=spellHist(cut)[name]; if(!o) return '<p class="muted">Not started yet.</p>';
   const D=hist()[cut], ca=castableAff(D)[o.aff], lostNow=o.now==="lost"||(o.aff&&!/^unaspected$/i.test(o.aff)&&!ca);
-  const now=lostNow?(o.now==="lost"?"Lost":`Lost — can no longer cast ${o.aff}`):o.now==="relearning"?"Being re-learned (RLIP)":o.now==="learning"?"Still learning":o.now==="relearned"?"Re-learned":"Learned";
+  const now=lostNow?(o.now==="lost"?"Lost":`Lost: can no longer cast ${o.aff}`):o.now==="relearning"?"Being re-learned (RLIP)":o.now==="learning"?"Still learning":o.now==="relearned"?"Re-learned":"Learned";
   return `<div class="ifhead"><b>${esc(name)}</b> <span class="ptype ${ca?.tc||"t1"}">(${circ(o.circle)}-${esc(o.aff||"?")})</span></div>${descPH("Spell",name)}
     <dl class="ifdl"><dt>Affinity</dt><dd>${esc(o.aff||"?")}${ca?.via?` (cast through ${ca.via.map(esc).join(" + ")})`:""}, ${circWord(o.circle)}</dd><dt>Now</dt><dd>${esc(now)}</dd></dl>
     <table class="iftab"><thead><tr><th>Ch.</th><th>Event</th><th>Notes</th></tr></thead><tbody>${o.ev.map(e=>`<tr><td>${rowCh(e.k)}</td><td class="nw">${SPELL_EV[e.st]}</td><td>${esc(LOGROWS[e.k-1].notes||"")}</td></tr>`).join("")}</tbody></table>`; }
