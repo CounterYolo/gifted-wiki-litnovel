@@ -1,9 +1,12 @@
 # Changelog
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
+
+## 2026-11-14
+- Misc. Statistics section added
+
 ## 2026-11-13
 - New GoogleSpreadsheet created that is owned by CounterYolo (per request of other GoogleSpreadsheet's owner formerly referenced in this project)
-
 
 ## 2026-11-12 (another update)
 - Slot counts for AA's, Affinity and Skills are clickable: a panel shows the starting number and each chapter that added slots, with where they came from.
