@@ -282,6 +282,18 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .bmc,#tracker .gxp{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px}
 #tracker #body.nobmc .bmc,#tracker #advanced.noxp .gxp{display:none}
 #tracker #aaList .aach{font-style:normal}
+#tracker .stg{display:grid;grid-template-columns:96px repeat(4,1fr);margin:4px 0 6px;font-size:.8rem;line-height:1.4}
+#tracker .stg .gn{color:var(--muted);white-space:nowrap}
+#tracker .stg .sl{color:var(--muted);padding-left:12px}
+#tracker .stg .hd{color:var(--muted);font-size:.72rem;text-align:center}
+#tracker .stg .n{text-align:center;font-family:var(--mono);font-weight:400}
+#tracker .stg .n.na{color:var(--muted);font-weight:400}
+#tracker .stg .gt{border-top:1px solid var(--line);padding-top:3px;margin-top:2px}
+#tracker .stp2{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;margin:6px 0 10px;font-size:.8rem;border-top:1px solid var(--line);padding-top:4px}
+#tracker .stp2>div:not(.infodrop){display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding:1px 0}
+#tracker .stp2>div>i{font-style:normal;color:var(--muted);white-space:nowrap}#tracker .stp2>div>b{font-family:var(--mono);font-weight:400;white-space:nowrap}
+#tracker .stp2>.infodrop{grid-column:1/-1;display:block;border-bottom:1px solid var(--line)}
+#tracker .stp2>div.hasinfo{cursor:pointer}
 #tracker #aaUniq{color:var(--muted);font-family:var(--mono);font-weight:400;font-size:.72rem;margin-right:6px;white-space:nowrap}
 #tracker #aaList li,#tracker #aaList li *:not(.infodrop):not(.infodrop *){font-size:.8rem}   /* AA Info: one smaller size throughout */
 #tracker #aaList .aaev{color:var(--muted);white-space:nowrap}
@@ -561,14 +573,15 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
       <div class="col" id="drawers">
         <div class="dshow" id="drawerShow" role="group" aria-label="Sections to show">
           <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="rift">Rift/Dungeon Paths</label><label class="dtoggle"><input type="checkbox" data-d="nonactive">Non-Active Paths</label></div>
-          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="spells">Spells</label><label class="dtoggle"><input type="checkbox" data-d="aas">AA Info</label><label class="dtoggle"><input type="checkbox" data-d="seeds">Skill Seeds</label><label class="dtoggle"><input type="checkbox" data-d="achievements">Achievements</label></div>
+          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="spells">Spells</label><label class="dtoggle"><input type="checkbox" data-d="aas">AA Info</label><label class="dtoggle"><input type="checkbox" data-d="seeds">Skill Seeds</label><label class="dtoggle"><input type="checkbox" data-d="achievements">Achievements</label><label class="dtoggle"><input type="checkbox" data-d="stats">Misc. Statistics</label></div>
         </div>
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
         <details class="drawer" data-d="rift"><summary><span class="lbl">Rift/Dungeon Paths</span><span class="sumr"><span class="seg spelltabs" id="riftTabs" role="group" aria-label="Which rift and dungeon paths"><button type="button" data-t="active">Active <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="riftCount"></span></span></summary><ul id="riftList"></ul></details>
         <details class="drawer" data-d="nonactive"><summary><span class="lbl">Non-Active Paths</span><span class="sumr"><span class="seg spelltabs" id="pathTabs" role="group" aria-label="Which paths"><button type="button" data-t="dormant">Dormant <i></i></button><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="completed">Completed <i></i></button></span><span class="count" id="dormCount" hidden></span><span class="count" id="compCount" hidden></span><span class="count" id="availCount" hidden></span></span></summary><ul id="dormant"></ul><ul id="completed"></ul><ul id="available"></ul></details>
-        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="aauniq" id="aaUniq" title="unique AA's obtained (evolved AA's don't count as new ones)"></span><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
+        <details class="drawer" data-d="aas"><summary><span class="lbl">AA Info</span><span class="sumr"><span class="seg spelltabs" id="aaTabs" role="group" aria-label="Which AA's"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="slotted">Slotted <i></i></button><button type="button" data-t="evolved">Evolved <i></i></button></span><span class="count" id="aaCount" hidden></span></span></summary><ul id="aaList"></ul></details>
         <details class="drawer" data-d="seeds"><summary><span class="lbl">Skill Seeds</span><span class="sumr"><span class="seg spelltabs" id="seedTabs" role="group" aria-label="Which skill seeds"><button type="button" data-t="available">Available <i></i></button><button type="button" data-t="used">Used <i></i></button><button type="button" data-t="relinquished">Relinquished <i></i></button></span><span class="count" id="seedCount"></span></span></summary><ul id="seedList"></ul></details>
         <details class="drawer" data-d="achievements"><summary><span class="lbl">Achievements</span><span class="count" id="achCount"></span></summary><ul id="achList"></ul></details>
+        <details class="drawer" data-d="stats"><summary><span class="lbl">Misc. Statistics</span></summary><div id="statsBox"></div></details>
       </div>
     </div>
     <div class="since" id="since" hidden>
@@ -944,6 +957,61 @@ function renderStats(D){
       ${pct!=null?`<span class="num">${fmtN(c,m,p)}</span>`:""}</div>
       ${pct!=null?`<div class="bar"><i class="skill" style="--c:var(--t${tierOf(g)});width:${pct}%"></i></div>`:""}</div>`}).join(""):'<div class="row empty">None yet</div>';
 }
+// Misc. Statistics: everything is worked out from the sheet rows up to the chosen chapter
+const isExternal=t=>/\b(bought|given|gift(?:ed)?)\b/i.test(String(t||""));
+function stepLosses(cut){ const H=hist(), out=[];
+  for(let k=1;k<=cut;k++){ const A=H[k-1], B=H[k];
+    for(const [lst,to] of [["dormant","made dormant"],["available","unslotted back to Available"]]) for(const n of B[lst]){
+      if(A[lst].includes(n)) continue; const a=(A.psteps||{})[n], b=(B.psteps||{})[n];
+      if(a!=null&&b!=null&&b<a) out.push({k,n,lost:a-b,to}); } }
+  return out; }
+function miscStats(cut){ const H=hist(), D=H[cut], S0=H[0];
+  const ty=n=>String((D.ptypes||{})[n]||"").replace(/-M$/,"");
+  const allP=new Set([...(D.paths?.items||[]).map(x=>x[0]),...D.dormant,...D.available,...D.completed]);
+  const byT=list=>{ const o={B:0,A:0,E:0}; list.forEach(n=>{ const t=ty(n); if(t in o) o[t]++; }); return o; };
+  const po=byT([...allP]), pc=byT(D.completed);
+  // seeds
+  const seeds=seedList(cut), ext=x=>isExternal(x.how);
+  const sd={oE:0,oA:0,uE:0,uA:0,rel:0}; seeds.forEach(x=>{ if(ext(x)) sd.oA++; else sd.oE++; if(x.state==="used"){ if(ext(x)) sd.uA++; else sd.uE++; } else if(x.state!=="have") sd.rel++; });
+  // skills: each skill counts once when first gained; an evolved, upgraded or merged result adds to "evolved" instead
+  const firstAt=new Map(); for(let k=1;k<=cut;k++) H[k].skills.items.forEach(x=>{ if(!firstAt.has(x[0])&&!H[k-1].skills.items.some(y=>y[0]===x[0])) firstAt.set(x[0],k); });
+  H[0].skills.items.forEach(x=>firstAt.has(x[0])||firstAt.set(x[0],0));
+  const sk={oE:0,oA:0,eE:0,eA:0}, origin=new Map();
+  [...firstAt].sort((a,b)=>a[1]-b[1]).forEach(([n,k])=>{ const pr=k?skillParents(n,k):{evolved:null,merged:[]};
+    const parent=pr.evolved||(pr.merged&&pr.merged[0]);
+    if(parent){ const ex=origin.get(parent)||false; origin.set(n,ex); if(ex) sk.eA++; else sk.eE++; return; }
+    const g=k?skillHistory(n,k).gain:null, ex=isExternal(g?srcTxt(g):""); origin.set(n,ex); if(ex) sk.oA++; else sk.oE++; });
+  // spells learned at least once
+  const sh=spellHist(cut), learned=Object.entries(sh).filter(([,o])=>o.ev.some(e=>e.st==="learned"||e.st==="relearned"));
+  const affs=new Set(learned.map(([,o])=>o.aff).filter(Boolean));
+  const rl=riftList(cut).filter(x=>x.doneK);
+  const uniqAA=LOGROWS.slice(0,cut).reduce((n,r)=>n+String(r.aa||"").split(/;\s*/).filter(a=>a.trim()&&!/\((?:evolved version of|evolved from)\b/i.test(a)).length,0);
+  const len=x=>(x&&x.items?x.items:x||[]).length;
+  return {po,pc,sd,sk,
+    rift:rl.filter(x=>x.kind!=="Dungeon").length, dung:rl.filter(x=>x.kind==="Dungeon").length,
+    aaE:uniqAA, aaEv:aaEvolved(cut).length,
+    aaSl:(D.advanced.slots||0)-(S0.advanced.slots||0), afSl:(D.affinity.slots||0)-(S0.affinity.slots||0), skSl:(D.skills.slots||0)-(S0.skills.slots||0),
+    body:len(D.body)-len(S0.body), boons:len(D.boons)-len(S0.boons),
+    spells:learned.length, spAff:affs.size, lost:stepLosses(cut).reduce((t,x)=>t+x.lost,0)}; }
+function renderMiscStats(){ const box=$("statsBox"); if(!box) return; const m=miscStats(curCut());
+  const grp=(name,heads,rows)=>`<div class="gn gt">${name}</div>${heads.map(x=>`<div class="hd gt">${x}</div>`).join("")}`+rows.map(r=>`<div class="sl">${r[0]}</div>${r[1].map(v=>`<div class="n${v==="-"?" na":""}">${v==null?"":v}</div>`).join("")}`).join("");
+  const t=o=>Object.values(o).reduce((a,b)=>a+b,0);
+  const pair=(a,b)=>[a,b].map(x=>`<div${x[2]?` data-st="${x[2]}"`:""}><i>${x[0]}</i><b>${x[1]}</b></div>`).join("");
+  box.innerHTML=`<div class="stg">${grp("Paths",["Basic","Advanced","Elite","Total"],[["obtained",[m.po.B,m.po.A,m.po.E,t(m.po)]],["completed",[m.pc.B,m.pc.A,m.pc.E,t(m.pc)]]])}`+
+    `${grp("Skill Seeds",["Earned","Acquired","Relinquished","Total"],[["obtained",[m.sd.oE,m.sd.oA,"-",m.sd.oE+m.sd.oA]],["used",[m.sd.uE,m.sd.uA,m.sd.rel,m.sd.uE+m.sd.uA+m.sd.rel]]])}`+
+    `${grp("Skills",["Earned","Acquired","","Total"],[["obtained",[m.sk.oE,m.sk.oA,null,m.sk.oE+m.sk.oA]],["evolved",[m.sk.eE,m.sk.eA,null,m.sk.eE+m.sk.eA]]])}</div>`+
+    `<div class="stp2">${pair(["AA&#39;s earned",m.aaE],["AA&#39;s evolved",m.aaEv])}${pair(["AA slots added",m.aaSl,"added:aa"],["Affinity slots added",m.afSl,"added:affinity"])}${pair(["Skill slots added",m.skSl,"added:skill"],["Body features added",m.body])}${pair(["Distinct spells",m.spells],["Distinct spell affinities",m.spAff])}${pair(["Steps lost",m.lost,"lost:all"],["Boons earned",m.boons])}</div>`; }
+function infoAdded(key,cut){ const H=hist(), get=D=>key==="aa"?D.advanced.slots:key==="affinity"?D.affinity.slots:D.skills.slots;
+  const start=get(H[0])||0, rows=[]; let prev=start;
+  for(let k=1;k<=cut;k++){ const v=get(H[k]); if(v!=null&&v!==prev){ const r=LOGROWS[k-1];
+    const why=/^status screen/i.test(r.text||"")?"status screen":[srcTxt(k),String(r.other||"").split(/,\s*(?![^()]*\))/).find(x=>/slot/i.test(x))].filter(Boolean).join(": ");
+    rows.push({k,d:v-prev,why}); prev=v; } }
+  const added=(get(H[cut])||0)-start, name={aa:"AA slots added",affinity:"Affinity slots added",skill:"Skill slots added"}[key];
+  return `<div class="ifhead"><b>${name}</b><span class="num">${added}</span></div>
+    ${rows.length?`<table class="iftab"><thead><tr><th>Ch.</th><th>Added</th><th>From</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${rowCh(x.k)}</td><td class="num">${x.d>0?"+":""}${x.d}</td><td>${esc(x.why)}</td></tr>`).join("")}</tbody></table>`:'<p class="muted">None added yet.</p>'}`; }
+function infoLost(key,cut){ const L=stepLosses(cut), tot=L.reduce((t,x)=>t+x.lost,0);
+  return `<div class="ifhead"><b>Steps lost</b><span class="num">${tot}</span></div>
+    ${L.length?`<table class="iftab"><thead><tr><th>Ch.</th><th>Path</th><th>Lost</th><th>How</th></tr></thead><tbody>${L.map(x=>`<tr><td>${rowCh(x.k)}</td><td>Path of ${esc(x.n.replace(/^Path of /,""))}</td><td class="num">${x.lost}</td><td>${x.to}</td></tr>`).join("")}</tbody></table>`:'<p class="muted">No steps lost yet.</p>'}`; }
 function formerSkills(cut){ const H=hist(), D=H[cut], cur=new Set(D.skills.items.map(x=>x[0])), seen=new Map();
   for(let k=1;k<=cut;k++){ const now=new Set(H[k].skills.items.map(x=>x[0]));
     H[k-1].skills.items.forEach(x=>{ if(!now.has(x[0])&&!cur.has(x[0])) seen.set(x[0],{name:x[0],g:x[1],sl:x[5],k,from:skillHistory(x[0],k).first}); }); }
@@ -1032,6 +1100,7 @@ function renderDrawers(S){
   document.querySelectorAll("#pathTabs button").forEach(b=>{ b.querySelector("i").textContent=pc[b.dataset.t]; b.setAttribute("aria-pressed",b.dataset.t===PATHTAB?"true":"false"); });
   ["dormant","completed","available"].forEach(t=>{ $(t).hidden=t!==PATHTAB; });
   renderRift();
+  renderMiscStats();
   const slotted=new Set(S.advanced.items.map(i=>i[0]));
   // Slotted: in an AA slot now; Evolved: AA's that turned into another one; Available: earned but not slotted
   const evo=aaEvolved(curCut());
@@ -1589,12 +1658,13 @@ function infoSpell(name,cut){ const o=spellHist(cut)[name]; if(!o) return '<p cl
     <dl class="ifdl"><dt>Affinity</dt><dd>${esc(o.aff||"?")}${ca?.via?` (cast through ${ca.via.map(esc).join(" + ")})`:""}, ${circWord(o.circle)}</dd><dt>Now</dt><dd>${esc(now)}</dd></dl>
     <table class="iftab"><thead><tr><th>Ch.</th><th>Event</th><th>Notes</th></tr></thead><tbody>${o.ev.map(e=>`<tr><td>${rowCh(e.k)}</td><td class="nw">${SPELL_EV[e.st]}</td><td>${esc(LOGROWS[e.k-1].notes||"")}</td></tr>`).join("")}</tbody></table>`; }
 function infoHTML(kind,name){ const cut=curCut();
-  try{ return ({basic:infoBasic,aa:infoAA,body:infoBody,boon:infoBoon,path:infoPath,skill:infoSkill,ach:infoAch,seed:infoSeed,rift:infoRift,slots:infoSlots,aff:infoAff,equiv:infoEquiv,spell:infoSpell})[kind](name,cut); }
+  try{ return ({basic:infoBasic,aa:infoAA,body:infoBody,boon:infoBoon,path:infoPath,skill:infoSkill,ach:infoAch,seed:infoSeed,rift:infoRift,slots:infoSlots,lost:infoLost,added:infoAdded,aff:infoAff,equiv:infoEquiv,spell:infoSpell})[kind](name,cut); }
   catch(e){ console.error(e); return '<p class="muted">Couldn\'t build these details.</p>'; } }
 
 // mark the items that have details, after every render
 function markInfo(){
   const mark=(el,kind,name)=>{ if(!el||!name) return; el.classList.add("hasinfo"); el.dataset.info=kind+"|"+name; el.tabIndex=0; el.setAttribute("role","button"); el.setAttribute("aria-expanded","false"); };
+  document.querySelectorAll("#statsBox [data-st]").forEach(r=>{ const [k,v]=r.dataset.st.split(":"); mark(r,k,v); });
   mark($("advCount"),"slots","aa"); mark($("affCount"),"slots","affinity"); mark($("skillCount"),"slots","skill");
   document.querySelectorAll("#basic .row").forEach(r=>mark(r,"basic",r.querySelector(".nm")?.textContent.trim()));
   document.querySelectorAll("#advanced .row").forEach(r=>mark(r,"aa",r.querySelector(".nm")?.textContent.trim()));
@@ -1618,7 +1688,7 @@ function openInfo(el){ const [kind,name]=el.dataset.info.split("|"), open=el.get
   closeInfo(); if(open) return;
   el.setAttribute("aria-expanded","true");
   const html=`<button type="button" class="ifclose" aria-label="Close details">×</button><div class="ifbody">${infoHTML(kind,name)}</div>`;
-  if(INFOMODE==="dropdown"){ const d=document.createElement("div"); d.className="infodrop"; d.innerHTML=html; if(kind==="slots"&&el.closest("h2")) el.closest("h2").after(d); else if(el.parentElement&&el.parentElement.tagName==="LI") el.parentElement.appendChild(d); else el.after(d); return; }
+  if(INFOMODE==="dropdown"){ const d=document.createElement("div"); d.className="infodrop"; d.innerHTML=html; if(el.parentElement&&el.parentElement.classList.contains("stp2")){ const i=[...el.parentElement.children].filter(x=>!x.classList.contains("infodrop")).indexOf(el); (i%2===0&&el.nextElementSibling?el.nextElementSibling:el).after(d); } else if(kind==="slots"&&el.closest("h2")) el.closest("h2").after(d); else if(el.parentElement&&el.parentElement.tagName==="LI") el.parentElement.appendChild(d); else el.after(d); return; }
   POP=document.createElement("div"); POP.className="infopop"; POP.setAttribute("role","dialog"); POP.setAttribute("aria-label",(kind==="ach"?el.textContent.trim():name)+" details"); POP.innerHTML=html; POPFOR=el;
   (document.getElementById("tracker")||document.querySelector(".wrap")||document.body).appendChild(POP); placePop(); POP.querySelector(".ifclose").focus({preventScroll:true}); }
 function placePop(){ if(!POP||!POPFOR) return; const narrow=innerWidth<700; POP.classList.toggle("sheet",narrow); if(narrow){ POP.style.left=POP.style.top=""; return; }
