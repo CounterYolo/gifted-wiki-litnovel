@@ -537,6 +537,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .ifbody>*:first-child{margin-top:0}
 #tracker .ifhead{display:flex;align-items:center;gap:8px;margin:0 24px 2px 0;font-size:.9rem}
 #tracker .ifhead .num{margin-left:auto;font-family:var(--mono);font-variant-numeric:lining-nums tabular-nums;font-weight:600}
+#tracker .ifhead .iftier{margin-right:.55em}   /* the tier numeral and the steps: clearly apart */
 #tracker .ifhead .ifsl{font-size:.75rem;color:var(--muted)}
 #tracker .ifhead .iflv{font-family:var(--mono);font-variant-numeric:lining-nums tabular-nums;font-weight:600;font-size:.85rem}
 #tracker .ifbody p{margin:2px 0 4px}
@@ -755,7 +756,8 @@ const EMBEDDED_VANA = [["Chapter", "Age (years)", "Achievement?", "Achievements 
 // ============================================
 
 const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// shown text: tier ranges read "I-X", not "I through X" (display only: the sheet's wording is unchanged)
+const esc=s=>String(s).replace(/\b([IVX]+) through ([IVX]+)\b/g,"$1-$2").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 // Five-step grade scale shared by paths, classes, affinities, aether body and skills
 const GRADE_TIER={Basic:1,Minor:1,Weak:1,Lesser:2,Adept:2,Moderate:2,Greater:3,Advanced:3,Strong:3,Superior:4,Elite:4,Potent:4,Exalted:5,Master:5,Perfect:5};
 const tierOf=g=>GRADE_TIER[g]||1;
@@ -1357,15 +1359,17 @@ function aaTierInfo(name,cut){ const d=aaTierFromDetails(name); if(d) return d;
 // AA's earned (per the author): every AA in the Unlocked AA's column counts once, except an evolved version of
 // an AA that hadn't evolved before (it replaces that AA, so it adds nothing new). A 2nd+ AA evolved from an AA that
 // already evolved earlier (e.g. Sleight of Hand from Stealth after Invisible Presence) counts as a new AA too.
+// the Unlocked AA's column can list several, split by ";" or "," (a comma inside brackets stays: "(evolved from A, B)")
+const splitAAs=v=>String(v||"").split(/\s*[;,]\s*(?![^()]*\))/);
 function aaEarnedList(cut){ const used=new Set(), out=[];
-  LOGROWS.slice(0,cut).forEach((r,i)=>String(r.aa||"").split(/;\s*/).forEach(a=>{ if(!a.trim()) return; const nm=a.replace(/\s*\(.*$/,"").trim();
+  LOGROWS.slice(0,cut).forEach((r,i)=>splitAAs(r.aa).forEach(a=>{ if(!a.trim()) return; const nm=a.replace(/\s*\(.*$/,"").trim();
     const m=a.match(/\((?:evolved version of|evolved from)\s+(.+?)\)/i); if(!m){ out.push({k:i+1,n:nm}); return; }
     const from=m[1].split(/\s*(?:,|\/|\band\b)\s*/i).map(x=>x.trim().toLowerCase()).filter(Boolean);
     if(from.every(f=>used.has(f))) out.push({k:i+1,n:nm,second:true}); from.forEach(f=>used.add(f)); }));
   return out; }
 function aaEarnedCount(cut){ return aaEarnedList(cut).length; }
 // AA evolutions up to this point, from "X (evolved version of Y)" in the Unlocked AA's column; oldest first
-function aaEvolved(cut){ const out=[]; LOGROWS.slice(0,cut).forEach((r,i)=>String(r.aa||"").split(/;\s*/).forEach(a=>{ const m=a.match(/^(.+?)\s*\((?:evolved version of|evolved from)\s+(.+?)\)/i); if(m) out.push({from:m[2].trim(),to:m[1].trim(),k:i+1}); })); return out; }
+function aaEvolved(cut){ const out=[]; LOGROWS.slice(0,cut).forEach((r,i)=>splitAAs(r.aa).forEach(a=>{ const m=a.match(/^(.+?)\s*\((?:evolved version of|evolved from)\s+(.+?)\)/i); if(m) out.push({from:m[2].trim(),to:m[1].trim(),k:i+1}); })); return out; }
 (function(){ try{ const v=localStorage.getItem("pathTab"); if(["dormant","completed","available"].includes(v)) PATHTAB=v; }catch(e){} })();
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("#pathTabs button"); if(!b) return;
   e.preventDefault(); const dd=b.closest("details"); if(dd&&!dd.open) dd.open=true; PATHTAB=b.dataset.t; try{ localStorage.setItem("pathTab",PATHTAB); }catch(e){} if(LASTS){ renderDrawers(LASTS); markInfo(); } });
@@ -1657,7 +1661,7 @@ function splitAttr(v,r){ const k=LOGROWS.indexOf(r)+1, bb=boonAt(k), used=new Se
   const left=bb.filter((b,i)=>!used.has(i)); return txt+(left.length?` [note also lists ${left.map(b=>b.boon+" +"+b.n+" "+b.stat).join(", ")}, not in this row's increases]`:""); }
 function rewardText(r,oth){ return REWARD_COLS.map(([key,fmt])=>{ const v=key==="other"&&oth!=null?oth:String(r[key]||"").trim(); return v?fmt(v,r):""; }).filter(Boolean).join("; "); }
 function pathAchievements(name,cut){ const out=[], isDone=t=>/^Path of (.+?) (?:[IVX]+ through )?(X|V|III)(?=\s|\(|$)/.exec(t||"");
-  for(let k=1;k<=cut;k++){ const r=LOGROWS[k-1]; if(!/^y/i.test(r.ach||"")||!/complet/i.test(r.text||"")) continue;
+  for(let k=1;k<=cut;k++){ const r=LOGROWS[k-1]; if(!/^y/i.test(r.ach||"")||!/\bcomplete\b/i.test(r.text||"")||/placeholder|combined line/i.test(r.text||"")) continue;
     for(let j=k-1;j>=1&&LOGROWS[j-1].ch===r.ch;j--){ const m=isDone(LOGROWS[j-1].text); if(!m) continue;
       const pn=m[1].trim(), ty=(hist()[j].ptypes||{})[pn]||"", need=/basic/i.test(r.text)?"B":/advanced/i.test(r.text)?"A":/elite/i.test(r.text)?"E":null;
       const full=(ty[0]==="B"&&m[2]==="X")||(ty[0]==="A"&&m[2]==="V")||(ty[0]==="E"&&m[2]==="III"); if(!full) continue;
@@ -1665,8 +1669,8 @@ function pathAchievements(name,cut){ const out=[], isDone=t=>/^Path of (.+?) (?:
       if(pn===name) out.push({k,text:r.text,rew:[r.paths&&("Unlocked: "+r.paths),r.other].filter(Boolean).join("; ")}); break; } }
   return out; }
 // what unlocked a path: the row that lists it as a reward / unlock. A path that only appears in a status line has no known cause.
-function unlockSrc(k,name){ const re=new RegExp("Path of "+reEsc2(name)+"(?![\\w-])","i"), c=causeRow(k,re);
-  return re.test(ownTxt(LOGROWS[c-1]))?": "+esc(srcTxt(c)):""; }
+function unlockSrc(k,name){ if(!LOGROWS[k-1]) return ""; const re=new RegExp("Path of "+reEsc2(name)+"(?![\\w-])","i"), c=causeRow(k,re);
+  return LOGROWS[c-1]&&re.test(ownTxt(LOGROWS[c-1]))?": "+esc(srcTxt(c)):""; }
 function infoAvailable(name,cut){ const H=hist(); let k0=null; for(let k=1;k<=cut;k++) if(pathState(H[k],name)){ k0=k; break; }
   const ev=[]; for(let k=k0+1;k<=cut;k++){ const a=pathState(H[k-1],name), b=pathState(H[k],name); if(a!==b) ev.push(`<dt>${b==="active"?"Slotted":"Unslotted"}</dt><dd>Ch. ${rowCh(k)}${b==="available"?": before reaching tier I, so back to Available":""}</dd>`); }
   return `<div class="ifhead"><b>Path of ${esc(name)}</b> ${tagHTML(name)}</div>
@@ -1677,7 +1681,7 @@ function infoPath(name,cut){ const H=hist(), D=H[cut], get=S=>{ const v=(S.pstep
     const oth=String(r.other||"").split(/,\s*(?![^()]*\))/).filter(x=>{ const m=x.match(/^Path of (the Completionist|Exceptionalism) \+\d+/i); return !(m&&m[1].toLowerCase()!==name.toLowerCase()); }).join(", ")
       .replace(/Path of ([^,;+]+?) \+(\d+)/g,(m0,p,n)=>{ const sp=rewardSplit(kt,p.trim(),+n).short; return sp?`${m0} (${sp})`:m0; });
     tiers.push({k:kt,from:a,to:b,rew:rewardText(r,oth)}); } }
-  const firstK=(()=>{ for(let k=1;k<=cut;k++) if([...H[k].paths.items.map(x=>x[0]),...H[k].dormant,...H[k].available].includes(name)) return k; return null; })();
+  const firstK=(()=>{ for(let k=1;k<=cut;k++) if([...H[k].paths.items.map(x=>x[0]),...H[k].dormant,...H[k].available,...(H[k].completed||[])].includes(name)) return k; return null; })();   /* a path can be unlocked and completed in one row */
   // steps: where each increase came from (the sheet may record several completions' steps on one later row)
   const rows=[]; let prev=null, prevK=0;
   for(let k=1;k<=cut;k++){ const v=get(H[k]); if(v==null) continue;
@@ -1730,7 +1734,7 @@ function infoPath(name,cut){ const H=hist(), D=H[cut], get=S=>{ const v=(S.pstep
   // completing = reaching the last tier; slot changes are just when they happened
   const evSrc=e=>{ if(e.b!=="completed") return ""; const kt=tierRow(e.k,name,(H[e.k].ptiers||{})[name]); return `: reached tier ${ROMANS[(H[e.k].ptiers||{})[name]]}`+(kt!==e.k?` (final steps from ${srcTxt(e.k)})`:""); };
   let wasOn=false; const evTxt=e=>{ const t=e.b==="completed"?"Completed":e.b==="active"?(wasOn?"Made active again":"Made active"):"Made dormant"; if(e.b==="active") wasOn=true; return t; };
-  return `<div class="ifhead"><b>Path of ${esc(name)}</b> ${tagHTML(name)}<span class="num">${cur[1]||""} ${(cur[2]??0).toLocaleString()}</span></div>
+  return `<div class="ifhead"><b>Path of ${esc(name)}</b> ${tagHTML(name)}<span class="num">${cur[1]?`<span class="iftier">${cur[1]}</span>`:""}${(cur[2]??0).toLocaleString()}</span></div>
     ${/Completionist/.test(name)?`<p>Earns steps whenever another path is completed: <b>10</b> per basic, <b>20</b> per advanced, <b>40</b> per elite, plus the Talented/Gifted bonus at that moment, rounded down. Choose-a-path rewards spent on it also get the bonus. Rift &amp; dungeon paths give none. The brackets after the steps show how much of that number the bonus added.</p>`:""}
     <dl class="ifdl"><dt>Now</dt><dd>${st==="active"?"Active":st==="completed"?"Completed":st==="dormant"?"Dormant (not slotted)":"Available, not started"}${t?` at tier ${ROMANS[t]}`:""}</dd>
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)}${unlockSrc(firstK,name)}</dd>
