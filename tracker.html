@@ -156,14 +156,14 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 /* Affinity and Body Features (as on the Status tab): within each block the grade tags line up in one column after the names,
    the castable notes in a column after the tags, the BMC/BWC just before the value */
 @media (min-width:761px){
-  #tracker .cmp .stk.chipcol>.blk{display:grid;grid-template-columns:max-content max-content 1fr max-content;column-gap:0;align-content:start}
+  #tracker .cmp .stk.chipcol>.blk{display:grid;grid-template-columns:max-content max-content 1fr max-content max-content;column-gap:0;align-content:start}
   #tracker .cmp .stk.chipcol .bth{grid-column:1/-1}
   #tracker .cmp .stk.chipcol .cr{display:grid;grid-column:1/-1;grid-template-columns:subgrid;align-items:center}
   #tracker .cmp .stk.chipcol .cr>.n{grid-column:1;margin-right:0}
   #tracker .cmp .stk.chipcol .cr>.chip{grid-column:2;justify-self:start;margin-left:10px}
   #tracker .cmp .stk.chipcol .cr>.csrc{grid-column:3;justify-self:start;margin-left:8px}
-  #tracker .cmp .stk.chipcol .cr>.cpre{grid-column:3;justify-self:end;margin-left:8px}
-  #tracker .cmp .stk.chipcol .cr>.v{grid-column:4;justify-self:end;margin-left:8px}
+  #tracker .cmp .stk.chipcol .cr>.cpre{grid-column:4;justify-self:end;margin-left:8px}
+  #tracker .cmp .stk.chipcol .cr>.v{grid-column:5;justify-self:end;margin-left:8px}
 }
 #tracker .cmp .lk{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
 @media (min-width:1000px){
@@ -503,8 +503,9 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker #body{grid-template-columns:minmax(0,1fr)}
 #tracker #body .row{min-width:0}
 @media (max-width:560px){#tracker #body .v{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
-#tracker #body .bmc{order:2;margin-right:0;font-size:.74rem}
+#tracker #body .bmc,#tracker #affinity .bmc{order:2;margin-right:0;font-size:.74rem}
 }
+#tracker #affinity:not(.castable) .bma{display:none}   /* BWA only with "Castable & BWA" */
 #tracker #skillTabs[hidden],#tracker #aaTabs[hidden],#tracker .drawer ul[hidden],#tracker .drawer .count[hidden],#tracker #seedTabs[hidden],#tracker #spellTabs[hidden],#tracker #spellTabs button[hidden],#tracker #riftTabs[hidden]{display:none}
 /* item details */
 #tracker .hasinfo{cursor:pointer}
@@ -684,7 +685,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
       <div class="col">
         <section><h2><span style="white-space:nowrap">Basic Attributes</span><span class="hright"><label class="dtoggle ifull"><input type="checkbox" id="infoFull">Full breakdown</label><span class="seg" id="infoMode" role="group" aria-label="How item details open"><button type="button" data-m="popup">Popup</button><button type="button" data-m="dropdown">Dropdown</button></span></span></h2><div class="rows" id="basic"></div></section>
         <section><h2><span style="white-space:nowrap">Advanced Attributes</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showXp">Tier</label><span class="count" id="advCount"></span></span></h2><div class="rows" id="advanced"></div></section>
-        <section><h2><span style="white-space:nowrap">Affinity</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showCast">Castable &amp; Tier</label><span class="count" id="affCount"></span></span></h2><div class="rows" id="affinity"></div></section>
+        <section><h2><span style="white-space:nowrap">Affinity</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showCast">Castable &amp; BWA</label><span class="count" id="affCount"></span></span></h2><div class="rows" id="affinity"></div></section>
         <section><h2><span style="white-space:nowrap">Body Features</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showBmc">BMC &amp; BWC</label><span class="count" id="bodyCount"></span></span></h2><div class="rows" id="body"></div></section>
         <section><h2><span>Boons</span> <span class="count" id="boonCount"></span></h2><div id="boons"></div></section>
       </div>
@@ -1072,8 +1073,10 @@ function renderStats(D){
     // own affinity: T2 if it's a combined one (Kinetic), else T1; reached ones: a combined affinity through its two parts ("T2, Life+Shadow"),
     // or a part reached through a combined one Bastian/they have ("T1, via Kinetic")
     const src=`<span class="affsrc">${!a.via?(COMBO_AFF[k]?"T2 affinity":"T1 affinity"):COMBO_AFF[k]?"T2, "+a.via.map(esc).join("+"):"T1, via "+a.via.map(esc).join("+")}</span>`;
-    if(!a.via){ const r=row(k,a.v,a.grade); return r.replace(/(<span class="chip[^>]*>[^<]*<\/span>)/,"$1"+src); }
-    return `<div class="row affequiv"><span class="name"><span class="nm">${esc(k)}</span><span class="chip ${a.tc}">EQUIV-${esc(a.grade)}</span>${src}</span><span class="v equivv">${a.v==null?"":esc(a.v)}</span></div>`;
+    // BWA: the affinity against a Base Weak Affinity (Weak 100 = 1), on the Aether Channels scale; shown with "Castable & BWA"
+    const bma=`<span class="bmc bma">(${fmtBmc(bmaOf(a))} BWA)</span>`;
+    if(!a.via){ const r=row(k,a.v,a.grade); return r.replace(/(<span class="chip[^>]*>[^<]*<\/span>)/,"$1"+src).replace('<span class="v">','<span class="v">'+bma); }
+    return `<div class="row affequiv"><span class="name"><span class="nm">${esc(k)}</span><span class="chip ${a.tc}">${esc(a.grade)}</span>${src}</span><span class="v equivv">${bma}${a.v==null?"":esc(a.v)}</span></div>`;
   }).join("");
   $("bodyCount").textContent=`(${D.body.length})`;
   $("body").innerHTML=D.body.map(([k,g,v])=>{ const r=row(k,v,g), core=/aether core/i.test(k), chan=/aether channels/i.test(k);
@@ -1251,12 +1254,17 @@ function infoRift(key,cut){ const x=riftList(cut).find(r=>r.key===key); if(!x) r
       ${notes.map(n=>`<dt>Note</dt><dd>${esc(n)}</dd>`).join("")}</dl>`; }
 function fill(id,cid,arr,html){ $(cid).textContent=`(${arr.length})`; $(id).innerHTML=arr.length?arr.map(html).join(""):'<li class="empty">None</li>'; }
 // Affinities Bastian can cast with: his own (T1), plus combined ones reachable through two of his affinities (T2).
-// Combined affinities (author's rule): 25% of the total of the affinities it combines. Affinity amounts are one straight scale:
-// Weak 100 = 100, each grade 100 more (Moderate 100 = 200, Strong 100 = 300, Potent 100 = 400, Perfect 100 = 500).
+// Combined affinities (author's rule): 25% of the total of the affinities it combines.
+// Affinities scale the same way as Aether Channels (the BWC scale): Weak 100 = 1, each grade is 5x the one below
+// (Moderate 100 = 5, Strong 100 = 25, Potent 100 = 125, Perfect 100 = 625), and within a grade 100/140/170/190/200 = 1x/2x/3x/4x/5x.
 // The other way round, each part of a combined affinity someone has is 25% of that combined affinity.
-// These can fall below Weak 100 (the usual floor).
-const affAmt=a=>(a.tier-1)*100+(+a.v||0);
-const affFromAmt=x=>{ x=Math.floor(x+1e-9); const tr=Math.max(1,Math.min(5,Math.floor(x/100))); return {tier:tr,v:x-(tr-1)*100}; };   // whole numbers, rounded down
+// These can fall below Weak 100 (the usual floor). Ratings are rounded down to whole numbers.
+const bmaOf=a=>bmcOf(CORE_TYPES[a.tier-1],a.v)??0;   // the grade and rating as shown
+const affAmt=a=>a.amt!=null?a.amt:(bmcOf(CORE_TYPES[a.tier-1],a.v)??0);
+const affFromAmt=x=>{ let tr=1; while(tr<5&&x>=Math.pow(5,tr)-1e-9) tr++;
+  const f=x/Math.pow(5,tr-1); let v;
+  if(f<=1) v=f*100; else { v=200; for(let k=1;k<CORE_PTS.length;k++){ const [a,fa]=CORE_PTS[k-1],[b,fb]=CORE_PTS[k]; if(f>=fa-1e-9&&f<=fb+1e-9){ v=a+(f-fa)/(fb-fa)*(b-a); break; } } }
+  return {tier:tr,v:Math.floor(v+1e-9),amt:x}; };
 // an unaspected spell needs no affinity: it casts as if through a Weak 100 affinity (the least efficient there is)
 const UNASP={rank:1100,tc:"t1",tier:1,grade:"Weak",v:100,unasp:true};
 const affFor=(aff,n)=>/^unaspected$/i.test(String(n||""))?UNASP:aff[n];
@@ -1264,12 +1272,12 @@ function castableAff(S){
   const aff={}; S.affinity.items.forEach(([n,g,v])=>aff[n]={rank:tierOf(g)*1000+(v||0),tc:"t"+tierOf(g),tier:tierOf(g),grade:g,v});
   Object.entries(COMBO_AFF).forEach(([n,parts])=>{
     if(!parts.every(p=>aff[p])||aff[n]) return;
-    // 25% of the parts' total: Shadow Potent 118 (418) + Life Moderate 100 (200) = 618 -> 154.5, rounded down = Weak 154 Dream
+    // 25% of the parts' total: Shadow Potent 118 (181.25) + Life Moderate 100 (5) = 186.25 -> 46.56 = Strong 134 Dream
     const total=parts.reduce((t,p)=>t+affAmt(aff[p]),0), {tier:tr,v}=affFromAmt(total*0.25);
     aff[n]={rank:tr*1000+(v||0),tc:"t"+tr,tier:tr,grade:GRADE_AFF[tr-1],v,via:[...parts].sort(),total};
   });
   // the other way round: having a combined (T2) affinity gives access to the two it's made of (Kinetic gives Wind and Lightning).
-  // Each part is 25% of the combined one: Kinetic Moderate 140 (240) gives Wind and Lightning at 60 = Weak 60.
+  // Each part is 25% of the combined one: Kinetic Moderate 140 (10) gives Wind and Lightning at 2.5 = Weak 155.
   Object.entries(COMBO_AFF).forEach(([n,parts])=>{ const own=aff[n]; if(!own||own.via) return;
     const total=affAmt(own), {tier:tr,v}=affFromAmt(total*0.25);
     parts.forEach(p=>{ if(!aff[p]) aff[p]={rank:tr*1000+(v||0),tc:"t"+tr,tier:tr,grade:GRADE_AFF[tr-1],v,via:[n],total}; }); });
@@ -1847,9 +1855,9 @@ function infoEquiv(name,cut){ const H=hist(), D=H[cut], ca=castableAff(D)[name];
   const parts=ca.via.map(v=>{ const x=D.affinity.items.find(a=>a[0]===v); return x?`${v} (${x[1]} ${x[2]})`:v; });
   let k0=null; for(let k=1;k<=cut;k++){ const c=castableAff(H[k])[name]; if(c&&c.via){ k0=k; break; } }
   const sp=spellsOf(name,cut);
-  return `<div class="ifhead ifequiv"><b>${esc(name)}</b> <span class="chip ${ca.tc}">EQUIV-${esc(ca.grade)}</span> <span class="aatag">${COMBO_AFF[name]?"T2, "+ca.via.map(esc).join("+"):"T1, via "+ca.via.map(esc).join("+")}</span><span class="num equivv">${ca.v??""}</span></div>${descPH("Affinity",name)}
+  return `<div class="ifhead ifequiv"><b>${esc(name)}</b> <span class="chip ${ca.tc}">${esc(ca.grade)}</span> <span class="aatag">${COMBO_AFF[name]?"T2, "+ca.via.map(esc).join("+"):"T1, via "+ca.via.map(esc).join("+")}</span><span class="num equivv">${ca.v??""}</span></div>${descPH("Affinity",name)}
     <dl class="ifdl"><dt>Cast through</dt><dd>${parts.map(esc).join(" + ")}</dd>
-    <dt>Worked out</dt><dd>25% of ${ca.via.length>1?"their total":esc(ca.via[0])} (${(+ca.total).toLocaleString()}): EQUIV-${esc(ca.grade)} ${ca.v??""}</dd>
+    <dt>Worked out</dt><dd>25% of ${ca.via.length>1?"their total":esc(ca.via[0])} on the Aether Channels scale (${ca.via.length>1?ca.via.map(p=>{ const x=D.affinity.items.find(a=>a[0]===p); return fmtBmc(bmcOf(CORE_TYPES[tierOf(x[1])-1],x[2])); }).join(" + ")+" = ":""}${fmtBmc(ca.total)}) = ${fmtBmc(ca.total*0.25)}: ${esc(ca.grade)} ${ca.v??""}</dd>
     ${k0?`<dt>Reachable since</dt><dd>Ch. ${rowCh(k0)}</dd>`:""}
 </dl>`; }
 const SPELL_EV={learning:"Started learning",learned:"Learned",relearning:"Started re-learning",relearned:"Re-learned",lost:"Lost"};
@@ -2173,7 +2181,8 @@ function renderCmp(){
   const affRows=c=>!showC?c.aff.map(([n,g,v])=>cr(esc(n),v,{chip:g,info:"aff|"+n})):
     Object.entries(c.cast).sort((a,b)=>(!!a[1].via-!!b[1].via)||(b[1].rank-a[1].rank)).map(([k,a])=>{
       const src=!a.via?(COMBO_AFF[k]?"T2 affinity":"T1 affinity"):COMBO_AFF[k]?"T2, "+a.via.join("+"):"T1, via "+a.via.join("+");
-      return a.via?cr(esc(k),a.v,{chip:a.grade,chipText:"EQUIV-"+a.grade,eq:true,src,info:"equiv|"+k}):cr(esc(k),a.v,{chip:a.grade,src,info:"aff|"+k}); });
+      const pre=`(${fmtBmc(bmaOf(a))} BWA)`;
+      return a.via?cr(esc(k),a.v,{chip:a.grade,eq:true,src,pre,info:"equiv|"+k}):cr(esc(k),a.v,{chip:a.grade,src,pre,info:"aff|"+k}); });
   const aff=evenOut(cols.map(c=>{ const r=affRows(c); return r.length?r:[cr("None",null,{empty:true})]; }));
   const basic=cols.map(c=>c.basic.map(([n,v])=>cr(esc(n),v,{info:"basic|"+n})));
   const ptabs=[["active","Active"],["dormant","Dormant"],["completed","Completed"],["rift","Rift/Dungeon"]], stabs=[["available","Available"],["unavailable","Unavailable"]];
