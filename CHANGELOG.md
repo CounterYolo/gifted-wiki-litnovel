@@ -3,6 +3,10 @@
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
 ## 2026-11-21
+- Equivalent affinity scaling changed to match official information from author's discord chats
+- Base Weak Affinity (BWA) scaling added to all affinity numbers
+
+## 2026-11-21
 - Comparison tab added to the tracker
 - Initial data for Kalin & Vana added to the Googlespreadsheet in their own tabs inside such
 - Text formatting standardized across the tracker to one that is available for free from Google, to avoid text issues across devices & browsers
