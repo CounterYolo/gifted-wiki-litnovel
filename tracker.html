@@ -1251,7 +1251,7 @@ function infoRift(key,cut){ const x=riftList(cut).find(r=>r.key===key); if(!x) r
       ${notes.map(n=>`<dt>Note</dt><dd>${esc(n)}</dd>`).join("")}</dl>`; }
 function fill(id,cid,arr,html){ $(cid).textContent=`(${arr.length})`; $(id).innerHTML=arr.length?arr.map(html).join(""):'<li class="empty">None</li>'; }
 // Affinities Bastian can cast with: his own (T1), plus combined ones reachable through two of his affinities (T2).
-// A combined affinity counts one grade below the average of the two it comes through, and uses the weaker one's rating.
+// A combined affinity is the lower of the two it comes through, one grade lower, with that one's rating.
 // an unaspected spell needs no affinity: it casts as if through a Weak 100 affinity (the least efficient there is)
 const UNASP={rank:1100,tc:"t1",tier:1,grade:"Weak",v:100,unasp:true};
 const affFor=(aff,n)=>/^unaspected$/i.test(String(n||""))?UNASP:aff[n];
@@ -1259,12 +1259,11 @@ function castableAff(S){
   const aff={}; S.affinity.items.forEach(([n,g,v])=>aff[n]={rank:tierOf(g)*1000+(v||0),tc:"t"+tierOf(g),tier:tierOf(g),grade:g,v});
   Object.entries(COMBO_AFF).forEach(([n,parts])=>{
     if(!parts.every(p=>aff[p])||aff[n]) return;
-    // place each on one scale (Weak 100 = 0, every grade 100 points), average them, then drop one grade:
-    // Potent 116 (316) + Moderate 100 (100) -> 208 = Strong 108 -> Moderate 108
-    const sc=p=>(aff[p].tier-1)*100+((aff[p].v??100)-100);
-    const eq=Math.max(0,Math.floor(parts.reduce((t,p)=>t+sc(p),0)/parts.length)-100);
-    const tr=Math.min(5,Math.floor(eq/100)+1), v=100+(eq-(tr-1)*100);
-    aff[n]={rank:tr*1000+v,tc:"t"+tr,tier:tr,grade:GRADE_AFF[tr-1],v,via:[...parts].sort()};
+    // take the lower of the two (lower grade, or lower rating at the same grade), drop it one grade, keep its rating:
+    // Shadow Potent 116 + Life Moderate 100 -> Life is lower -> Weak 100 Dream (Weak stays Weak)
+    const low=parts.reduce((a,p)=>!a||aff[p].rank<aff[a].rank?p:a,null);
+    const tr=Math.max(1,aff[low].tier-1), v=aff[low].v;
+    aff[n]={rank:tr*1000+(v||0),tc:"t"+tr,tier:tr,grade:GRADE_AFF[tr-1],v,via:[...parts].sort(),low};
   });
   // the other way round: having a combined (T2) affinity gives access to the two it's made of (Kinetic gives Wind and Lightning).
   // Like the forward way, the access is one grade lower, with the same rating: Kinetic Moderate 140 gives Wind and Lightning at Weak 140.
@@ -1847,7 +1846,7 @@ function infoEquiv(name,cut){ const H=hist(), D=H[cut], ca=castableAff(D)[name];
   const sp=spellsOf(name,cut);
   return `<div class="ifhead ifequiv"><b>${esc(name)}</b> <span class="chip ${ca.tc}">EQUIV-${esc(ca.grade)}</span> <span class="aatag">T2, ${ca.via.map(esc).join("+")}</span><span class="num equivv">${ca.v??""}</span></div>${descPH("Affinity",name)}
     <dl class="ifdl"><dt>Cast through</dt><dd>${parts.map(esc).join(" + ")}</dd>
-    <dt>Worked out</dt><dd>the average of the two, one grade lower: EQUIV-${esc(ca.grade)} ${ca.v??""}</dd>
+    <dt>Worked out</dt><dd>${ca.low?`the lower of the two (${esc(ca.low)}), one grade lower, same rating`:"one grade lower than "+ca.via.map(esc).join(" / ")+", same rating"}: EQUIV-${esc(ca.grade)} ${ca.v??""}</dd>
     ${k0?`<dt>Reachable since</dt><dd>Ch. ${rowCh(k0)}</dd>`:""}
 </dl>`; }
 const SPELL_EV={learning:"Started learning",learned:"Learned",relearning:"Started re-learning",relearned:"Re-learned",lost:"Lost"};
