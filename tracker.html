@@ -152,7 +152,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .cmp .bth .dtoggle+.cnt{margin-left:0}
 #tracker .cmp .csrc{font-style:italic;color:var(--muted);font-size:.74rem;white-space:nowrap}
 #tracker .cmp .cpre{font-weight:400;font-size:.74rem;color:var(--muted);white-space:nowrap}
-#tracker .cmp .cr.eq .chip{border-style:dashed;font-style:italic}#tracker .cmp .cr.eq .n{font-style:italic}
+#tracker .cmp .cr.eq .chip{border-style:dashed}
 /* Affinity and Body Features (as on the Status tab): within each block the grade tags line up in one column after the names,
    the castable notes in a column after the tags, the BMC/BWC just before the value */
 @media (min-width:761px){
@@ -475,15 +475,11 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 }
 #tracker #affinity.castable .affsrc{display:inline-block;font-style:italic;color:var(--muted);font-size:.74rem;margin-left:2px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto;vertical-align:bottom}
 #tracker #affinity.castable .affequiv{display:flex}
-#tracker #affinity .equivv{font-style:italic;font-weight:400}
-#tracker .ifequiv>b{font-style:italic}
-#tracker .ifequiv .chip{border-style:dashed;font-style:italic}
-#tracker .ifequiv .num{font-style:italic;font-weight:400}
+#tracker .ifequiv .chip{border-style:dashed}
 #tracker .ifhead .aatag{white-space:nowrap}
 #tracker .ifequiv .aatag{font-size:.74rem}
 #tracker .ifhead.ifequiv{flex-wrap:wrap;row-gap:2px}
-#tracker #affinity .affequiv .chip{border-style:dashed;font-style:italic}
-#tracker #affinity .affequiv .nm{font-style:italic}
+#tracker #affinity .affequiv .chip{border-style:dashed}
 #tracker .sumr{display:inline-flex;align-items:center;gap:10px;margin-left:auto}
 #tracker .drawer[data-d=spells]>summary{align-items:center;flex-wrap:nowrap}
 #tracker .drawer[data-d=spells] #spellCount{display:none}
@@ -1319,9 +1315,9 @@ function renderDrawers(S){
   fill("seedList","seedCount",sg[SEEDTAB],x=>`<li><span data-si="${x.i}"${x.state==="have"?"":' class="equipped"'}>${esc(x.label)}</span><span class="sub">Ch. ${x.ch}</span></li>`);
   fill("achList","achCount",S.achievements,e=>`<li><span>${esc(e.text.replace(/ - .*/,""))}</span><span class="sub">Ch. ${e.ch}</span></li>`);
   const aff=castableAff(S);
-  // spells of Bastian's own affinities first (strongest affinity first), then those cast through combined affinities like Dream
-  // order: his own affinities (strongest first), then combined ones, then unaspected spells last
-  const grp=a=>/^unaspected$/i.test(a||"")?2:(aff[a]?.via?1:0);
+  // order: by how strong the affinity is (own or reached through a combined one alike: Shadow, then Dream, then Life),
+  // then circle, then name; unaspected spells always last
+  const grp=a=>/^unaspected$/i.test(a||"")?1:0;
   const order=(x,y)=>(grp(x.affinity)-grp(y.affinity))||((affFor(aff,y.affinity)?.rank||0)-(affFor(aff,x.affinity)?.rank||0))||((x.circle||0)-(y.circle||0))||x.name.localeCompare(y.name);
   // tab "learned": a spell being re-learned stays listed, greyed, with (RLIP); tab "progress": (Learning) or (Re-Learning) at the end
   const spellLi=(s,tab)=>{ const rl=s.status==="relearning";
@@ -1857,7 +1853,7 @@ function infoEquiv(name,cut){ const H=hist(), D=H[cut], ca=castableAff(D)[name];
   const sp=spellsOf(name,cut);
   return `<div class="ifhead ifequiv"><b>${esc(name)}</b> <span class="chip ${ca.tc}">${esc(ca.grade)}</span> <span class="aatag">${COMBO_AFF[name]?"T2, "+ca.via.map(esc).join("+"):"T1, via "+ca.via.map(esc).join("+")}</span><span class="num equivv">${ca.v??""}</span></div>${descPH("Affinity",name)}
     <dl class="ifdl"><dt>Cast through</dt><dd>${parts.map(esc).join(" + ")}</dd>
-    <dt>Worked out</dt><dd>25% of ${ca.via.length>1?"their total":esc(ca.via[0])} on the Aether Channels scale (${ca.via.length>1?ca.via.map(p=>{ const x=D.affinity.items.find(a=>a[0]===p); return fmtBmc(bmcOf(CORE_TYPES[tierOf(x[1])-1],x[2])); }).join(" + ")+" = ":""}${fmtBmc(ca.total)}) = ${fmtBmc(ca.total*0.25)}: ${esc(ca.grade)} ${ca.v??""}</dd>
+    <dt>Worked out</dt><dd>25% of ${ca.via.length>1?"their total":esc(ca.via[0])} on the Aether Channels scale (${ca.via.length>1?ca.via.map(p=>{ const x=D.affinity.items.find(a=>a[0]===p); return fmtBmc(bmcOf(CORE_TYPES[tierOf(x[1])-1],x[2])); }).join(" + ")+" = ":""}${fmtBmc(ca.total)}) = ${fmtBmc(ca.total*0.25)}, rounded down to ${esc(ca.grade)} ${ca.v??""}'s ${fmtBmc(bmaOf(ca))} BWA</dd>
     ${k0?`<dt>Reachable since</dt><dd>Ch. ${rowCh(k0)}</dd>`:""}
 </dl>`; }
 const SPELL_EV={learning:"Started learning",learned:"Learned",relearning:"Started re-learning",relearned:"Re-learned",lost:"Lost"};
