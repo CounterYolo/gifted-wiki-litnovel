@@ -69,7 +69,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 .wiki-btn[aria-expanded="true"] .caret { transform: rotate(180deg); }
 
 /* ===== TRACKER AREA ===== */
-.wiki-main { padding-block: 28px 40px; min-height: 60vh; }
+.wiki-main { padding-block: 0 40px; min-height: 60vh; }   /* no gap between the top bar and the sheet */
 .tracker-slot {
   border: 1px dashed var(--line); border-radius: 10px; padding: 60px 20px;
   text-align: center; color: var(--faint); font-style: italic;
@@ -2163,11 +2163,23 @@ function bodyLines(cols){
 const evenOut=lists=>{ const len=Math.max(...lists.map(x=>x.length)); return lists.map(x=>padTo(x,len)); };
 // The comparison box starts at the same left edge as the Status sheet, so the first name box is in the same spot on both tabs.
 // If the box is too wide for that, it moves left only as far as it has to.
-function alignCmp(){ const st=$("cmp"), bx=st&&st.querySelector(".cbox"), wr=st&&st.closest(".wrap"); if(!bx||st.hidden) return;
+function alignCmp(){ setTimeout(alignBrand,0); const st=$("cmp"), bx=st&&st.querySelector(".cbox"), wr=st&&st.closest(".wrap"); if(!bx||st.hidden) return;
   bx.style.marginLeft=""; if(innerWidth<1000) return;
   const sr=st.getBoundingClientRect(), off=wr.getBoundingClientRect().left-sr.left, room=sr.width-bx.getBoundingClientRect().width;
   bx.style.marginLeft=Math.round(Math.min(off,room))+"px"; }
 window.addEventListener("resize",()=>alignCmp());
+// The "Gifted" title: its first letter's ink lines up with the left edge of the name box (Status or Comparison tab),
+// measured in the browser's own font.
+function inkLeft(text,el){ const c=document.createElement("canvas").getContext("2d"), st=getComputedStyle(el);
+  c.font=`${st.fontStyle} ${st.fontWeight} ${st.fontSize} ${st.fontFamily}`; return c.measureText(text).actualBoundingBoxLeft||0; }
+function alignBrand(){ const b=document.querySelector(".wiki-brand b"); if(!b) return;
+  try{ const sel=[document.querySelector("#cmp:not([hidden]) .namesel"),$("charName")].find(x=>x&&x.offsetParent);
+    b.style.marginLeft="0px"; if(!sel) return;
+    const nameInk=sel.getBoundingClientRect().left;   // the name box's left edge
+    const brandInk=b.getBoundingClientRect().left-inkLeft((b.textContent||"").charAt(0),b);
+    b.style.marginLeft=(nameInk-brandInk)+"px"; }catch(e){} }
+alignBrand(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(alignBrand);
+window.addEventListener("resize",()=>alignBrand());
 function renderCmp(){
   const box=$("cmp"); if(!box||box.hidden) return;
   const cols=[0,1].map(colData);
@@ -2224,7 +2236,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closes
   if(b.dataset.ptab) CMP.ptab=b.dataset.ptab; else CMP.stab=b.dataset.stab; saveCmp(); renderCmp(); });
 // ----- switching between the Status and Comparison views (the two buttons at the top) -----
 const isCmpView=()=>location.hash==="#compare";
-function setView(){ const cmp=isCmpView();
+function setView(){ setTimeout(()=>alignBrand(),0); const cmp=isCmpView();
   document.querySelectorAll("#tracker .sheet,#tracker .log").forEach(el=>el.hidden=cmp);
   $("cmp").hidden=!cmp;
   $("navStatus").classList.toggle("primary",!cmp); $("navCompare").classList.toggle("primary",cmp);
@@ -2245,7 +2257,7 @@ function loadChar(key){
   start(first);
   fetchChar(key).then(rows=>{ if(rows&&rows!==first&&seq===LOADSEQ) start(rows); });
 }
-$("charName").addEventListener("change",e=>loadChar(e.target.value));
+$("charName").addEventListener("change",e=>{ loadChar(e.target.value); setTimeout(alignBrand,50); });
 { let k="bastian"; try{ k=localStorage.getItem("char")||k; }catch(e){} loadChar(k); }
 setView();
 if(DETAILS_CSV) fetch(DETAILS_CSV,{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.text(); })
