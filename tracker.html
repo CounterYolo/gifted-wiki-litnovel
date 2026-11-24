@@ -1543,12 +1543,23 @@ function causeRow(k,re){ const r=LOGROWS[k-1]; if(!r||re.test(ownTxt(r))) return
   LOGROWS.forEach((q,i)=>{ const j=i+1; if(j===k||q.ch!==r.ch||!re.test(ownTxt(q))) return;
     const dj=Math.abs(j-k), db=best==null?1e9:Math.abs(best-k); if(dj<db||(dj===db&&j<k)) best=j; });
   return best??k; }
-function series(get,cut,names){ const H=hist(), out=[]; let prev=get(H[0]);
-  for(let k=1;k<=cut;k++){ const v=get(H[k]); if(v==null||prev==null||v===prev){ if(v!=null) prev=v; continue; }
+// base: the value something starts at when gained (an AA starts at 100), so a rise in the same row it's gained in shows as a line
+function series(get,cut,names,base){ const H=hist(), out=[]; let prev=get(H[0]);
+  for(let k=1;k<=cut;k++){ let v=get(H[k]); if(v!=null&&prev==null&&base!=null&&v!==base) prev=base;
+    if(v==null||prev==null||v===prev){ if(v!=null) prev=v; continue; }
     const d=v-prev, ch=rowCh(k), s=isScreenRow(k)&&!/^Path of|Skill|Achievement/i.test(srcTxt(k))?"status screen":srcTxt(k);
     const bp=names?boonPart(k,names):[];
-    out.push({ch,delta:d,total:v,srcs:[[s,d,bp]]});   // one line per source, even within a chapter
+    // unallocated kept from earlier rows and put in here: one line per row it was earned in
+    const held=heldParts(k); let rest=d, tot=prev;
+    held.forEach(([src,n])=>{ tot+=n; rest-=n; out.push({ch,delta:n,total:tot,srcs:[[src+" (unallocated kept until Talented was taken)",n,[]]]}); });
+    if(rest) out.push({ch,delta:rest,total:v,srcs:[[s,rest,bp]]});   // one line per source, even within a chapter
     prev=v; }
+  return out; }
+// rows whose unallocated was kept for Talented, put in at row k ("the N unallocated kept from earlier rows put into ...")
+function heldParts(k){ const r=LOGROWS[k-1]; if(!r||!/unallocated kept from earlier rows put into/i.test(r.notes||"")) return [];
+  const out=[]; for(let j=k-1;j>=1;j--){ const q=LOGROWS[j-1], m=String(q.notes||"").match(/Unallocated (\d+) kept unspent for Talented/i);
+    if(/unallocated kept from earlier rows put into/i.test(q.notes||"")) break;
+    if(m) out.unshift([srcTxt(j),+m[1]]); }
   return out; }
 function seriesTable(rows,label){ if(!rows.length) return '<p class="muted">No changes yet.</p>';
   return `<table class="iftab"><thead><tr><th>Ch.</th><th>${label||"Change"}</th><th>Total</th><th>From</th></tr></thead><tbody>${rows.map(g=>
@@ -1606,7 +1617,7 @@ ${descPH("Advanced Attribute",curName)}
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)} as ${esc(chain[0])} (${tierTxt(chain[0])}${everSlotted?", 100":""}): ${esc(srcTxt(causeRow(firstK,new RegExp(reEsc2(chain[0]),"i"))))}</dd>
       ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}${aaPct(e.from[0],e.from[1])!=null?`, +${aaPct(e.from[0],e.from[1])}%`:""}) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}${aaPct(e.to[0],e.to[1])!=null?`, +${aaPct(e.to[0],e.to[1])}%`:""}): ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
       ${/^gifted$/i.test(curName)?`<dt>Cap</dt><dd>250 until the Basic Class Path is completed</dd>`:capK>=0?`<dt>Cap</dt><dd>${cur[1]} (reached in Ch. ${LOGROWS[capK].ch})</dd>`:""}
-    </dl>${prog(seriesTable(series(get,cut,shown)))}`; }
+    </dl>${prog(seriesTable(series(get,cut,shown,everSlotted?100:null)))}`; }
 
 // body changes: the row that names the feature; if only a status screen shows the new value, say so
 function bodySrc(k,name){ const re=new RegExp(reEsc2(name),"i");
