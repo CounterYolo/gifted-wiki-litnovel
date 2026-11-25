@@ -554,7 +554,24 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
 #tracker .ifbody .aatag{font-style:italic;color:var(--muted);font-size:.8rem}
 #tracker .ifskill.sub{border-left:2px solid var(--line);padding-left:10px;margin:8px 0 0 4px;font-size:inherit;color:inherit}   /* not the general .sub style (smaller grey text): nested skills use the same text as the top one */
 #tracker #infoMode button{font-size:.7rem}
+#tracker #statMode button{padding:1px 4px;font-size:.62rem}
+#tracker h2 .hright:has(#statMode){align-self:center}
+#tracker .xb{display:inline-grid;font-size:inherit;font-weight:400;color:var(--muted);margin:0 -16px 0 4px;
+  font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;vertical-align:baseline}
+#tracker .xb>span{grid-area:1/1;justify-self:start}
+#tracker .xbf{font-weight:400;font-size:.82rem;color:var(--muted);margin-right:6px;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}   /* Full: "(160 + 50)" before the total, like the (+93%) note */
+#tracker .cmp .xbf{font-size:.74rem}
+#tracker .ifhead .xbeq{color:var(--muted);font-weight:400;font-size:.85em}
+#tracker .xb .xbw{visibility:hidden}
+/* "160 (+50)": after the value at the same size, a box as wide as "(+999)"; it hangs 16px into the column's side padding
+   so the values move left as little as possible */   /* "160 (+50)": after the value, same size, room for "(+999)" so the values line up */   /* same look as the (+93%) and (BMC) notes */
+   /* the Exceptionalism boon, shown apart ("Separated stats") */
 #tracker .dtoggle.ifull{white-space:nowrap}
+#tracker .dshow .ifctl{display:inline-flex;align-items:stretch;gap:3px;white-space:nowrap}   /* stretch: "Full breakdown" sits exactly like the other tick boxes (no half-pixel offset that blurs the text) */
+#tracker .dshow .ifctl #infoMode{align-self:center}
+#tracker .dshow .ifctl #infoMode button{padding:1px 3px}   /* Full breakdown + Popup/Dropdown, first on the top row */
+#tracker .dshow .ifctl .dtoggle.ifull{font-size:inherit;gap:inherit}
+#tracker .dshow .ifctl .dtoggle.ifull input{width:auto;height:auto}
 #tracker h2:has(#infoMode){gap:6px;flex-wrap:wrap}
 #tracker .dshow{display:flex;flex-direction:column;gap:5px;margin:0 0 0}
 #tracker .dshow .dsrow{display:flex;flex-wrap:wrap;gap:6px 12px}
@@ -627,6 +644,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
           <li>On the status sheet each path is tagged (B), (A) or (E) and colored by its grade: pink for basic, yellow for advanced, green for elite. A mutated path adds -M, as in (B-M), and gets a crosshatched bar.</li>
           <li>Path of the Completionist earns 10 steps per completed basic path, 20 per advanced and 40 per elite, plus a Talented/Gifted bonus. Rift &amp; dungeon paths give none.</li>
           <li>Path of Exceptionalism earns 5 steps per basic path, 10 per advanced and 15 per elite, plus variable amounts from achievements. Talented/Gifted bonuses don't apply to those nor choose-a-path rewards that are applied to said path.</li>
+          <li>Path of Exceptionalism boon: a share of Gifted (or Talented / a variant) is added to the basic attributes and every other AA: 20% for completing the path, 10% for over 400 steps, 5% for over 300, nothing below. It comes when the path is completed or the class path is gained, whichever is first (at the class path, the share follows the steps reached). It follows the current Gifted value, rounded down. "Consolidated stats" adds it into each value; "Separated stats" shows it beside the value.</li>
           <li>Progress speed scales with a race's lifespan. System text shows this as a racial multiplier against the human baseline; longer-lived races like elves progress more slowly.</li>
         </ul>
         <h3>Classes</h3>
@@ -679,7 +697,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
     <p class="notice" id="notice" hidden style="display:none"></p>
     <div class="cols" id="stats">
       <div class="col">
-        <section><h2><span style="white-space:nowrap">Basic Attributes</span><span class="hright"><label class="dtoggle ifull"><input type="checkbox" id="infoFull">Full breakdown</label><span class="seg" id="infoMode" role="group" aria-label="How item details open"><button type="button" data-m="popup">Popup</button><button type="button" data-m="dropdown">Dropdown</button></span></span></h2><div class="rows" id="basic"></div></section>
+        <section><h2><span style="white-space:nowrap">Basic Attributes</span><span class="hright"><span class="seg" id="statMode" role="group" aria-label="How the Exceptionalism boon is shown"><button type="button" data-s="full">Full</button><button type="button" data-s="consolidated">Consolidated</button><button type="button" data-s="separated">Separated</button></span></span></h2><div class="rows" id="basic"></div></section>
         <section><h2><span style="white-space:nowrap">Advanced Attributes</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showXp">Tier</label><span class="count" id="advCount"></span></span></h2><div class="rows" id="advanced"></div></section>
         <section><h2><span style="white-space:nowrap">Affinity</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showCast">Castable &amp; BWA</label><span class="count" id="affCount"></span></span></h2><div class="rows" id="affinity"></div></section>
         <section><h2><span style="white-space:nowrap">Body Features</span><span class="hright"><label class="dtoggle"><input type="checkbox" id="showBmc">BMC &amp; BWC</label><span class="count" id="bodyCount"></span></span></h2><div class="rows" id="body"></div></section>
@@ -692,7 +710,7 @@ button.wiki-btn { cursor: pointer; line-height: inherit; }
       </div>
       <div class="col" id="drawers">
         <div class="dshow" id="drawerShow" role="group" aria-label="Sections to show">
-          <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="rift">Rift/Dungeon Paths</label><label class="dtoggle"><input type="checkbox" data-d="nonactive">Non-Active Paths</label></div>
+          <div class="dsrow"><span class="ifctl"><label class="dtoggle"><input type="checkbox" id="infoFull">Full breakdown</label><span class="seg" id="infoMode" role="group" aria-label="How item details open"><button type="button" data-m="popup">Popup</button><button type="button" data-m="dropdown">Dropdown</button></span></span><label class="dtoggle"><input type="checkbox" data-d="rift">Rift Paths</label><label class="dtoggle"><input type="checkbox" data-d="nonactive">Non-Active Paths</label></div>
           <div class="dsrow"><label class="dtoggle"><input type="checkbox" data-d="spells">Spells</label><label class="dtoggle"><input type="checkbox" data-d="aas">AA Info</label><label class="dtoggle"><input type="checkbox" data-d="seeds">Skill Seeds</label><label class="dtoggle"><input type="checkbox" data-d="achievements">Achievements</label><label class="dtoggle"><input type="checkbox" data-d="stats">Misc. Statistics</label></div>
         </div>
         <details class="drawer" data-d="spells"><summary><span class="lbl">Spells</span><span class="sumr"><span class="seg spelltabs" id="spellTabs" role="group" aria-label="Which spells"><button type="button" data-t="learned">Learned <i></i></button><button type="button" data-t="progress">In-Progress <i></i></button><button type="button" data-t="lost">Lost <i></i></button></span><span class="count" id="spellCount"></span></span></summary><ul id="spells"></ul></details>
@@ -759,7 +777,7 @@ const esc=s=>String(s).replace(/\b([IVX]+) through ([IVX]+)\b/g,"$1-$2").replace
 const GRADE_TIER={Basic:1,Minor:1,Weak:1,Lesser:2,Adept:2,Moderate:2,Greater:3,Advanced:3,Strong:3,Superior:4,Elite:4,Potent:4,Exalted:5,Master:5,Perfect:5};
 const tierOf=g=>GRADE_TIER[g]||1;
 const chip=(g)=>g?`<span class="chip t${tierOf(g)}">${esc(g)}</span>`:"";
-const row=(label,val,grade)=>`<div class="row"><span class="name"><span class="nm">${esc(label)}</span>${chip(grade)}</span><span class="v">${val==null?"":esc(val)}</span></div>`;
+const row=(label,val,grade,extra,pre)=>`<div class="row"><span class="name"><span class="nm">${esc(label)}</span>${chip(grade)}</span><span class="v">${pre||""}${val==null?"":esc(val)}${extra||""}</span></div>`;
 // Aether Core capacity in Base Minor Cores, from the table in "How the numbers work":
 // each core type is 5x the one before; ratings 100/140/170/190/200 = 1/2/3/4/5x the type's base, linear between those points.
 const CORE_TYPES=["Minor","Lesser","Greater","Superior","Exalted"], CORE_PTS=[[100,1],[140,2],[170,3],[190,4],[200,5]];
@@ -1044,7 +1062,11 @@ const colorOf=n=>"t"+({B:1,A:3,E:4}[baseType(ptOf(n))]||1);
 const tagHTML=n=>`<span class="ptype ${colorOf(n)}">(${esc(ptOf(n))})</span>`;
 function renderStats(D){
   { const o=$("charName").selectedOptions[0]; if(o) o.textContent=D.name; } $("charClass").textContent=D.class;
-  $("basic").innerHTML=D.basic.map(([k,v])=>row(k,v)).join("");
+  // with the boon shown apart, rows without it (Gifted) keep the same space so all the values line up
+  const XB=excBoon(curCut()), pad=XB&&XB.amt&&STATMODE!=="consolidated"?xbPad():"",
+    sv=(k,v)=>{ const b=xbFor(k,XB); if(!b||v==null||!isFinite(+v)) return [v,v==null||v===""?"":pad,""];
+      return STATMODE==="separated"?[v,xbHTML(b),""]:STATMODE==="full"?[+v+b.amt,xbFull(v,b),""]:[+v+b.amt,"",""]; };
+  $("basic").innerHTML=D.basic.map(([k,v])=>{ const [a,x,pr]=sv(k,v); return row(k,a,null,x,pr); }).join("");
   $("advCount").textContent=`${D.advanced.items.length}/${D.advanced.slots??"?"}`;
   // Bonus XP, whole percent, rounded down: Gifted = rating ÷ 2.5 (100 → 40%, 233 → 93%);
   // Talented is half as effective = rating ÷ 5 (100 → 20%, 150 → 30%)
@@ -1054,13 +1076,13 @@ function renderStats(D){
     // per the author: the narrow Talented AAs are T1; their Gifted upgrades are taken as T2
     "aether talented":1,"physically talented":1,"socially talented":1,"aether gifted":2,"physically gifted":2,"socially gifted":2};
   const advItems=aaOrder(D.advanced.items, n=>AA_TIER[String(n).trim().toLowerCase()]||aaTierFromDetails(n)||aaTierInfo(n,curCut())||0);
-  $("advanced").innerHTML=advItems.length?advItems.map(([k,v])=>{ const r=row(k,v), key=String(k).trim().toLowerCase(), t=AA_TIER[key]||aaTierFromDetails(k);
+  $("advanced").innerHTML=advItems.length?advItems.map(([k,v0])=>{ const [v,xh,xp]=sv(k,v0), r=row(k,v,null,xh,xp), key=String(k).trim().toLowerCase(), t=AA_TIER[key]||aaTierFromDetails(k);
     if(!t) return r;
     const r2=r.replace('</span></span><span class="v">',`</span><span class="aatier">T${t} AA</span></span><span class="v">`);
     if(v===""||v==null||!isFinite(+v)) return r2;
     // only Talented and Gifted have known percentages; other AA's show none until the story clarifies
     if(key!=="talented"&&key!=="gifted") return r2;
-    const pct=Math.floor(10*Math.pow(2,t-1)*(+v)/100+1e-9);
+    const pct=Math.floor(10*Math.pow(2,t-1)*(+v0)/100+1e-9);
     return r2.replace('<span class="v">',`<span class="v"><span class="gxp">(+${pct}%)</span>`); }).join(""):'<div class="row empty">Empty</div>';
   $("affCount").textContent=`${D.affinity.items.length}/${D.affinity.slots??"?"}`;
   // "Castable" checkbox: notes how each affinity is reached, and adds combined ones (e.g. Dream through Shadow + Life) as EQUIV-grade rows
@@ -1492,6 +1514,39 @@ let INFOMODE="dropdown", INFOFULL=true, HIST=null, HISTROWS=null;
 const prog=html=>INFOFULL?html:"";   // the chapter-by-chapter tables, hidden when "Full breakdown" is off
 (function(){ try{ const v=localStorage.getItem("infoMode"); if(v==="popup"||v==="dropdown") INFOMODE=v; }catch(e){} })();
 // one status snapshot after every row: HIST[k] = status after the first k rows
+// ---- Path of Exceptionalism boon (author, ~Ch. 180) ----
+// "A percentage of your Gifted Attribute applied to all your other Attributes": 20% for completing the path,
+// 10% for over 400 steps, 5% for over 300, nothing below that. It is earned when the path is completed, or when the
+// class path is gained (whichever comes first); at the class path the share follows the steps reached by then.
+// It is a share of the CURRENT Gifted (or Talented / a variant), rounded down, added to the basic attributes and every
+// other AA. The sheet rows stay the base values; the tracker adds the boon. "Path of Exceptionalism" and any path whose
+// name contains "Exceptionalism" (lesser variants) count.
+let STATMODE="full"; try{ const v=localStorage.getItem("statMode"); if(v==="consolidated"||v==="separated") STATMODE=v; }catch(e){}   // default: Full
+// Full: "210 (160 + 50)" -- the total, then base + boon in brackets after it (same style as Separated). Consolidated: 210. Separated: "160 (+50)".
+const xbFull=(v,b)=>xbBox(`(${v} + ${b.amt})`,"(999 + 999)").replace('<span class="xb">',`<span class="xb" title="Exceptionalism boon: ${b.pct}% of ${esc(b.gname)} ${b.gval}">`);
+function excBoon(cut){ const H=hist(); if(!H[cut]) return null;
+  const locked=c=>!c||/^locked$/i.test(c);
+  for(let k=1;k<=cut;k++){ const S=H[k], en=Object.keys(S.psteps||{}).find(n=>/Exceptionalism/i.test(n)); if(!en) continue;
+    const done=S.completed.includes(en), cls=!locked(S.class)&&locked(H[k-1].class);
+    if(!done&&!cls) continue;
+    const st=S.psteps[en]||0, pct=done?20:st>400?10:st>300?5:0;
+    const D=H[cut], gi=(D.advanced.items.find(([n])=>isGiftedType(n))||Object.entries(D.aaVal||{}).find(([n])=>isGiftedType(n)&&(D.aaEarned||[]).includes(n)));
+    const g=gi?+gi[1]:0;
+    return {pct,k,path:en,steps:st,done,why:done?"completed the path":`class path gained at ${st} steps`,gname:gi?gi[0]:null,gval:g,amt:Math.floor(g*pct/100+1e-9)}; }
+  return null; }
+// the boon for one attribute (none for Gifted itself): {amt, html} for the current display mode
+function xbFor(name,xb){ if(!xb||!xb.amt||(xb.gname&&name===xb.gname)) return null; return xb; }
+// a popup's headline number, the same way as on the sheet: with the boon added in, or shown apart
+// with a Gifted boon: the full sum "160 + 50 (20% Gifted) = 210", in either mode
+const xbNum=(name,v,xb)=>{ const b=xbFor(name,xb); if(!b||v==null||!isFinite(+v)) return v;
+  return `${v} + ${b.amt} <span class="xbeq">(${b.pct}% ${esc(b.gname)})</span> = ${+v+b.amt}`; };
+// the boon after the value; the box is exactly as wide as "(+999)" in the page's font (a hidden copy sets the width)
+const xbBox=(t,w)=>`<span class="xb"><span class="xbw" aria-hidden="true">${w||"(+999)"}</span><span class="xbt">${t}</span></span>`;
+// the empty space a row without the boon (Gifted) keeps, as wide as the others' brackets
+const xbPad=()=>STATMODE==="full"?xbBox("","(999 + 999)"):xbBox("");
+const xbHTML=xb=>xbBox(`(+${xb.amt})`).replace('<span class="xb">',`<span class="xb" title="Exceptionalism boon: ${xb.pct}% of ${esc(xb.gname)} ${xb.gval}">`);
+function xbLine(name,base,xb){ const b=xbFor(name,xb); if(!b) return "";
+  return `<dt>Exceptionalism boon</dt><dd>+${b.amt}: ${b.pct}% of ${esc(b.gname)} ${b.gval} (rounded down), from Ch. ${rowCh(b.k)} (${esc(b.why)})</dd>`; }
 function hist(){ if(HIST&&HISTROWS===LOGROWS) return HIST;
   const S=newState(); HIST=[snapshot(S)]; LOGROWS.forEach(r=>{ applyRow(S,r); HIST.push(snapshot(S)); }); HISTROWS=LOGROWS; return HIST; }
 let CUT_OVERRIDE=null;   // set while building a comparison column's details panel
@@ -1593,9 +1648,9 @@ function infoBasic(name,cut){ const H=hist(), get=D=>{ const x=D.basic.find(b=>b
     if(/^Path of /.test(s)) fromPaths+=d-bt; else other+=d-bt; }));
   const fromBoons=Object.entries(boon), boonTot=fromBoons.reduce((a,[,n])=>a+n,0);
   const parts=[fromPaths?`${sgn(fromPaths)} from paths`:"",boonTot?`${sgn(boonTot)} from boons (${fromBoons.map(([b,n])=>`${esc(b)} ${sgn(n)}`).join(", ")})`:"",other?`${sgn(other)} other`:""].filter(Boolean);
-  return `<div class="ifhead"><b>${esc(name)}</b><span class="num">${now}</span></div>
+  return `<div class="ifhead"><b>${esc(name)}</b><span class="num">${xbNum(name,now,excBoon(cut))}</span></div>
     ${descPH("Basic Attribute",name)}
-    <dl class="ifdl"><dt>Gained so far</dt><dd>${parts.length?parts.join(", "):"nothing yet"}</dd></dl>
+    <dl class="ifdl"><dt>Gained so far</dt><dd>${parts.length?parts.join(", "):"nothing yet"}</dd>${xbLine(name,now,excBoon(cut))}</dl>
     ${prog(seriesTable(rows))}`; }
 
 function infoAA(name,cut){ const H=hist(), chain=aaLineage(name), D=H[cut];
@@ -1611,11 +1666,12 @@ function infoAA(name,cut){ const H=hist(), chain=aaLineage(name), D=H[cut];
     if(b&&!a&&firstK==null) firstK=k; if(a&&b&&a[0]!==b[0]) evo.push({k,from:a,to:b}); }
   const capK=LOGROWS.slice(0,cut).findIndex(r=>new RegExp(esc(curName)+" has reached maximum capacity","i").test(r.notes||""));
   const tierTxt=n=>{ const t=AA_TIERS[n.toLowerCase()]||aaTierFromDetails(n); return t?`T${t}`:"tier unknown"; };
-  return `<div class="ifhead"><b>${esc(curName)}</b> <span class="aatag">${tierTxt(curName)} AA</span>${slottedNow?`<span class="num">${cur[1]}</span>`:""}</div>
+  return `<div class="ifhead"><b>${esc(curName)}</b> <span class="aatag">${tierTxt(curName)} AA</span>${slottedNow?`<span class="num">${xbNum(curName,+cur[1],excBoon(cut))}</span>`:""}</div>
 ${descPH("Advanced Attribute",curName)}
     <dl class="ifdl">
       <dt>Unlocked</dt><dd>Ch. ${rowCh(firstK)} as ${esc(chain[0])} (${tierTxt(chain[0])}${everSlotted?", 100":""}): ${esc(srcTxt(causeRow(firstK,new RegExp(reEsc2(chain[0]),"i"))))}</dd>
       ${evo.map(e=>`<dt>Evolved</dt><dd>Ch. ${rowCh(e.k)}: ${esc(e.from[0])} ${e.from[1]} (${tierTxt(e.from[0])}${aaPct(e.from[0],e.from[1])!=null?`, +${aaPct(e.from[0],e.from[1])}%`:""}) → ${esc(e.to[0])} ${e.to[1]} (${tierTxt(e.to[0])}${aaPct(e.to[0],e.to[1])!=null?`, +${aaPct(e.to[0],e.to[1])}%`:""}): ${esc(srcTxt(causeRow(e.k,new RegExp(reEsc2(e.to[0]),"i"))))}</dd>`).join("")}
+      ${slottedNow?xbLine(curName,+cur[1],excBoon(cut)):""}
       ${/^gifted$/i.test(curName)?`<dt>Cap</dt><dd>250 until the Basic Class Path is completed</dd>`:capK>=0?`<dt>Cap</dt><dd>${cur[1]} (reached in Ch. ${LOGROWS[capK].ch})</dd>`:""}
     </dl>${prog(seriesTable(series(get,cut,shown,everSlotted?100:null)))}`; }
 
@@ -1941,6 +1997,12 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&(POP||document.que
 function setInfoMode(m){ INFOMODE=m; try{ localStorage.setItem("infoMode",m); }catch(e){} closeInfo();
   document.querySelectorAll("#infoMode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===m?"true":"false")); }
 document.querySelectorAll("#infoMode button").forEach(b=>b.addEventListener("click",()=>setInfoMode(b.dataset.m)));
+// Consolidated stats: the Exceptionalism boon is added into each value. Separated stats: base value, boon shown beside it.
+function setStatMode(m){ STATMODE=m; try{ localStorage.setItem("statMode",m); }catch(e){}
+  document.querySelectorAll("#statMode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===m?"true":"false"));
+  if(LOGROWS.length){ closeInfo(); render(+$("point").value); if(!$("cmp").hidden) renderCmp(); } }
+document.querySelectorAll("#statMode button").forEach(b=>b.addEventListener("click",()=>setStatMode(b.dataset.s)));
+document.querySelectorAll("#statMode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===STATMODE?"true":"false"));
 setInfoMode(INFOMODE);
 (function(){ const cb=document.getElementById("infoFull"); if(!cb) return; cb.checked=INFOFULL;
   cb.addEventListener("change",()=>{ INFOFULL=cb.checked; try{ localStorage.setItem("infoFull",cb.checked?"1":"0"); }catch(e){}
@@ -2133,7 +2195,8 @@ function colData(side){
     const pli=n=>li(n,tr(n)).replace("<li><span>",`<li><span${hi("path",n)}>`);
     CMP_CUTS[side]=cut;
     const m=miscStats(cut);
-    return {key, P, idx, name:D.name, cls:D.class, basic:D.basic, aa, aaSlots:D.advanced.slots, boons:D.boons,
+    const XB=excBoon(cut);
+    return {key, P, idx, name:D.name, cls:D.class, basic:D.basic, aa, xb:XB, aaSlots:D.advanced.slots, boons:D.boons,
       aff:D.affinity.items, cast:castableAff(D), affSlots:D.affinity.slots, body:D.body,
       paths:{active:srt((D.paths.items||[]).map(x=>x[0])).map(pli), dormant:srt(D.dormant).map(pli),
              completed:srt(D.completed).map(pli), rift:rift.map(x=>`<li><span${hi("rift",x.key)}>${esc(x.name)}</span></li>`)},
@@ -2145,20 +2208,22 @@ function colData(side){
 }
 // clickable item: opens the same details as on the status view (built for that column's character and chapter)
 const hi=(kind,name)=>` class="hasinfo" data-info="${esc(kind+"|"+name)}" tabindex="0" role="button" aria-expanded="false"`;
-const cr=(n,v,o={})=>`<div class="cr${o.empty?" empty":""}${o.info?" hasinfo":""}${o.eq?" eq":""}"${o.info?` data-info="${esc(o.info)}" tabindex="0" role="button" aria-expanded="false"`:""}><span class="n">${n}</span>${o.chip?`<span class="chip t${tierOf(o.chip)}">${esc(o.chipText||o.chip)}</span>`:""}${o.src?`<span class="csrc">${esc(o.src)}</span>`:""}${o.pre?`<span class="cpre">${esc(o.pre)}</span>`:""}${v!=null&&v!==""?`<span class="v">${esc(v)}</span>`:""}${o.s?`<span class="s">${esc(o.s)}</span>`:""}</div>`;
+const cr=(n,v,o={})=>`<div class="cr${o.empty?" empty":""}${o.info?" hasinfo":""}${o.eq?" eq":""}"${o.info?` data-info="${esc(o.info)}" tabindex="0" role="button" aria-expanded="false"`:""}><span class="n">${n}</span>${o.chip?`<span class="chip t${tierOf(o.chip)}">${esc(o.chipText||o.chip)}</span>`:""}${o.src?`<span class="csrc">${esc(o.src)}</span>`:""}${o.pre?`<span class="cpre">${esc(o.pre)}</span>`:""}${v!=null&&v!==""?`<span class="v">${o.xp||""}${esc(v)}${o.xh||""}</span>`:""}${o.s?`<span class="s">${esc(o.s)}</span>`:""}</div>`;
 const blankRow='<div class="cr blank"><span class="n">&nbsp;</span></div>';
 const padTo=(arr,n)=>arr.concat(Array(Math.max(0,n-arr.length)).fill(blankRow));
 // AA lines: when Bastian is on one side, the other side's AA's sit on Bastian's lines (Gifted-type on line 1, "-" where they have none),
 // with their extras underneath. Otherwise each side keeps its own order (Gifted-type first).
+// comparison value with the Exceptionalism boon: [value, options] -- added in, or shown apart
+const cxv=(c,n,v,o)=>{ const b=xbFor(n,c.xb); if(!b||v==null||!isFinite(+v)) return cr(esc(n),v,c.xb&&c.xb.amt&&STATMODE!=="consolidated"&&v!=null?{...o,xh:xbPad()}:o); return STATMODE==="separated"?cr(esc(n),v,{...o,xh:xbHTML(b)}):STATMODE==="full"?cr(esc(n),+v+b.amt,{...o,xh:xbFull(v,b)}):cr(esc(n),+v+b.amt,o); };
 function aaLines(cols){
   const bi=cols.findIndex(c=>c.key==="bastian"), oi=bi<0?-1:1-bi;
-  const out=cols.map(c=>c.aa.map(([n,v])=>cr(esc(n),v,{info:"aa|"+n})));
+  const out=cols.map(c=>c.aa.map(([n,v])=>cxv(c,n,v,{info:"aa|"+n})));
   if(bi>=0&&cols[oi].key!=="bastian"){
     const base=cols[bi].aa, other=cols[oi].aa, used=new Set();
     const lines=base.map(([bn])=>{ let m=other.find(o=>!used.has(o[0])&&o[0].toLowerCase()===bn.toLowerCase());
       if(!m&&isGiftedType(bn)) m=other.find(o=>!used.has(o[0])&&isGiftedType(o[0]));
-      if(m){ used.add(m[0]); return cr(esc(m[0]),m[1],{info:"aa|"+m[0]}); } return cr("-",null,{empty:true}); });
-    out[oi]=lines.concat(other.filter(o=>!used.has(o[0])).map(([n,v])=>cr(esc(n),v,{info:"aa|"+n})));
+      if(m){ used.add(m[0]); return cxv(cols[oi],m[0],m[1],{info:"aa|"+m[0]}); } return cr("-",null,{empty:true}); });
+    out[oi]=lines.concat(other.filter(o=>!used.has(o[0])).map(([n,v])=>cxv(cols[oi],n,v,{info:"aa|"+n})));
   }
   // no blank rows at the end: the Boons block moves up into the space
   // no "-" gaps: AAs the other character has that this one doesn't are skipped and the rest move up
@@ -2200,6 +2265,24 @@ function alignBrand(){ const b=document.querySelector(".wiki-brand b"); if(!b) r
     b.style.marginLeft=(nameInk-brandInk)+"px"; }catch(e){} }
 alignBrand(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ alignCmp(); alignBrand(); });
 window.addEventListener("resize",()=>alignBrand());
+// top row lines up with the row below: "Rift Paths" above "Achievements", "Non-Active Paths" above "Misc. Statistics"
+// (only when both rows are on one line each, and only if the top row still fits on one line)
+function alignRift(){ const L=d=>document.querySelector(`#drawerShow input[data-d="${d}"]`)?.closest("label");
+  const pairs=[[L("rift"),L("achievements")],[L("nonactive"),L("stats")]]; if(pairs.some(p=>!p[0]||!p[1])) return;
+  pairs.forEach(([t])=>t.style.marginLeft=""); document.querySelector("#drawerShow .dsrow").style.flexWrap=""; const sg=document.getElementById("infoMode"); if(sg) sg.style.marginLeft="";
+  const mid=x=>{ const b=x.getBoundingClientRect(); return b.top+b.height/2; }, oneLine=row=>[...row.children].every(x=>Math.abs(mid(x)-mid(row.firstElementChild))<6);
+  const r1=pairs[0][0].parentElement, r2=pairs[0][1].parentElement; if(!oneLine(r1)||!oneLine(r2)) return;
+  // one at a time, left to right. The top row may run a little into the column's side padding (Non-Active Paths is a bit
+  // longer than Misc. Statistics), but never past the column's edge
+  r1.style.flexWrap="nowrap"; const edge=document.getElementById("drawers").getBoundingClientRect().right-4;
+  pairs.forEach(([t,u])=>{ const d=u.getBoundingClientRect().left-t.getBoundingClientRect().left;
+    const room=edge-r1.lastElementChild.getBoundingClientRect().right;
+    const m=Math.min(d,room); if(m>0) t.style.marginLeft=m+"px"; });
+  // Popup/Dropdown sits halfway between "Full breakdown" and "Rift Paths" (Rift Paths stays where it is)
+  const seg=document.getElementById("infoMode"), fb=seg&&seg.previousElementSibling, rp=pairs[0][0];
+  if(seg&&fb){ seg.style.marginLeft=""; const gl=seg.getBoundingClientRect().left-fb.getBoundingClientRect().right, gr=rp.getBoundingClientRect().left-seg.getBoundingClientRect().right, x=(gr-gl)/2;
+    if(x>0){ seg.style.marginLeft=x+"px"; rp.style.marginLeft=Math.max(0,(parseFloat(rp.style.marginLeft)||0)-x)+"px"; } } }
+alignRift(); window.addEventListener("resize",alignRift); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(alignRift);
 function renderCmp(){
   const box=$("cmp"); if(!box||box.hidden) return;
   const cols=[0,1].map(colData);
@@ -2212,7 +2295,7 @@ function renderCmp(){
       const pre=`(${fmtBmc(bmaOf(a))} BWA)`;
       return a.via?cr(esc(k),a.v,{chip:a.grade,eq:true,src,pre,info:"equiv|"+k}):cr(esc(k),a.v,{chip:a.grade,src,pre,info:"aff|"+k}); });
   const aff=evenOut(cols.map(c=>{ const r=affRows(c); return r.length?r:[cr("None",null,{empty:true})]; }));
-  const basic=cols.map(c=>c.basic.map(([n,v])=>cr(esc(n),v,{info:"basic|"+n})));
+  const basic=cols.map(c=>c.basic.map(([n,v])=>cxv(c,n,v,{info:"basic|"+n})));
   const ptabs=[["active","Active"],["dormant","Dormant"],["completed","Completed"],["rift","Rift/Dungeon"]], stabs=[["available","Available"],["unavailable","Unavailable"]];
   const seg=(tabs,cur,c,attr)=>`<span class="seg spelltabs" role="group">${tabs.map(([t,l])=>`<button type="button" data-${attr}="${t}" aria-pressed="${t===cur}">${l} <i>${c[t]}</i></button>`).join("")}</span>`;
   $("cmpCols").innerHTML=`
