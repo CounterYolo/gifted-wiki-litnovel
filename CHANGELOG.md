@@ -2,6 +2,10 @@
 
 Changes to the Gifted Fan Wiki and Bastian's status tracker, newest first.
 
+## 2026-11-26
+- Full breakdown & popup vs dropdown selector moved to 3rd column
+- New selector in first column of full vs consolidated vs separated added in, in anticipation for Bastian's boon he will earn at Path of Exceptionalism III
+
 ## 2026-11-22
 - Equivalent affinity scaling changed to match official information from author's discord chats
 - Base Weak Affinity (BWA) scaling added to all affinity numbers
